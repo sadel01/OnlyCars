@@ -1,9 +1,11 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import HeroSection from '../components/HeroSection.vue'
+import SellSectionHome from '../components/SellSectionHome.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <HeroSection />
+    <SellSectionHome/>
   </main>
 </template>
