@@ -1,5 +1,5 @@
 <template>
     <main>
-        <h1>User</h1>
+        <h1>Este es el catalogo</h1>
     </main>
 </template>
