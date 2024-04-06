@@ -18,9 +18,11 @@ defineProps({
         <h1>OnlyCars</h1>
         <h2>Subtitulo</h2>
         <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto similique, eum saepe tenetur magni vel voluptatibus velit, quam numquam adipisci veniam perspiciatis consequuntur facere quis dolorem excepturi! Animi, perspiciatis consequuntur!</p>
-        <RouterLink to="/catalog">
+        <div class="botoncito">
+          <RouterLink to="/catalog">
           <button>Ver Catalogo</button>
-        </RouterLink>
+          </RouterLink>
+        </div>
       </div>
     </main>
   </div>
@@ -28,13 +30,24 @@ defineProps({
 
 <style scoped>
 
+.botoncito{
+  color: black;
+  position: relative;
+  top: 210px;
+  left: 41%;
+}
+
 .wrapper{
-    background-color: grey;
+    background-image: url(@/assets/ferrari.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-position: 53% 53%;
     justify-content: space-between;
     width: 100%;
     height: 100%;
     padding-top: 1rem;
-    padding-bottom: 3rem;
+    padding-bottom: 17rem;
     color: white;
 }
 
@@ -43,14 +56,21 @@ h1 {
   font-size: 2.6rem;
   position: relative;
   top: -10px;
+  color: black;
 }
 
 h2 {
   font-size: 1.2rem;
+  position: relative;
+  top: -20px;
+  color: black;
 }
 
 p{
     font-size: 1rem;
+    color: black;
+    position: relative;
+    top: -20px;
     margin: 1rem 20%;
 }
 
