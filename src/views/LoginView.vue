@@ -1,5 +1,5 @@
 <template>
-    <main>
-        <h1>User</h1>
-    </main>
+  <main>
+    <h1>Iniciar Seción</h1>
+  </main>
 </template>

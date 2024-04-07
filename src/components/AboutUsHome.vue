@@ -9,31 +9,42 @@ import { RouterLink, RouterView } from 'vue-router'
     <main>
       <div class="wrapper">
         <h1>Nosotros</h1>
-        <p>Somos un equipo muy profesional de desarrolladores, deberían comprar autos en esta página.</p>
-        <p> Dinero, plata, guita, money.</p>
-        <img src="@/assets/explorer.jpg" alt="explorer" class="wrapper-image">
+        <p>
+          Somos un equipo muy profesional de desarrolladores, deberían comprar autos en esta página.
+        </p>
+        <p>Dinero, plata, guita, money.</p>
+        <img src="@/assets/explorer.jpg" alt="explorer" class="wrapper-image" />
+      </div>
+      <div class="botonNosotros">
+        <RouterLink to="/about">
+          <button>Nosotros</button>
+        </RouterLink>
       </div>
     </main>
   </div>
 </template>
 
 <style scoped>
-
 .wrapper-image {
   position: relative;
   left: -22%;
   top: -55px;
-  width: 700px; 
+  width: 700px;
   border-radius: 10%;
 }
 
-.wrapper{
-    background-color: #E5E5E5;
-    justify-content: space-between;
-    width: 100%;
-    height: 100%;
-    padding-top: 1rem;
-    color: black;
+.botonNosotros {
+  position: absolute;
+  top: 1850px;
+  left: 69%;
+}
+.wrapper {
+  background-color: #e5e5e5;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding-top: 1rem;
+  color: black;
 }
 
 h1 {
@@ -45,17 +56,31 @@ h1 {
   color: black;
 }
 
-p{
-    color: black;
-    font-size: 1rem;
-    margin: 1rem 30%;
-    position: relative;
-    top: 220px;
-    right: -22%;
+p {
+  color: black;
+  font-size: 1rem;
+  margin: 1rem 30%;
+  position: relative;
+  top: 220px;
+  right: -22%;
 }
 
 main {
   text-align: center;
 }
+button {
+  background-color: green;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 2rem;
+  font-size: 20px;
+}
 
+button:hover {
+  color: black;
+  background-color: greenyellow;
+}
 </style>
