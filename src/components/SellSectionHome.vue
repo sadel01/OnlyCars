@@ -35,7 +35,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 .boton{
   position: absolute;
-  top: 1075px; 
+  top: 1150px; 
   left: 24%; 
 }
 

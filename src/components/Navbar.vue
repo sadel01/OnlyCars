@@ -6,7 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
     <div class="wrapper">
       <nav>
-        <img src="@/assets/oc.svg" alt="logoOC" class="wrapper-image">
+        <img src="@/assets/oc.svg" alt="logoOC" class="logo-image">
         <RouterLink to="/">HOME</RouterLink>
         <RouterLink to="/catalog">CATALOGO</RouterLink>
         <RouterLink to="/contact">CONTACTO</RouterLink>
@@ -24,7 +24,7 @@ import { RouterLink, RouterView } from 'vue-router'
   margin: 0 auto 2rem;
 }
 
-.wrapper-image {
+.logo-image {
   position: relative;
   top: -5px;
   right: 8%;

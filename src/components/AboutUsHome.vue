@@ -39,7 +39,7 @@ h1 {
   font-weight: 500;
   font-size: 3rem;
   position: absolute;
-  top: 1500px;
+  top: 1600px;
   right: 22%;
   color: black;
 }
