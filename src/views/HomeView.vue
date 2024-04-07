@@ -7,7 +7,7 @@ import AboutUsHome from '../components/AboutUsHome.vue'
 
 <template>
   <main>
-    <HeroSection />
+    <HeroSection/>
     <SellSectionHome/>
     <AboutUsHome/>
   </main>
