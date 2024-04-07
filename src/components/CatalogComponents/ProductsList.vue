@@ -1,9 +1,15 @@
 <template>
   <main>
-    <h2>Products</h2>
+    
+    <div>
+      <SearchItems @inputItems="findItems" />
+    </div>
+    
+
     <div class="container">
       <ul class="list">
-        <li v-for="product in products" :key="product.id">
+
+        <li v-for="product in productsFiltered" :key="product.id">
           <div class="listElements">
             <img :src="product.image" alt="product image" />
             <div class="vehicleDescription">
@@ -25,14 +31,6 @@
 
             </div>
             
-            <!--
-              
-            <img :src="product.image" alt="product image" />
-            <p class="product-name">{{ product.name }}</p>
-            <br>
-            <p class="product-name productPrice">modelo</p>
-            <p>{{product.price}}</p>
-            -->
           </div>
         </li>
       </ul>
@@ -42,6 +40,9 @@
 </template>
 
 <script>
+import SearchItems from './SearchItems.vue';
+
+
 export default {
   data() {
     return {
@@ -49,9 +50,22 @@ export default {
         { id: 1, name: 'Product 1', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
         { id: 2, name: 'Product 2', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
         { id: 3, name: 'Product 3', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 3, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
+        { id: 4, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
     ],
+      productsFiltered: [],
     };
+  },
+  created() {
+    this.productsFiltered = this.products;
+  },
+  methods: {
+    findItems(item) {
+      this.productsFiltered = this.products.filter((product) => 
+         product.name.toLowerCase().includes(item.toLowerCase()));
+    },
+  },
+  components: {
+    SearchItems
   },
 };
 </script>
