@@ -22,6 +22,7 @@ import { RouterLink, RouterView } from 'vue-router'
 .wrapper-image {
   position: relative;
   left: -22%;
+  top: -55px;
   width: 700px; 
   border-radius: 10%;
 }
@@ -39,7 +40,7 @@ h1 {
   font-weight: 500;
   font-size: 3rem;
   position: absolute;
-  top: 1500px;
+  top: 1600px;
   right: 22%;
   color: black;
 }
@@ -47,7 +48,7 @@ h1 {
 p{
     color: black;
     font-size: 1rem;
-    margin: 1rem 20%;
+    margin: 1rem 30%;
     position: relative;
     top: 220px;
     right: -22%;

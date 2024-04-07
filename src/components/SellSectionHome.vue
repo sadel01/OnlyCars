@@ -27,7 +27,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 .wrapper-image {
   position: relative;
-  top: -105px;
+  top: -115px;
   right: -22%;
   width: 700px; 
   border-radius: 10%;
@@ -35,13 +35,14 @@ import { RouterLink, RouterView } from 'vue-router'
 
 .boton{
   position: absolute;
-  top: 1075px; 
+  top: 1150px; 
   left: 24%; 
 }
 
 .wrapper{
     background-color: #F0F0F0;
     justify-content: space-between;
+    padding-top: 1%;
     width: 100%;
     height: 100%;
     color: black;
@@ -59,7 +60,7 @@ h1 {
 p{
     color: black;
     font-size: 1rem;
-    margin: 1rem 20%;
+    margin: 1rem 30%;
     position: relative;
     top: 100px;
     left: -22%;
