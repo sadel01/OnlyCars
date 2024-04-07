@@ -39,3 +39,10 @@ npm run test:unit
 ```sh
 npm run lint
 ```
+
+Instalación Fortawesome:
+
+npm i --save @fortawesome/vue-fontawesome@latest-3
+npm i --save @fortawesome/free-solid-svg-icons
+npm i --save @fortawesome/free-regular-svg-icons
+npm i --save @fortawesome/free-brands-svg-icons
