@@ -6,8 +6,17 @@
             <div class="telefonoContainer">
                 <img class="telefonoImg" src="@/assets/telefono.png" alt="Teléfono">
                 <p class="telefonoTexto">Teléfono</p>
+                <p class="textoDatos">Lorem ipsum dolor sit amet consectetur adipisicing elit. A asperiores consectetur dolor error. Sed ut vero incidunt dolor asperiores enim omnis esse tempore voluptates hic, consequuntur obcaecati eos cum architecto.</p>
             </div>        
-            <div class="overlayBox"></div>
+            <div class="overlayBox">
+                <div>
+                    <p class="contactanos">Contáctanos</p>
+                    <input type="text" v-model="datos" placeholder="Nombre">
+                    <input type="text" v-model="datos" placeholder="Email">
+                    <textarea class="input3" v-model="campo3" placeholder="Descripción"></textarea>
+                </div>
+
+            </div>
         </div>
     </main>
 </template>
@@ -44,17 +53,49 @@
 }
 
 .telefonoImg {
-    width: 40px; /* Ajusta este valor según tus necesidades */
-    position: absolute; /* Posiciona la imagen de forma absoluta en relación a su contenedor más cercano con posición relativa/absoluta */
-    top: 55%; /* Posiciona la imagen a la mitad del contenedor desde arriba */
-    left: 5%; /* Posiciona la imagen a la mitad del contenedor desde la izquierda */
-    transform: translate(-50%, -50%); /* Centra la imagen exactamente en el medio del contenedor */
+    width: 40px; 
+    position: absolute; 
+    top: 54%; 
+    left: 5%;
+    transform: translate(-50%, -50%);
 }
 
 .telefonoTexto {
     margin-left: 130px;
-    padding-top: 56px;
+    padding-top: 45px;
     font-size: 50px;
+}
+
+.textoDatos{
+    margin-left: 80px;
+}
+
+.contactanos{
+    text-align: center;
+    font-size: 50px;
+}
+
+.overlayBox div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.overlayBox div input {
+    display: block;
+    margin-bottom: 50px;
+    width: 500px;
+    font-size: 20px;
+}
+
+.input3{
+    display: block;
+    margin-bottom: 50px;
+    width: 500px;
+    height: 280px;
+    font-size: 20px;
+    resize: none;
 }
 
 </style>
