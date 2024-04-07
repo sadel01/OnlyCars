@@ -1,7 +1,17 @@
 <template> 
-    <div class="searchItems">
-        <input type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
+    
+    
+    <div class="container">
+        <div class="searchItems">
+            <input type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
+        </div>
+        <div class="si">
+            
+        </div>
     </div>
+    
+
+    
     
 </template>
 
@@ -19,3 +29,16 @@ export default {
     },
 };
 </script>
+
+<style>
+
+.searchBar > .container {
+    width: %; /* modified */
+    height: 40%;
+}
+
+.searchItems > input {
+    width: 95%;
+    margin-left: 1%;
+}
+</style>
