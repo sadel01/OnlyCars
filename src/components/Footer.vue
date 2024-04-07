@@ -24,7 +24,7 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
         </div>
         <div class="link-group">
           <strong>INFORMACION</strong>
-          <a href="#">Contacto</a>
+          <RouterLink to="/contact">Contacto</RouterLink>
           <a href="#">FAQ</a>
           <a href="#">Ubicación</a>
         </div>
