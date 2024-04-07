@@ -28,7 +28,7 @@ import { RouterLink, RouterView } from 'vue-router'
 .wrapper-image {
   position: relative;
   top: -105px;
-  right: -20%;
+  right: -22%;
   width: 700px; 
   border-radius: 10%;
 }
@@ -40,7 +40,7 @@ import { RouterLink, RouterView } from 'vue-router'
 }
 
 .wrapper{
-    background-color: transparent;
+    background-color: #F0F0F0;
     justify-content: space-between;
     width: 100%;
     height: 100%;
