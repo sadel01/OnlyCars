@@ -9,33 +9,49 @@ import { RouterLink, RouterView } from 'vue-router'
     <main>
       <div class="wrapper">
         <h1>Nosotros</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto similique, eum saepe tenetur magni vel voluptatibus velit, quam numquam adipisci veniam perspiciatis consequuntur facere quis dolorem excepturi! Animi, perspiciatis consequuntur!</p>
+        <p>Somos un equipo muy profesional de desarrolladores, deberían comprar autos en esta página.</p>
+        <p> Dinero, plata, guita, money.</p>
+        <img src="@/assets/explorer.jpg" alt="explorer" class="wrapper-image">
       </div>
     </main>
   </div>
 </template>
 
 <style scoped>
+
+.wrapper-image {
+  position: relative;
+  left: -22%;
+  top: -55px;
+  width: 700px; 
+  border-radius: 10%;
+}
+
 .wrapper{
-    background-color: wheat;
+    background-color: #E5E5E5;
     justify-content: space-between;
     width: 100%;
     height: 100%;
     padding-top: 1rem;
-    padding-bottom: 8rem;
     color: black;
 }
 
 h1 {
   font-weight: 500;
-  font-size: 2.6rem;
-  position: relative;
-  top: -10px;
+  font-size: 3rem;
+  position: absolute;
+  top: 1600px;
+  right: 22%;
+  color: black;
 }
 
 p{
+    color: black;
     font-size: 1rem;
-    margin: 1rem 20%;
+    margin: 1rem 30%;
+    position: relative;
+    top: 220px;
+    right: -22%;
 }
 
 main {

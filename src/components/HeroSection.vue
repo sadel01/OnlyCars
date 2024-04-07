@@ -18,6 +18,7 @@ defineProps({
         <h1>OnlyCars</h1>
         <h2>Subtitulo</h2>
         <p>Prueba de cómo se ve este texto sobre la imagen de un Ferrari rojo</p>
+        <img src="@/assets/oc.svg" alt="logoOC" class="wrapper-image">
       </div>
 
         <div class="botoncito">
@@ -30,6 +31,14 @@ defineProps({
 </template>
 
 <style scoped>
+
+.wrapper-image {
+  position: relative;
+  top: -200px;
+  right: -7.5%;
+  width: 100px; 
+  border-radius: 10%;
+}
 
 .botoncito{
   position: absolute;
