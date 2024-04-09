@@ -86,7 +86,7 @@ button[type="submit"]{
 <div class="login-container" >
   <div class="login-box">
     <form class="form">
-    <p>Inicia sesión con tu cuenta</p>
+    <p>Inicia sesión</p>
     <div class="group">
       <input required="true" class="main-input" type="text">
       <span class="highlight-span"></span>
@@ -107,7 +107,7 @@ button[type="submit"]{
           </div>
         </div>
         <div class="sign-up">
-          <span class="txt">¿No tienes cuenta? </span><router-link to="/register" style="color: #FAE00F;">Regístrate aquí</router-link>
+          <span class="txt">¿No tienes cuenta? </span><router-link to="/register" style="color: #FBC40E;">Regístrate aquí</router-link>
         </div>
   </form>
   </div>
@@ -119,7 +119,7 @@ button[type="submit"]{
   color: white;
 }
 .login-container {
-  background-image: url("@/assets/f1.jpg");
+  background-image: url("@/assets/sportage.jpg");
   background-size: cover;
   background-position: center;
   display: flex;
@@ -128,9 +128,10 @@ button[type="submit"]{
   height: 100vh;
 }
 .login-box{
-  background-color: rgba(255, 255, 255, 0);
-  backdrop-filter: blur(25px);
-  border-radius: 30px;
+  background-color: rgba(0, 0, 0, 0.7);;
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  padding: 0% 2.5%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .group {
@@ -151,9 +152,7 @@ button[type="submit"]{
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
   flex-direction: column;
-  padding: 120px 40px;
-  padding-top: 60px;
-  padding-bottom: 90px;
+  padding: 40px;
   padding-right: 40px;
   padding-left: 40px;
   position: relative;
@@ -240,7 +239,7 @@ button[type="submit"]{
   justify-content: center;
   align-items: center;
   border-radius: 5px;
-  background: #F8FF0F;
+  background: #FBC40E;
   font-family: "Montserrat", sans-serif;
   box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
   overflow: hidden;
@@ -252,7 +251,7 @@ button[type="submit"]:after {
   content: " ";
   width: 0%;
   height: 100%;
-  background: #FAC30F;
+  background: #C19400;
   position: absolute;
   transition: all 0.4s ease-in-out;
   right: 0;
