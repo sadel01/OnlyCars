@@ -6,6 +6,7 @@ import { RouterLink, RouterView } from 'vue-router'
   <header>
     <div class="wrapper">
       <nav>
+        <img src="@/assets/oc.svg" alt="logoOC" class="logo-image">
         <RouterLink to="/">HOME</RouterLink>
         <RouterLink to="/catalog">CATALOGO</RouterLink>
         <RouterLink to="/contact">CONTACTO</RouterLink>
@@ -23,11 +24,15 @@ import { RouterLink, RouterView } from 'vue-router'
   display: block;
   margin: 0 auto 2rem;
 }
-.login-icon {
-  display: block;
-  width: 27px; 
-  height: 25px;
- }
+
+.logo-image {
+  position: relative;
+  top: -5px;
+  right: 8%;
+  width: 100px; 
+  border-radius: 10%;
+}
+
 .wrapper{
     display: flex;
     justify-content: space-between;
