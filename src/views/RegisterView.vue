@@ -1,7 +1,6 @@
 <template>
     <div class="register-container" >
       <div class="register-box">
-        <h2>Regístrate</h2>
         <form @submit.prevent="login">
             <div class="form">
               <label for="name">Nombre</label>
