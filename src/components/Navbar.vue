@@ -8,7 +8,9 @@ import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
   <header>
     <div class="wrapper">
       <nav>
-        <img src="@/assets/oc.svg" alt="logoOC" class="logo-image">
+        <RouterLink to="/">
+          <img href="" src="@/assets/oc.svg" alt="logoOC" class="logo-image">
+        </RouterLink> 
         <div class="nav-links">
           <RouterLink to="/" class="nav-link">Inicio</RouterLink>
           <RouterLink to="/catalog" class="nav-link">Catalogo</RouterLink>
