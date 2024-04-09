@@ -9,35 +9,61 @@ import { RouterLink, RouterView } from 'vue-router'
     <main>
       <div class="wrapper">
         <h1>Vender</h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Architecto similique, eum saepe tenetur magni vel voluptatibus velit, quam numquam adipisci veniam perspiciatis consequuntur facere quis dolorem excepturi! Animi, perspiciatis consequuntur!</p>
-        <RouterLink to="/sell">
-          <button>Vende tu auto</button>
-        </RouterLink>
+        <p>Prueba para ver cómo se ve el texto sobre la imagen que usamos de fondo. </p>
+        <p> La imagen es solo referencial, está sujeta a muchos cambios.</p>
+        <img src="@/assets/astonMartin.jpg" alt="astonMartin" class="wrapper-image">
       </div>
+
+        <div class="boton">
+          <RouterLink to="/sell">
+            <button>Vende tu auto</button>
+          </RouterLink>
+        </div>
     </main>
   </div>
 </template>
 
 <style scoped>
+
+.wrapper-image {
+  position: relative;
+  top: -115px;
+  right: -22%;
+  width: 700px; 
+  border-radius: 10%;
+}
+
+.boton{
+  position: absolute;
+  top: 1150px; 
+  left: 24%; 
+}
+
 .wrapper{
+    background-color: #F0F0F0;
     justify-content: space-between;
+    padding-top: 1%;
     width: 100%;
     height: 100%;
-    padding-top: 1rem;
-    padding-bottom: 3rem;
     color: black;
 }
 
 h1 {
   font-weight: 500;
-  font-size: 2.6rem;
+  font-size: 3rem;
   position: relative;
-  top: -10px;
+  top: 80px;
+  left: -22%;
+  color: black;
 }
 
 p{
+    color: black;
     font-size: 1rem;
-    margin: 1rem 20%;
+    margin: 1rem 30%;
+    position: relative;
+    top: 100px;
+    left: -22%;
 }
 
 main {
@@ -45,7 +71,7 @@ main {
 }
 
 button {
-  background-color: #f39c12;
+  background-color: green;
   color: white;
   padding: 1rem;
   border: none;
@@ -56,7 +82,8 @@ button {
 }
 
 button:hover {
-  background-color: #f39c12;
+  color: black;
+  background-color: greenyellow;
 }
 
 </style>
