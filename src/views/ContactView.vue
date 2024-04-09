@@ -1,7 +1,8 @@
 <template>
   <main>
-    <h1 class="contactoTexto">Contacto</h1>
+    <h1 class="contactoTexto"></h1>
     <p class="textoSub"></p>
+
     <div class="colorBox">
       <div class="telefonoContainer">
         <img class="telefonoImg" src="@/assets/telefono.png" alt="Teléfono" />
@@ -64,7 +65,31 @@ export default {
   margin-left: 40px;
   margin-top: 60px;
   font-size: 50px;
-  color: #144d53;
+  color: black;
+}
+.colorBox::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../assets/contacto.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: brightness(50%);
+  z-index: -1;
+}
+.mensajeExito {
+  margin-top: 1px;
+  color: white;
+  font-size: 15px;
+}
+.mensajeNoExito {
+  margin-top: 1px;
+  color: #a32d2d;
+  font-size: 15px;
 }
 
 .textoSub {
@@ -73,7 +98,6 @@ export default {
 }
 
 .colorBox {
-  background: #307672;
   height: 600px;
   width: 100%;
   margin-top: 140px;
@@ -82,11 +106,12 @@ export default {
 
 .overlayBox {
   position: absolute;
-  background-color: #1a3c40;
-  height: 83%;
-  width: 50%;
-  top: 35%;
-  left: 45%;
+  background-color: #1f1f1f;
+  height: 650px;
+  width: 750px;
+  top: 150px;
+  right: 150px;
+  border-radius: 35px;
 }
 
 .telefonoImg {
@@ -109,7 +134,8 @@ export default {
 
 .contactanos {
   text-align: center;
-  font-size: 50px;
+  font-size: 35px;
+  color: white;
 }
 
 .overlayBox div {
@@ -121,7 +147,7 @@ export default {
 
 .overlayBox div input {
   display: block;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
   width: 500px;
   font-size: 20px;
 }
@@ -135,22 +161,23 @@ export default {
   resize: none;
 }
 button {
-  background-color: #307672;
-  color: white;
+  position: relative;
+  top: -10px;
+  background: #fbc40e;
+  color: black;
   padding: 1rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
-  margin-top: 2rem;
   font-size: 20px;
 }
 
 button:hover {
-  background-color: #1d4e4a;
+  background: #a17e0b;
 }
 
 button:active {
-  background-color: #1d4e4a;
+  background: #a17e0b;
 }
 
 button:focus {
