@@ -15,10 +15,9 @@ defineProps({
     <Navbar />
     <main>
       <div class="wrapper">
-        <h1>OnlyCars</h1>
+        <h1 class="titulo">OnlyCars</h1>
         <h2>Subtitulo</h2>
         <p>Prueba de cómo se ve este texto sobre la imagen de un Ferrari rojo</p>
-        <img src="@/assets/oc.svg" alt="logoOC" class="wrapper-image">
       </div>
 
         <div class="botoncito">
@@ -38,16 +37,7 @@ defineProps({
 
 <style scoped>
 
-.wrapper-image {
-  position: relative;
-  top: -200px;
-  right: -7.5%;
-  width: 100px; 
-  border-radius: 10%;
-}
-
 .botoncito{
-
   position: absolute;
   top: 430px; /*570*/
   left: 870px; /*1620*/
@@ -59,7 +49,7 @@ defineProps({
   width: 100%;
   height: 100%;
   padding-top: 1rem;
-  padding-bottom: 25rem;
+  padding-bottom: 30rem;
 }
 
 .wrapper::before {
@@ -82,7 +72,7 @@ h1 {
   font-size: 2.6rem;
   font-weight: bold ;
   position: relative;
-  top: -10px;
+  left: auto;
   color: white;
 }
 
