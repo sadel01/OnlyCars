@@ -89,7 +89,20 @@ export default {
   background-color: white;
   box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
   flex: 1;
+  height: 796px; /* Set a fixed height */
+  overflow: auto; /* Enable scrolling if content exceeds the height */
 }
+
+@media (max-width: 768px) {
+  .container {
+    margin-left: 10%;
+    margin-right: 10%;
+    height: auto; /* Reset the height for mobile devices */
+  }
+}
+
+
+
 .principalContainer{
   display: flex;
   flex-direction: row;
