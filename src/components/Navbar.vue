@@ -11,6 +11,7 @@ import { RouterLink, RouterView } from 'vue-router'
         <RouterLink to="/contact">CONTACTO</RouterLink>
         <RouterLink to="/about">NOSOTROS</RouterLink>
         <RouterLink to="/sell">VENDER</RouterLink>
+        
       </nav>
     </div>
   </header>
@@ -22,7 +23,11 @@ import { RouterLink, RouterView } from 'vue-router'
   display: block;
   margin: 0 auto 2rem;
 }
-
+.login-icon {
+  display: block;
+  width: 27px; 
+  height: 25px;
+ }
 .wrapper{
     display: flex;
     justify-content: space-between;
