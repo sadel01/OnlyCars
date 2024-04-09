@@ -12,18 +12,18 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
       </div>
       <div class="footer-links">
         <div class="link-group">
-          <strong>EXPLORAR</strong>
+          <strong class="titles">EXPLORAR</strong>
           <a href="#">Buscar autos</a>
           <a href="#">Comparar modelos</a>
         </div>
         <div class="link-group">
-          <strong>SERVICIOS</strong>
+          <strong class="titles">SERVICIOS</strong>
           <a href="#">Vender tu auto</a>
           <a href="#">Test Drive</a>
           <a href="#">Soporte</a>
         </div>
         <div class="link-group">
-          <strong>INFORMACION</strong>
+          <strong class="titles">INFORMACION</strong>
           <RouterLink to="/contact">Contacto</RouterLink>
           <a href="#">FAQ</a>
           <a href="#">Ubicación</a>
@@ -52,8 +52,15 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
 </template>
 
 <style scoped>
+
+.titles {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #FBC40E;
+}
+
 .footer {
-  background-color: #1A3C40;
+  background-color: #1f1f1f;
   color: #fff;
   font-family: Arial, sans-serif;
   padding: 4rem;
@@ -80,6 +87,7 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
 .logo {
   font-size: 2rem;
   font-weight: bold;
+  color: #FBC40E;
 }
 
 .slogan {
