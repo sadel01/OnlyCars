@@ -86,12 +86,16 @@ export default {
   margin-bottom: 1%;
   padding: 1% 1% 1% 1%;
   border-radius: 10px;
-  background-color: white;
   box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
   flex: 1;
   height: 796px; /* Set a fixed height */
   overflow: auto; /* Enable scrolling if content exceeds the height */
 }
+
+.principalContainer > .container {
+  background-color: red;
+}
+
 
 @media (max-width: 768px) {
   .container {

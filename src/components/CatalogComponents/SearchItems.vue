@@ -1,7 +1,7 @@
 <template> 
     
     <!--- Mejorar clase padre para los containers y hacer independiente cada unos.-->
-    <div class="container container2">
+    <div class="container">
         <div class="searchItems">
             <input type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
         </div>
@@ -9,9 +9,6 @@
             
         </div>
     </div>
-    
-
-    
     
 </template>
 
@@ -32,7 +29,7 @@ export default {
 
 <style>
 
-.container.container2{
+.searchBar > .container{
     width: 80%; /* modified */
     height: 20%;
     background-color: #1f1f1f;
@@ -48,6 +45,7 @@ export default {
     padding-top: 3%;
     padding-bottom: 3%;
     margin-top: 5%;
+    
 }
 .searchItems > input:focus {
     outline: none;
