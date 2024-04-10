@@ -8,11 +8,11 @@
       </div>
       
   
-      <div class="container">
+      <div class="container listContainer">
         <ul class="list">
   
-          <li v-for="product in productsFiltered" :key="product.id">
-            <div class="listElements">
+          <li v-for="product in productsFiltered" :key="product.id" @click='changeProductClicked' >
+            <div class="listElements" >
               <img :src="product.image" alt="product image" />
               <div class="vehicleDescription">
                 <div>
@@ -38,16 +38,24 @@
         </ul>
       </div>
     </div>
+
+    <ProductDetail :open='productClicked' @close='closePanel'/>
     
+    
+    
+
       
   </main>
 </template>
 
 <script>
 import SearchItems from './SearchItems.vue';
+import ProductDetail from './ProductDetail.vue';
+
 
 
 export default {
+  
   data() {
     return {
       products: [
@@ -55,8 +63,13 @@ export default {
         { id: 2, name: 'Product 2', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
         { id: 3, name: 'Product 3', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
         { id: 4, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-    ],
+        { id: 5, name: 'Product 5', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
+        { id: 6, name: 'Product 6', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
+        { id: 7, name: 'Product 7', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
+        { id: 8, name: 'Product 8', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
+        ],
       productsFiltered: [],
+      productClicked: false,
     };
   },
   created() {
@@ -67,14 +80,29 @@ export default {
       this.productsFiltered = this.products.filter((product) => 
          product.name.toLowerCase().includes(item.toLowerCase()));
     },
+    changeProductClicked() {
+      if (!this.productClicked) {
+        this.productClicked = true;
+        return;
+      }
+    },
+    closePanel() {
+      this.productClicked = false;
+    },
+
   },
   components: {
-    SearchItems
+    SearchItems,
+    ProductDetail,
   },
 };
 </script>
 
 <style scoped>
+
+
+
+
   .searchBar {
     margin-top: 1%;
     width: 20%;
@@ -86,16 +114,28 @@ export default {
   margin-bottom: 1%;
   padding: 1% 1% 1% 1%;
   border-radius: 10px;
-  background-color: white;
   box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
   flex: 1;
+    
 }
+
+.container.listContainer {
+  background-color: #1f1f1f;
+  height: 900px;
+  overflow: auto; /* Enable scrolling if content exceeds the height */
+}
+
+
+
+
+
+
 .principalContainer{
   display: flex;
   flex-direction: row;
   margin-top: 1%;
   margin-right: 0;
-  border: 1px solid black;
+  background-color: #f1f1f1;
 }
 
 @media (max-width: 768px) {
@@ -117,7 +157,7 @@ export default {
 .list {
   padding-bottom: .5%;
   padding-top: .5%;
-  background-color: white;
+  background-color: #1f1f1f(0, 0, 0);
   @media (max-width: 768px) {
     margin-left: 10%;
     margin-right: 10%;
@@ -126,7 +166,7 @@ export default {
 
 ul {
   list-style-type: none;
-  background-color: white;
+  background-color: #1f1f1f;
   @media (max-width: 768px) {
     ul {
       margin-left: 10%;
@@ -140,6 +180,14 @@ ul {
     align-items: center;
   }
 
+  @media (max-width: 768px) {
+    .container {
+      margin-left: 10%;
+      margin-right: 10%;
+      height: auto; /* Reset the height for mobile devices */
+    }
+  }
+  
   @media (max-width: 768px) {
     .listElements {
       flex-direction: column;

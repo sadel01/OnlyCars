@@ -1,17 +1,14 @@
 <template> 
     
-    
-    <div class="container">
+    <!--- Mejorar clase padre para los containers y hacer independiente cada unos.-->
+    <div class="container searchContainer">
         <div class="searchItems">
-            <input type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
+            <input class="inputCarName" type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
         </div>
         <div class="si">
             
         </div>
     </div>
-    
-
-    
     
 </template>
 
@@ -32,13 +29,27 @@ export default {
 
 <style>
 
-.searchBar > .container {
-    width: %; /* modified */
-    height: 40%;
+.container.searchContainer{
+    width: 80%; /* modified */
+    height: 80%;
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    margin-left: 5%;
 }
 
-.searchItems > input {
-    width: 95%;
-    margin-left: 1%;
+.inputCarName {
+    width: 90%;
+    margin-left: 4%;
+    border-radius: 10px;
+    border: none;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    margin-top: 5%;
+    
 }
+.searchItems > input:focus {
+    outline: none;
+    border-color: rgb(255, 0, 0); /* change the color to your desired color */
+}
+
 </style>
