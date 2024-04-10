@@ -5,9 +5,8 @@ import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 </script>
 
 <template>
-    <main>
-        <div class="transparent-box" >
-            
+    <main class="principal">
+        <div class="transparent-box" >            
             <div class="linea"></div>
             <div class="enviarCorreo">
                 <p class="textoContactanos" >Contáctanos</p>
@@ -21,29 +20,29 @@ import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
 </template>
 
 <style>
-main {
-    background-color: #333; /* Fondo negro claro */
+.principal {
+    background-color: #333;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Asegura que main ocupe toda la altura de la pantalla */
+    height: 100vh;
 }
 
 .transparent-box {
     display: flex;
     justify-content: end;
-    position: relative; /* Necesario para posicionar correctamente el pseudo-elemento */
-    width: 80%; /* Ajusta estos valores según tus necesidades */
+    position: relative;
+    width: 80%;
     max-width: 1300px;
     height: 80%;
     max-height: 700px;
-    background-color: rgba(255, 255, 255, 0.5); /* Caja transparente */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Sombreado alrededor de la caja */
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .linea {
     position: absolute;
-    top: 10%; /* Ajusta estos valores para cambiar la altura de la línea */
+    top: 10%;
     bottom: 10%;
     left: 50%;
     width: 1px;
@@ -82,7 +81,6 @@ textarea{
     align-self: center;
 }
 
-/* Consulta de medios para pantallas pequeñas */
 @media (max-width: 600px) {
     .transparent-box {
         width: 90%;
@@ -90,12 +88,12 @@ textarea{
     }
 
     .enviarCorreo {
-        width: 100%; /* Ajusta este valor para cambiar el ancho de .enviarCorreo en pantallas pequeñas */
+        width: 100%;
     }
 
     .enviarCorreo input,
     .enviarCorreo textarea {
-        width: 100%; /* Ajusta este valor para cambiar el ancho de los campos de entrada y el textarea en pantallas pequeñas */
+        width: 100%;
     }
 }
 </style>
