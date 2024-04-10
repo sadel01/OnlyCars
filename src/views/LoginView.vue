@@ -5,24 +5,18 @@
     <form class="form">
     <p>Inicia sesión</p>
     <div class="group">
-      <input required="true" class="main-input" type="text">
+      <input required="true" class="main-input" type="text" id="rut">
       <span class="highlight-span"></span>
-      <label class="lebal-email">Ingrese su R.U.T.</label>
+      <label class="lebal-email">Ingrese su RUT</label>
     </div>
     <div class="container-1">
       <div class="group">
-        <input required="true" class="main-input" type="text">
+        <input required="true" class="main-input" type="text" id="password">
         <span class="highlight-span"></span>
         <label class="lebal-email">Ingrese su contraseña</label>
       </div>
     </div>
     <button type="submit"><span>Ingresar </span></button>
-        <div class="socialmedia">
-            <span class="txt">Síguenos en</span>
-            <div class="socialicons">
-            
-          </div>
-        </div>
         <div class="sign-up">
           <span class="txt">¿No tienes cuenta? </span><router-link to="/register" style="color: #FBC40E;">Regístrate aquí</router-link>
         </div>
@@ -76,7 +70,6 @@
 }
 
 .form p {
-  padding-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
   letter-spacing: .5px;
@@ -148,9 +141,9 @@
   }
 }
 
-
 button[type="submit"]{
- margin-top: 40px;
+  margin-top:15%;
+  margin-bottom:5%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -162,7 +155,7 @@ button[type="submit"]{
   overflow: hidden;
   cursor: pointer;
   border: none;
-  
+  padding: 5% 30%;
 }
 button[type="submit"]:after {
   content: " ";
@@ -212,15 +205,6 @@ button[type="submit"]:hover span {
 }
 
 
-
-
-.socialmedia{
-  text-align: center;
-  margin-top: 20px;
-}
-.socialicons{
-  margin-top: 10px;
-}
 .sign-up{
   text-align: center;
   margin-top: 20px;
