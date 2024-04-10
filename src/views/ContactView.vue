@@ -1,101 +1,99 @@
-<template>
-    <main>
-        <h1 class="contactoTexto">Contacto</h1>
-        <p class="textoSub">Lorem ipsum dolor sit amet consectetur adipisicing elit. A asperiores consectetur dolor error. Sed ut vero incidunt dolor asperiores enim omnis esse tempore voluptates hic, consequuntur obcaecati eos cum architecto.</p>
-        <div class="colorBox">    
-            <div class="telefonoContainer">
-                <img class="telefonoImg" src="@/assets/telefono.png" alt="Teléfono">
-                <p class="telefonoTexto">Teléfono</p>
-                <p class="textoDatos">Lorem ipsum dolor sit amet consectetur adipisicing elit. A asperiores consectetur dolor error. Sed ut vero incidunt dolor asperiores enim omnis esse tempore voluptates hic, consequuntur obcaecati eos cum architecto.</p>
-            </div>        
-            <div class="overlayBox">
-                <div>
-                    <p class="contactanos">Contáctanos</p>
-                    <input type="text" v-model="datos" placeholder="Nombre">
-                    <input type="text" v-model="datos" placeholder="Email">
-                    <textarea class="input3" v-model="campo3" placeholder="Descripción"></textarea>
-                </div>
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+</script>
 
+<template>
+    <main class="principal">
+        <div class="transparent-box" >            
+            <div class="linea"></div>
+            <div class="enviarCorreo">
+                <p class="textoContactanos" >Contáctanos</p>
+                <input type="text" placeholder="Nombre">
+                <input type="text" placeholder="Email">
+                <textarea cols="30" rows="10" placeholder="Descripción"></textarea>
+                <button class="botonEnviar">Enviar</button>
             </div>
         </div>
     </main>
 </template>
 
 <style>
-
-.contactoTexto{
-    margin-left: 40px;
-    margin-top: 60px;
-    font-size: 50px;
-    color: #144D53;
+.principal {
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-.textoSub{
-    font-size: 15px;
-    margin: 40px
+.transparent-box {
+    display: flex;
+    justify-content: end;
+    position: relative;
+    width: 80%;
+    max-width: 1300px;
+    height: 80%;
+    max-height: 700px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-.colorBox {
-    background: #307672;
-    height: 600px;
-    width: 100%;
-    margin-top: 140px;
-    margin-bottom: 140px;
-}
-
-.overlayBox {
+.linea {
     position: absolute;
-    background-color: #1A3C40;
-    height:83%;
-    width: 50%;
-    top: 35%;
-    left: 45%;
+    top: 10%;
+    bottom: 10%;
+    left: 50%;
+    width: 1px;
+    background-color: black;
 }
 
-.telefonoImg {
-    width: 40px; 
-    position: absolute; 
-    top: 54%; 
-    left: 5%;
-    transform: translate(-50%, -50%);
-}
-
-.telefonoTexto {
-    margin-left: 130px;
-    padding-top: 45px;
-    font-size: 50px;
-}
-
-.textoDatos{
-    margin-left: 80px;
-}
-
-.contactanos{
-    text-align: center;
-    font-size: 50px;
-}
-
-.overlayBox div {
+.enviarCorreo{
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    gap: 40px;
+    margin-right: 110px;
+    margin-bottom: 50px;
+    width: 35%;
 }
 
-.overlayBox div input {
-    display: block;
-    margin-bottom: 50px;
-    width: 500px;
-    font-size: 20px;
-}
-
-.input3{
-    display: block;
-    margin-bottom: 50px;
-    width: 500px;
-    height: 280px;
-    font-size: 20px;
+textarea{
     resize: none;
+    width: 99%;
 }
 
+.textoContactanos{
+    font-size: 40px;
+    text-align: center;
+}
+
+.botonEnviar{
+    width: 100px;
+    height: 40px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    align-self: center;
+}
+
+@media (max-width: 600px) {
+    .transparent-box {
+        width: 90%;
+        height: 90%;
+    }
+
+    .enviarCorreo {
+        width: 100%;
+    }
+
+    .enviarCorreo input,
+    .enviarCorreo textarea {
+        width: 100%;
+    }
+}
 </style>

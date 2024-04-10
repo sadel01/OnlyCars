@@ -48,8 +48,8 @@ const router = createRouter({
       component: RegisterView
     },
     {
-      path: '/item/:id',
-      name: 'item',
+      path: '/catalog/:id',
+      name: 'catalog-item',
       component: ItemView
     },
     {
