@@ -13,16 +13,16 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
       <div class="footer-links">
         <div class="link-group">
           <strong class="titles">NAVEGACIÓN</strong>
-          <a href="#">Home</a>
-          <a href="#">Catálogo</a>
-          <a href="#">Nosotros</a>
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/catalog">Catálogo</RouterLink>
+          <RouterLink to="/about">Nosotros</RouterLink>
           <RouterLink to="/contact">Contacto</RouterLink>
-          <a href="#">Vender</a>
+          <RouterLink to="/sell">Vender</RouterLink>
         </div>
         <div class="link-group">
           <strong class="titles">CONTACTO</strong>
           <a href="#">Dirección</a>
-          <a href="#">Telefono</a>
+          <a href="#">Teléfono</a>
           <a href="#">Email</a>
         </div>
         <div class="link-group">

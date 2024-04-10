@@ -93,7 +93,7 @@
 
 .main-input:focus {
   outline: none;
-  border-bottom-color: #FAE00F;
+  border-bottom-color: #FBC40E;
 }
 
 .lebal-email {
@@ -113,7 +113,7 @@
 .main-input:valid ~ .lebal-email {
   top: -20px;
   font-size: 14px;
-  color: #FAE00F;
+  color: #FBC40E;
 }
 
 .highlight-span {
@@ -133,7 +133,7 @@
 
 @keyframes input-focus {
   from {
-    background: #FAE00F;
+    background: #FBC40E;
   }
 
   to {

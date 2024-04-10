@@ -5,7 +5,7 @@
         <span>ONLYCARS</span>
       </div>
       <span class="subtitle">Compra y Vende Autos con nosotros</span>
-      <p>Tu Plataforma Confiable para Transacciones de Automóviles Seguras y Convenientes</p>
+      <p>Tu plataforma confiable para transacciones de automóviles seguras y convenientes</p>
       <RouterLink to="/catalog" class="theme-features-btn">
         <span>Ver Catálogo</span>
         <svg width="34" height="34" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
