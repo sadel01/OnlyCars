@@ -1,86 +1,3 @@
-<!--<template>
-  <div class="login-container" >
-    <div class="login-box">
-      <h2>Iniciar Sesión</h2>
-      <form @submit.prevent="login">
-        <div class="form">
-            <label for="rut">R.U.T.</label>
-            <input type="rut" id="rut" name="rut" required>
-        </div>
-        <div class="form">
-            <label for="password">Contraseña</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-        <button type="submit"><a href="https://www.youtube.com/watch?v=FJ6_h3HGsW4&list=RDFJ6_h3HGsW4&start_radio=1&ab_channel=KiddVoodoo">Ingresar </a></button>
-        <div class="socialmedia">
-            <span>Síguenos en</span>
-            <div class="socialicons">
-            
-          </div>
-        </div>
-        <div class="sign-up">
-          ¿No tienes cuenta? <router-link to="/register" style="color: #144D53;">Regístrate aquí</router-link>
-        </div>
-      </form>  
-    </div>
-  </div>
-
-</template>
-
-<style>
-.login-container {
-  background-image: url("@/assets/f1.jpg");
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
-.login-box{
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  padding: 30px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-.form{
-  margin-bottom: 20px;
-}
-label{
-  display: block;
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-input[type="rut"], input[type="password"]{
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-button[type="submit"]{
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: none;
-  background-color: #144D53;
-  color: #fff;
-  cursor: pointer;
-}
-.socialmedia{
-  text-align: center;
-  margin-top: 20px;
-}
-.socialicons{
-  margin-top: 10px;
-}
-.sign-up{
-  text-align: center;
-  margin-top: 20px;
-
-}
-</style>-->
 
 <template>
 <div class="login-container" >
@@ -88,24 +5,18 @@ button[type="submit"]{
     <form class="form">
     <p>Inicia sesión</p>
     <div class="group">
-      <input required="true" class="main-input" type="text">
+      <input required="true" class="main-input" type="text" id="rut">
       <span class="highlight-span"></span>
-      <label class="lebal-email">Ingrese su R.U.T.</label>
+      <label class="lebal-email">Ingrese su RUT</label>
     </div>
     <div class="container-1">
       <div class="group">
-        <input required="true" class="main-input" type="text">
+        <input required="true" class="main-input" type="text" id="password">
         <span class="highlight-span"></span>
         <label class="lebal-email">Ingrese su contraseña</label>
       </div>
     </div>
     <button type="submit"><span>Ingresar </span></button>
-        <div class="socialmedia">
-            <span class="txt">Síguenos en</span>
-            <div class="socialicons">
-            
-          </div>
-        </div>
         <div class="sign-up">
           <span class="txt">¿No tienes cuenta? </span><router-link to="/register" style="color: #FBC40E;">Regístrate aquí</router-link>
         </div>
@@ -159,7 +70,6 @@ button[type="submit"]{
 }
 
 .form p {
-  padding-bottom: 20px;
   font-size: 24px;
   font-weight: bold;
   letter-spacing: .5px;
@@ -183,7 +93,7 @@ button[type="submit"]{
 
 .main-input:focus {
   outline: none;
-  border-bottom-color: #FAE00F;
+  border-bottom-color: #FBC40E;
 }
 
 .lebal-email {
@@ -203,7 +113,7 @@ button[type="submit"]{
 .main-input:valid ~ .lebal-email {
   top: -20px;
   font-size: 14px;
-  color: #FAE00F;
+  color: #FBC40E;
 }
 
 .highlight-span {
@@ -223,7 +133,7 @@ button[type="submit"]{
 
 @keyframes input-focus {
   from {
-    background: #FAE00F;
+    background: #FBC40E;
   }
 
   to {
@@ -231,9 +141,9 @@ button[type="submit"]{
   }
 }
 
-
 button[type="submit"]{
- margin-top: 40px;
+  margin-top:15%;
+  margin-bottom:5%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -245,7 +155,7 @@ button[type="submit"]{
   overflow: hidden;
   cursor: pointer;
   border: none;
-  
+  padding: 5% 30%;
 }
 button[type="submit"]:after {
   content: " ";
@@ -295,15 +205,6 @@ button[type="submit"]:hover span {
 }
 
 
-
-
-.socialmedia{
-  text-align: center;
-  margin-top: 20px;
-}
-.socialicons{
-  margin-top: 10px;
-}
 .sign-up{
   text-align: center;
   margin-top: 20px;

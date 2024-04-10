@@ -1,47 +1,52 @@
 <template>
   <main>
-    <h2>Products</h2>
-    <div class="container">
-      <ul class="list">
-        <li v-for="product in products" :key="product.id">
-          <div class="listElements">
-            <img :src="product.image" alt="product image" />
-            <div class="vehicleDescription">
-              <div>
-                <p class="productText productTitle">{{ product.name }}</p>          
-              </div>
-              
-              <div class="description">
-                <p class="productText productDescription">Kilometraje : {{product.km}}</p>
-                <p class="productText productDescription data">Transmisión : {{product.transmision}}</p>
-                <p class="productText productDescription data">Combustible : {{product.combustible }}</p>
-              
-              </div>
-              
-              <div class="productPrice">
-                <p class="productText productPriceText">Price: </p>
-                <p class="productText productPriceNumber">${{product.price}}</p>
-              </div>
+    
 
-            </div>
-            
-            <!--
+    <div class="principalContainer">  
+      <div class="searchBar">
+        <SearchItems @inputItems="findItems" />
+      </div>
+      
+  
+      <div class="container">
+        <ul class="list">
+  
+          <li v-for="product in productsFiltered" :key="product.id">
+            <div class="listElements">
+              <img :src="product.image" alt="product image" />
+              <div class="vehicleDescription">
+                <div>
+                  <p class="productText productTitle">{{ product.name }}</p>          
+                </div>
+                
+                <div class="description">
+                  <p class="productText productDescription">Kilometraje : {{product.km}}</p>
+                  <p class="productText productDescription data">Transmisión : {{product.transmision}}</p>
+                  <p class="productText productDescription data">Combustible : {{product.combustible }}</p>
+                
+                </div>
+                
+                <div class="productPrice">
+                  <p class="productText productPriceText">Price: </p>
+                  <p class="productText productPriceNumber">${{product.price}}</p>
+                </div>
+  
+              </div>
               
-            <img :src="product.image" alt="product image" />
-            <p class="product-name">{{ product.name }}</p>
-            <br>
-            <p class="product-name productPrice">modelo</p>
-            <p>{{product.price}}</p>
-            -->
-          </div>
-        </li>
-      </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
+    
       
   </main>
 </template>
 
 <script>
+import SearchItems from './SearchItems.vue';
+
+
 export default {
   data() {
     return {
@@ -49,22 +54,81 @@ export default {
         { id: 1, name: 'Product 1', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
         { id: 2, name: 'Product 2', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
         { id: 3, name: 'Product 3', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 3, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
+        { id: 4, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
     ],
+      productsFiltered: [],
     };
+  },
+  created() {
+    this.productsFiltered = this.products;
+  },
+  methods: {
+    findItems(item) {
+      this.productsFiltered = this.products.filter((product) => 
+         product.name.toLowerCase().includes(item.toLowerCase()));
+    },
+  },
+  components: {
+    SearchItems
   },
 };
 </script>
 
 <style scoped>
+  .searchBar {
+    margin-top: 1%;
+    width: 20%;
+}
+.container{
+  margin-left: 5%;
+  margin-right: 1%;
+  margin-top: 1%;
+  margin-bottom: 1%;
+  padding: 1% 1% 1% 1%;
+  border-radius: 10px;
+  box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
+  flex: 1;
+  height: 796px; /* Set a fixed height */
+  overflow: auto; /* Enable scrolling if content exceeds the height */
+}
+
+.principalContainer > .container {
+  background-color: red;
+}
+
+
+@media (max-width: 768px) {
+  .container {
+    margin-left: 10%;
+    margin-right: 10%;
+    height: auto; /* Reset the height for mobile devices */
+  }
+}
+
+
+
+.principalContainer{
+  display: flex;
+  flex-direction: row;
+  margin-top: 1%;
+  margin-right: 0;
+  border: 1px solid black;
+}
+
+@media (max-width: 768px) {
+  .principalContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
 
 .listElements{
   display: flex;
   margin: 20px;
-  justify-content: flex-start;
   background-color: white;
   border-radius: 10px;
-  box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
+  box-shadow: 3px 4px 5px rgb(185, 185, 185);
 }
 
 .list {
@@ -80,16 +144,37 @@ export default {
 ul {
   list-style-type: none;
   background-color: white;
-  margin: 0 auto;
+  @media (max-width: 768px) {
+    ul {
+      margin-left: 10%;
+      margin-right: 10%;
+    }
+  }
 }
 
-img {
-  max-width: 100%;
-  height: auto;
-  width: 400px;
-  height: 400px;
-  /*border-radius: 4%;*/
-}
+  .listElements {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .listElements {
+      flex-direction: column;
+    }
+
+    img {
+      order: -1;
+      margin-bottom: 10px;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    width: 25%;
+    max-height: 400px;
+    border-radius: 4%;
+  }
 
 .description{
   display: flex;
@@ -107,20 +192,17 @@ img {
   font-size: 2rem;
   font-weight: bold;
   text-align: left;
-  /*border: 1px solid black;*/
 }
 .productText.productPriceText{
   font-size: 1rem;
   opacity: 0.5;
   text-align: left;
-  /*border: 1px solid black;*/
 }
 .productText.productDescription{
   font-size: 1.5rem;
   font-weight: bold;
   opacity: 0.5;
   text-align: left;
-  /*border: 1px solid black;*/
 }
 .productText.productDescription.data{
   margin-left: 5%;
@@ -130,8 +212,8 @@ img {
   font-size: 3.5rem;
   font-weight: bold;
   text-align: left;
-  /*border: 1px solid black;*/
 }
+
 
 .vehicleDescription{
   width: 100%;
@@ -141,12 +223,20 @@ img {
   flex-direction: column;
   
 }
-.container{
-  margin-left: 20%;
-  margin-right: 5%;
-  padding: 1% 1% 1% 1%;
-  border-radius: 10px;
-  background-color: white;
-  box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
+
+
+@media (max-width: 768px) {
+  .productText.productPriceNumber{
+    font-size: 1.5rem;
+  }
+  .productText.productPriceText{
+    font-size: 0.8rem;
+  }
+  .productText.productDescription{
+    font-size: 1rem;
+  }
+  .productText.productTitle{
+    font-size: 2.2rem;
+  }
 }
 </style>
