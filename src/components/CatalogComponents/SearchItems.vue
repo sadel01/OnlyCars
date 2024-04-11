@@ -1,9 +1,9 @@
 <template> 
     
     <!--- Mejorar clase padre para los containers y hacer independiente cada unos.-->
-    <div class="container">
+    <div class="container searchContainer">
         <div class="searchItems">
-            <input type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
+            <input class="inputCarName" type="text" placeholder="Search for a car" v-model="search" @input="inputItems" />
         </div>
         <div class="si">
             
@@ -29,17 +29,17 @@ export default {
 
 <style>
 
-.searchBar > .container{
+.container.searchContainer{
     width: 80%; /* modified */
-    height: 20%;
+    height: 80%;
     background-color: #1f1f1f;
     border-radius: 10px;
     margin-left: 5%;
 }
 
-.searchItems > input {
-    width: 80%;
-    margin-left: 1%;
+.inputCarName {
+    width: 90%;
+    margin-left: 4%;
     border-radius: 10px;
     border: none;
     padding-top: 3%;
@@ -49,7 +49,7 @@ export default {
 }
 .searchItems > input:focus {
     outline: none;
-    border-color: yellow; /* change the color to your desired color */
+    border-color: rgb(255, 0, 0); /* change the color to your desired color */
 }
 
 </style>
