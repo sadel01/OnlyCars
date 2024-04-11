@@ -3,7 +3,7 @@
     <div class="wrapper">
       <nav>
         <RouterLink to="/" class="logo-container">
-          <img src="@/assets/oc.svg" alt="logoOC" class="logo-image">
+          <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image">
         </RouterLink>
         <button class="hamburger" @click="toggleNav">&#9776;</button>
         <div class="nav-links" :class="{ 'active': navActive }">
