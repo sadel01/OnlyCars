@@ -1,19 +1,17 @@
-<script setup>
-import { defineProps } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div id="app">
     <Navbar />
     <main>
-      <div class="wrapper">
-        <h1>Nosotros</h1>
-        <p>
-          Somos un equipo muy profesional de desarrolladores, deberían comprar autos en esta página.
-        </p>
-        <p>Dinero, plata, guita, money.</p>
-        <img src="@/assets/explorer.jpg" alt="explorer" class="wrapper-image" />
+      <div class="content-wrapper">
+        <div class="text-container">
+          <div class="text-block">
+            <strong class="title">Nosotros</strong>
+            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint omnis quis ad asperiores ab exercitationem nesciunt, minus voluptatum nihil repudiandae impedit perferendis laborum sapiente iste quo modi molestias provident natus. Cupiditate, nesciunt officia! Repellat nam assumenda aperiam blanditiis porro officiis vel enim accusantium autem. At iusto similique nemo. Veniam dolorum quia pariatur minus ipsa placeat. Impedit, tenetur nesciunt! Officia deleniti ducimus maiores corporis nisi!</p>
+          </div>
+        </div>
+        <div class="image-container">
+          <img src="@/assets/nosotros.jpeg" alt="explorer" class="wrapper-image">
+        </div>
       </div>
       <div class="botonNosotros">
         <RouterLink to="/about">
@@ -24,19 +22,22 @@ import { RouterLink, RouterView } from 'vue-router'
   </div>
 </template>
 
+<script setup>
+import { RouterLink } from 'vue-router'
+</script>
+
 <style scoped>
 .wrapper-image {
-  position: relative;
-  left: -22%;
-  top: -55px;
-  width: 700px;
-  border-radius: 10%;
+  width: 100%;
+  border-radius: 5%;
 }
 
-.botonNosotros {
-  position: absolute;
-  top: 1850px;
-  left: 69%;
+.content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  padding: 2rem;
 }
 .wrapper {
   background-color: #e5e5e5;
@@ -47,26 +48,19 @@ import { RouterLink, RouterView } from 'vue-router'
   color: black;
 }
 
-h1 {
-  font-weight: 500;
-  font-size: 3rem;
-  position: absolute;
-  top: 1600px;
-  right: 22%;
-  color: black;
+.text-container,
+.image-container {
+  width: 100%;
 }
 
-p {
-  color: black;
-  font-size: 1rem;
-  margin: 1rem 30%;
-  position: relative;
-  top: 220px;
-  right: -22%;
+.text-block {
+  padding: 1rem;
 }
 
-main {
-  text-align: center;
+.title {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
 }
 button {
   background-color: green;
@@ -79,8 +73,32 @@ button {
   font-size: 20px;
 }
 
-button:hover {
-  color: black;
-  background-color: greenyellow;
+p {
+  max-width: 800px;
+  overflow-wrap: break-word;
+  font-size: 1rem;
+  margin: 1rem 0;
+  text-align: justify;
+}
+
+@media (min-width: 768px) {
+  .content-wrapper {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2rem 5rem; /* Ajusta el padding horizontal */
+  }
+
+  .text-container {
+    flex: 2;
+    margin-right: 2rem; /* Ajusta el espacio entre el texto y la imagen */
+  }
+
+  .image-container {
+    flex: 1;
+  }
+
+  .text-block {
+    padding: 1rem 3rem; /* Ajusta el padding interior del bloque de texto */
+  }
 }
 </style>

@@ -1,71 +1,46 @@
-<template>
-  <main>
-    <h1 class="contactoTexto"></h1>
-    <p class="textoSub"></p>
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+</script>
 
-    <div class="colorBox">
-      <div class="telefonoContainer">
-        <img class="telefonoImg" src="@/assets/telefono.png" alt="Teléfono" />
-        <p class="telefonoTexto">Teléfono</p>
-        <p class="textoDatos"></p>
-      </div>
-      <div class="overlayBox">
-        <div>
-          <p class="contactanos">Contáctanos</p>
-          <input type="text" v-model="datoNombre" placeholder="Nombre" @input="borrarMensaje" />
-          <input type="text" v-model="datoEmail" placeholder="Email" @input="borrarMensaje" />
-          <textarea
-            class="input3"
-            v-model="datoDescripcion"
-            placeholder="Descripción"
-            @input="borrarMensaje"
-          ></textarea>
-          <button @click="enviarFormulario" :disabled="!camposCompletos">Enviar</button>
-          <p v-if="mensajeEnviado" class="mensajeExito">Mensaje enviado correctamente</p>
-          <p v-if="mensajeNoEnviado" class="mensajeNoExito">Campos faltantes</p>
+<template>
+    <main class="principal">
+        <div class="transparent-box" >            
+            <div class="linea"></div>
+            <div class="enviarCorreo">
+                <p class="textoContactanos" >Contáctanos</p>
+                <input type="text" placeholder="Nombre">
+                <input type="text" placeholder="Email">
+                <textarea cols="30" rows="10" placeholder="Descripción"></textarea>
+                <button class="botonEnviar">Enviar</button>
+            </div>
         </div>
       </div>
     </div>
   </main>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      datoNombre: '',
-      datoEmail: '',
-      datoDescripcion: '',
-      mensajeEnviado: false,
-      mensajeNoEnviado: false
-    }
-  },
-  computed: {
-    camposCompletos() {
-      return this.datoNombre && this.datoEmail && this.datoDescripcion
-    }
-  },
-  methods: {
-    enviarFormulario() {
-      console.log('Formulario enviado')
-      this.mensajeEnviado = true
-      this.mensajeNoEnviado = false
-    },
-
-    borrarMensaje() {
-      this.mensajeEnviado = false
-      this.mensajeNoEnviado = true
-    }
-  }
+<style>
+.principal {
+    background-color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 </script>
 
-<style>
-.contactoTexto {
-  margin-left: 40px;
-  margin-top: 60px;
-  font-size: 50px;
-  color: black;
+.transparent-box {
+    display: flex;
+    justify-content: end;
+    position: relative;
+    width: 80%;
+    max-width: 1300px;
+    height: 80%;
+    max-height: 700px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 .colorBox::before {
   content: '';
@@ -92,95 +67,60 @@ export default {
   font-size: 15px;
 }
 
-.textoSub {
-  font-size: 15px;
-  margin: 40px;
+.linea {
+    position: absolute;
+    top: 10%;
+    bottom: 10%;
+    left: 50%;
+    width: 1px;
+    background-color: black;
 }
 
-.colorBox {
-  height: 600px;
-  width: 100%;
-  margin-top: 140px;
-  margin-bottom: 140px;
+.enviarCorreo{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 40px;
+    margin-right: 110px;
+    margin-bottom: 50px;
+    width: 35%;
 }
 
-.overlayBox {
-  position: absolute;
-  background-color: #1f1f1f;
-  height: 650px;
-  width: 750px;
-  top: 150px;
-  right: 150px;
-  border-radius: 35px;
+textarea{
+    resize: none;
+    width: 99%;
 }
 
-.telefonoImg {
-  width: 40px;
-  position: absolute;
-  top: 54%;
-  left: 5%;
-  transform: translate(-50%, -50%);
+.textoContactanos{
+    font-size: 40px;
+    text-align: center;
 }
 
-.telefonoTexto {
-  margin-left: 130px;
-  padding-top: 45px;
-  font-size: 50px;
+.botonEnviar{
+    width: 100px;
+    height: 40px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px;
+    align-self: center;
 }
 
-.textoDatos {
-  margin-left: 80px;
-}
+@media (max-width: 600px) {
+    .transparent-box {
+        width: 90%;
+        height: 90%;
+    }
 
-.contactanos {
-  text-align: center;
-  font-size: 35px;
-  color: white;
-}
+    .enviarCorreo {
+        width: 100%;
+    }
 
-.overlayBox div {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.overlayBox div input {
-  display: block;
-  margin-bottom: 20px;
-  width: 500px;
-  font-size: 20px;
-}
-
-.input3 {
-  display: block;
-  margin-bottom: 50px;
-  width: 500px;
-  height: 280px;
-  font-size: 20px;
-  resize: none;
-}
-button {
-  position: relative;
-  top: -10px;
-  background: #fbc40e;
-  color: black;
-  padding: 1rem;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-button:hover {
-  background: #a17e0b;
-}
-
-button:active {
-  background: #a17e0b;
-}
-
-button:focus {
-  outline: none;
+    .enviarCorreo input,
+    .enviarCorreo textarea {
+        width: 100%;
+    }
 }
 </style>
