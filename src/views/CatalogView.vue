@@ -11,3 +11,9 @@
         <ProductsList />
     </main>
 </template>
+
+<style scoped>
+.main{
+    background-color: red;
+}
+</style>
