@@ -1,126 +1,162 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
-</script>
-
 <template>
-    <main class="principal">
-        <div class="transparent-box" >            
-            <div class="linea"></div>
-            <div class="enviarCorreo">
-                <p class="textoContactanos" >Contáctanos</p>
-                <input type="text" placeholder="Nombre">
-                <input type="text" placeholder="Email">
-                <textarea cols="30" rows="10" placeholder="Descripción"></textarea>
-                <button class="botonEnviar">Enviar</button>
-            </div>
-        </div>
+  <main class="principal">
+    <div class="transparent-box">
+      <div class="linea"></div>
+      <div class="enviarCorreo">
+        <p class="textoContactanos">Contáctanos</p>
+        <input type="text" placeholder="Nombre" v-model="nombre" @input="limpiarMensaje" />
+        <input type="text" placeholder="Email" v-model="email" @input="limpiarMensaje" />
+        <textarea
+          cols="30"
+          rows="10"
+          placeholder="Descripción"
+          v-model="descripcion"
+          @input="limpiarMensaje"
+        ></textarea>
+        <button type="botonEnviar" @click="enviarFormulario"><span>ENVIAR</span></button>
+        <div v-if="enviado" class="mensajeExito">(*)Mensaje enviado con éxito</div>
       </div>
     </div>
   </main>
 </template>
 
-<style>
-.principal {
-    background-color: #333;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+<script setup>
+import { RouterLink, RouterView } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { ref } from 'vue'
+
+const nombre = ref('')
+const email = ref('')
+const descripcion = ref('')
+const enviado = ref(false)
+const enviarFormulario = () => {
+  if (nombre.value && email.value && descripcion.value) {
+    enviado.value = true
+  }
+}
+const limpiarMensaje = () => {
+  enviado.value = false
 }
 </script>
 
+<style>
+.principal {
+  background-color: #333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
 .transparent-box {
-    display: flex;
-    justify-content: end;
-    position: relative;
-    width: 80%;
-    max-width: 1300px;
-    height: 80%;
-    max-height: 700px;
-    background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-.colorBox::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(../assets/contacto.jpg);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter: brightness(50%);
-  z-index: -1;
-}
-.mensajeExito {
-  margin-top: 1px;
-  color: white;
-  font-size: 15px;
-}
-.mensajeNoExito {
-  margin-top: 1px;
-  color: #a32d2d;
-  font-size: 15px;
+  display: flex;
+  justify-content: end;
+  position: relative;
+  width: 80%;
+  max-width: 1300px;
+  height: 80%;
+  max-height: 700px;
+  background-color: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .linea {
-    position: absolute;
-    top: 10%;
-    bottom: 10%;
-    left: 50%;
-    width: 1px;
-    background-color: black;
+  position: absolute;
+  top: 10%;
+  bottom: 10%;
+  left: 50%;
+  width: 1px;
+  background-color: black;
 }
 
-.enviarCorreo{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 40px;
-    margin-right: 110px;
-    margin-bottom: 50px;
-    width: 35%;
+.enviarCorreo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+  margin-right: 110px;
+  margin-bottom: 50px;
+  width: 35%;
 }
 
-textarea{
-    resize: none;
-    width: 99%;
+textarea {
+  resize: none;
+  width: 99%;
 }
 
-.textoContactanos{
-    font-size: 40px;
-    text-align: center;
+.textoContactanos {
+  font-size: 40px;
+  text-align: center;
 }
 
-.botonEnviar{
-    width: 100px;
-    height: 40px;
-    background-color: #333;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 20px;
-    align-self: center;
+button[type='botonEnviar'] {
+  margin-top: 5%;
+  margin-bottom: 5%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #fbc40e;
+  font-family: 'Montserrat', sans-serif;
+  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 5% 20%;
+}
+button[type='botonEnviar']:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #c19400;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+}
+
+button[type='botonEnviar']:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+button[type='botonEnviar'] span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+
+.mensajeExito {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
 }
 
 @media (max-width: 600px) {
-    .transparent-box {
-        width: 90%;
-        height: 90%;
-    }
+  .transparent-box {
+    width: 90%;
+    height: 90%;
+  }
 
-    .enviarCorreo {
-        width: 100%;
-    }
+  .enviarCorreo {
+    width: 100%;
+  }
 
-    .enviarCorreo input,
-    .enviarCorreo textarea {
-        width: 100%;
-    }
+  .enviarCorreo input,
+  .enviarCorreo textarea {
+    width: 100%;
+  }
 }
 </style>
