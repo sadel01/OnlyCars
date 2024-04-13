@@ -17,7 +17,6 @@
   </section>
 </template>
 
-
 <style scoped>
 
 .hero-section {

@@ -8,7 +8,7 @@
         </div>
         <div class="text-container">
           <div class="text-block">
-            <strong class="title">Título de la Página</strong>
+            <strong class="title">Vende tu Auto</strong>
             <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis iure pariatur ullam omnis reprehenderit. Rerum vitae voluptatibus nisi numquam ad, officiis in modi odit minima corrupti eius ratione consequuntur, dicta eaque laborum ipsa neque, vel reiciendis voluptatem minus sapiente necessitatibus commodi magni accusamus? Ratione sint incidunt ipsa repudiandae, pariatur totam atque praesentium.</p>
             <RouterLink to="/sell" class="boton">
               <button>Vende tu auto</button>
