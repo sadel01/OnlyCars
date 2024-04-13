@@ -14,7 +14,7 @@
         </div>
         <div class="nav-buttons" :class="{ 'active': navActive }">
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" /> {{ user.name }}
+            <FontAwesomeIcon :icon="faUser" /> {{ user.nombre + ' ' + user.apellido}}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar

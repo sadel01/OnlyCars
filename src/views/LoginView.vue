@@ -46,20 +46,25 @@
     methods: {
   async login() {
     try {
-      const response = await axios.post('http://localhost:8080/login', {
-        rut: this.rut,
-        password: this.password,
+    const response = await axios.post('http://localhost:8080/login', {
+      rut: this.rut,
+      password: this.password,
+    });
+    console.log(response); // Imprime la respuesta del servidor
+    if (response.data.message === 'Inicio de sesion exitoso') {
+      // Obtiene los datos del usuario de response.data.userData
+      const userData = response.data.userData;
+      this.$store.commit('setUser', {
+        nombre: userData.nombre,
+        apellido: userData.apellido,
+        rut: userData.rut,
+        mail: userData.mail
       });
-      if (response.data === 'Inicio de sesion exitoso') {
-        // Simula obtener datos del usuario como el nombre
-        this.$store.commit('setUser', {
-          name: 'Nombre Apellido' // Cambia esto por los datos reales
-        });
-        this.successMessage = 'Inicio de sesion exitoso';
-        this.errorMessage = '';
-        setTimeout(() => {
-          this.$router.push('/');
-        }, 1500);
+      this.successMessage = 'Inicio de sesion exitoso';
+      this.errorMessage = '';
+      setTimeout(() => {
+        this.$router.push('/');
+      }, 1500);
       } else {
         this.errorMessage = 'Rut o contraseña incorrectos';
       }
