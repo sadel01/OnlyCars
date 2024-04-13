@@ -35,6 +35,7 @@ app.post('/login', async (req, res) => {
                 res.send({
                     message: 'Inicio de sesion exitoso',
                     userData: {
+                        _id: user._id.toString(), //ID PARA MAS ADELANTE MANEJAR EDICIONES EN LA BASE DE DATOS
                         nombre: user.nombre,
                         apellido: user.apellido,
                         rut: user.rut,

@@ -50,7 +50,6 @@
       rut: this.rut,
       password: this.password,
     });
-    console.log(response); // Imprime la respuesta del servidor
     if (response.data.message === 'Inicio de sesion exitoso') {
       // Obtiene los datos del usuario de response.data.userData
       const userData = response.data.userData;
