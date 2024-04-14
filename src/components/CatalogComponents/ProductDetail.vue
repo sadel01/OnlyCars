@@ -4,10 +4,10 @@
       <p>Detalles del vehículo</p>
       <button class="closeButton" @click="closePanel">Cerrar vista</button>
       <img :src="product.image" alt="Product image" class="content-image">
-      <p class="productText productTitle">{{ product.name }}</p>
-      <p class="productText productDescription">{{ product.km }} KM</p>
-        <p class="productText productDescription data">{{ product.transmision }}</p>
-        <p class="productText productDescription data">{{ product.combustible }}</p>
+      <p class="productText productTitle">{{ product.brand }}</p>
+      <p class="productText productDescription">{{ product.mileage }} KM</p>
+        <p class="productText productDescription data">{{ product.transmission }}</p>
+        <p class="productText productDescription data">{{ product.fuel }}</p>
         <p class="productText productPriceNumber">${{ product.price }} CLP</p>
       <button class="verMas"><span>Ver más</span></button>
 

@@ -8,16 +8,16 @@
               <img :src="product.image" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.name }}</p>
+                  <p class="productText productTitle">{{ product.brand }}</p>
                 </div>
 
                 <div class="description">
-                  <p class="productText productDescription">{{ product.km }} KM</p>
+                  <p class="productText productDescription">{{ product.mileage }} KM</p>
                   <p class="productText productDescription data">
-                    {{ product.transmision }}
+                    {{ product.transmission }}
                   </p>
                   <p class="productText productDescription data">
-                    {{ product.combustible }}
+                    {{ product.fuel }}
                   </p>
                 </div>
 
