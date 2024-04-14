@@ -56,6 +56,31 @@ app.post('/login', async (req, res) => {
     }
 });
 
+app.get('/brands', async (req, res) => {
+    try {
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('vehicles');
+        const brands = await collection.distinct("make");
+        res.send(brands);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+app.get('/models/:brand', async (req, res) => {
+    const brand = req.params.brand;
+    try {
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('vehicles');
+        const models = await collection.find({ make: brand }).toArray();
+        res.send(models.map(model => model.model));
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
 
 app.listen(8080, () => {
   console.log('Server started on port 8080!');

@@ -43,7 +43,8 @@ const router = createRouter({
     {
       path: '/sell',
       name: 'sell',
-      component: SellView
+      component: SellView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
