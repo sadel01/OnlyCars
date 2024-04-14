@@ -72,7 +72,7 @@
 
 button {
  appearance: none;
- background-color: #FAFBFC;
+ background-color: #FBC40E;
  border: 1px solid rgba(27, 31, 35, 0.15);
  border-radius: 6px;
  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
@@ -97,20 +97,20 @@ button {
 }
 
 button:hover {
- background-color: #F3F4F6;
+ background-color: #fdd349;
  text-decoration: none;
  transition-duration: 0.1s;
 }
 
 button:disabled {
- background-color: #FAFBFC;
+ background-color: #f8d666;
  border-color: rgba(27, 31, 35, 0.15);
  color: #959DA5;
  cursor: default;
 }
 
 button:active {
- background-color: #EDEFF2;
+ background-color: #f8d666;
  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
  transition: none 0s;
 }

@@ -31,7 +31,17 @@ app.post('/login', async (req, res) => {
         const user = await collection.findOne({rut: req.body.rut});
         if (user) {
             if (user.password === req.body.password) {
-                res.send('Inicio de sesion exitoso');
+                // Enviar un objeto que contenga el mensaje y los datos del usuario
+                res.send({
+                    message: 'Inicio de sesion exitoso',
+                    userData: {
+                        _id: user._id.toString(), //ID PARA MAS ADELANTE MANEJAR EDICIONES EN LA BASE DE DATOS
+                        nombre: user.nombre,
+                        apellido: user.apellido,
+                        rut: user.rut,
+                        mail: user.mail
+                    }
+                });
                 console.log('Inicio de sesion exitoso');
             } else {
                 res.send('Contraseña incorrecta');
@@ -43,6 +53,31 @@ app.post('/login', async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+    }
+});
+
+app.get('/brands', async (req, res) => {
+    try {
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('vehicles');
+        const brands = await collection.distinct("make");
+        res.send(brands);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+app.get('/models/:brand', async (req, res) => {
+    const brand = req.params.brand;
+    try {
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('vehicles');
+        const models = await collection.find({ make: brand }).toArray();
+        res.send(models.map(model => model.model));
+    } catch (error) {
+        res.status(500).send(error.message);
     }
 });
 
