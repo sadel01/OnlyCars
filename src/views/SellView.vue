@@ -3,7 +3,11 @@
       <div class="image-upload-container" @click="triggerFileUpload">
         <p>Agregar Imágenes</p>
         <input type="file" id="image-upload" ref="fileInput" multiple style="display: none;" @change="handleFileUpload" />
+        <div v-for="(src, index) in imagePreviews" :key="index">
+          <img :src="src" alt="Image preview" class="previewImage"/>
+        </div>
       </div>
+      <button @click="removeImage(index)">Eliminar</button>
   
       <div class="vehicle-details">
         <div class="details-column">
@@ -107,6 +111,7 @@
         },
         brands: [],
         models: [],
+        imagePreviews: [],
       };
     },
     methods: {
@@ -114,7 +119,34 @@
         this.$refs.fileInput.click();
       },
       handleFileUpload() {
-        // Logica para subir archivos
+        const files = event.target.files;
+        Array.from(files).forEach(file => {
+          const reader = new FileReader();
+          reader.onload = e => {
+            this.imagePreviews.push(e.target.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      },
+      removeImage(index) {
+        this.imagePreviews.splice(index, 1);
+        // Remove the corresponding file from the file input
+        let fileList = Array.from(this.$refs.fileInput.files);
+        fileList.splice(index, 1);
+        this.$refs.fileInput.files = new FileList(...fileList);
+      },
+      async saveImages() {
+        const formData = new FormData();
+        Array.from(this.$refs.fileInput.files).forEach((file, index) => {
+          formData.append(`image${index}`, file);
+        });
+        const response = await fetch('/api/save-images', {
+          method: 'POST',
+          body: formData,
+        });
+        if (!response.ok) {
+          throw new Error('Failed to save images');
+        }
       },
       async fetchBrands() {
         try {
@@ -162,6 +194,10 @@
   
   
   <style scoped>
+  .previewImage {
+    width: 200px; 
+    height: auto;
+  }
 
   .sell-view {
     max-width: 800px;
