@@ -31,12 +31,18 @@
         </ul>
       </div>
 
-      <div class="product-detail" v-if="selectedProduct"></div>
+      <div class="product-detail" v-if="selectedProduct">
+        <img :src="selectedProduct.image" alt="Product image" class="content-image">
+        <p class="productText productTitle">{{ selectedProduct.name }}</p>
+        <p class="productText productDescription">{{ selectedProduct.km }} KM</p>
+        <p class="productText productDescription data">{{ selectedProduct.transmision }}</p>
+        <p class="productText productDescription data">{{ selectedProduct.combustible }}</p>
+        <p class="productText productPriceNumber">${{ selectedProduct.price }} CLP</p>
+        <button type="submit"><span>Ver más</span></button>
+      </div>
     </div>
   </main>
 </template>
-
-// Componente para mostrar la lista de productos y el detalle de un producto seleccionado.
 
 <script>
 import SearchItems from './SearchItems.vue'
@@ -68,12 +74,73 @@ export default {
 </script>
 
 <style scoped>
+
+button[type="submit"]{
+    margin-top:15%;
+    margin-bottom:5%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+    background: #FBC40E;
+    box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    padding: 5% 40%;
+  }
+  button[type="submit"]:after {
+    content: " ";
+    width: 0%;
+    height: 100%;
+    background: #C19400;
+    position: absolute;
+    transition: all 0.4s ease-in-out;
+    right: 0;
+  }
+  
+  button[type="submit"]:hover::after {
+    right: auto;
+    left: 0;
+    width: 100%;
+  }
+  
+  button[type="submit"] span {
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    color: black;
+    font-size: 1.125em;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    z-index: 20;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  button[type="submit"]:hover span {
+    color: white;
+    animation: scaleUp 0.3s ease-in-out;
+  }
+
+.content-image {
+  max-width: 100%;
+  border-radius: 0%;
+}
+
+.productCard .imagenes {
+  width: 30%;
+  height: auto; 
+  object-fit: cover; 
+}
+
 .listContainer {
   border-top-left-radius: 16px;
 }
 
 .principalContainer {
   display: flex;
+  height: 100vh
 }
 
 .container {
