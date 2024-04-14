@@ -34,6 +34,14 @@ import { RouterLink } from 'vue-router'
   gap: 2rem;
   padding: 2rem;
 }
+.wrapper {
+  background-color: #e5e5e5;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding-top: 1rem;
+  color: black;
+}
 
 .text-container,
 .image-container {
@@ -48,6 +56,16 @@ import { RouterLink } from 'vue-router'
   font-size: 2rem;
   margin-bottom: 1rem;
   font-weight: bold;
+}
+button {
+  background-color: green;
+  color: white;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 2rem;
+  font-size: 20px;
 }
 
 p {
