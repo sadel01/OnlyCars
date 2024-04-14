@@ -33,7 +33,7 @@ export default {
           transmision: 'Manual',
           price: '10.000.000',
           km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
+          image: 'src/assets/mustang-rally.jpg',
           description: 'This is a product description'
         },
         {
@@ -43,7 +43,7 @@ export default {
           transmision: 'Manual',
           price: '10.000.000',
           km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
+          image: 'src/assets/explorer.jpg',
           description: 'This is a product description'
         },
         {

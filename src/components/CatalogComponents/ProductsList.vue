@@ -30,13 +30,10 @@
           </li>
         </ul>
       </div>
-
-      <div class="product-detail" v-if="selectedProduct"></div>
+      <ProductDetail class="product-detail" v-if="selectedProduct" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" />
     </div>
   </main>
 </template>
-
-// Componente para mostrar la lista de productos y el detalle de un producto seleccionado.
 
 <script>
 import SearchItems from './SearchItems.vue'
@@ -58,6 +55,9 @@ export default {
       } else {
         this.selectedProduct = product
       }
+    },
+    closeProductDetail() {
+      this.selectedProduct = null;
     }
   },
   components: {
@@ -68,32 +68,33 @@ export default {
 </script>
 
 <style scoped>
+
+.productCard .imagenes {
+  width: 30%;
+  height: auto; 
+  object-fit: cover; 
+}
+
+.principalContainer {
+    display: flex;
+  }
+
+  .product-detail {
+    flex: 1;
+  }
+
 .listContainer {
   border-top-left-radius: 16px;
 }
 
 .principalContainer {
   display: flex;
+  height: 100vh
 }
 
 .container {
   flex: 1;
   overflow-y: auto;
-}
-
-.product-detail {
-  position: relative;
-  top: 0;
-  right: 0;
-  width: 40%;
-  height: 80vh;
-  background-color: #efefef5f;
-  padding: 20px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin-top: 20px;
-  margin-right: 20px;
-  border-radius: 16px;
-  border: 2px solid #1717172c;
 }
 
 .imagenes {
