@@ -12,19 +12,21 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
       </div>
       <div class="footer-links">
         <div class="link-group">
-          <strong class="titles">EXPLORAR</strong>
-          <a href="#">Buscar autos</a>
-          <a href="#">Comparar modelos</a>
-        </div>
-        <div class="link-group">
-          <strong class="titles">SERVICIOS</strong>
-          <a href="#">Vender tu auto</a>
-          <a href="#">Test Drive</a>
-          <a href="#">Soporte</a>
-        </div>
-        <div class="link-group">
-          <strong class="titles">INFORMACION</strong>
+          <strong class="titles">NAVEGACIÓN</strong>
+          <RouterLink to="/">Home</RouterLink>
+          <RouterLink to="/catalog">Catálogo</RouterLink>
+          <RouterLink to="/about">Nosotros</RouterLink>
           <RouterLink to="/contact">Contacto</RouterLink>
+          <RouterLink to="/sell">Vender</RouterLink>
+        </div>
+        <div class="link-group">
+          <strong class="titles">CONTACTO</strong>
+          <a href="#">Dirección</a>
+          <a href="#">Teléfono</a>
+          <a href="#">Email</a>
+        </div>
+        <div class="link-group">
+          <strong class="titles">INFORMACIONES</strong>
           <a href="#">FAQ</a>
           <a href="#">Ubicación</a>
         </div>

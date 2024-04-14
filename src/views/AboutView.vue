@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
 
 .about {
   position: relative;
