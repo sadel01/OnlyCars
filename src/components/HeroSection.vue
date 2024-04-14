@@ -17,7 +17,6 @@
   </section>
 </template>
 
-
 <style scoped>
 
 .hero-section {
@@ -39,7 +38,7 @@ body, html {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-image: url(../assets/ferrari2.jpeg);  /* Agregar imagen */
+  background-image: url(../assets/ferrari2.jpeg);  /*Agregar imagen*/
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;

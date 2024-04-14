@@ -13,11 +13,6 @@
           <img src="@/assets/nosotros.jpeg" alt="explorer" class="wrapper-image">
         </div>
       </div>
-      <div class="botonNosotros">
-        <RouterLink to="/about">
-          <button>Nosotros</button>
-        </RouterLink>
-      </div>
     </main>
   </div>
 </template>

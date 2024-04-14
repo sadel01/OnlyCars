@@ -1,242 +1,156 @@
 <template>
   <main>
-    
-
-    <div class="principalContainer">  
-      <div class="searchBar">
-        <SearchItems @inputItems="findItems" />
-      </div>
-      
-  
-      <div class="container">
+    <div class="principalContainer">
+      <div class="container listContainer">
         <ul class="list">
-  
-          <li v-for="product in productsFiltered" :key="product.id">
-            <div class="listElements">
-              <img :src="product.image" alt="product image" />
+          <li v-for="product in products" :key="product.id" @click="showProductDetail(product)">
+            <div class="productCard">
+              <img :src="product.image" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.name }}</p>          
+                  <p class="productText productTitle">{{ product.name }}</p>
                 </div>
-                
+
                 <div class="description">
-                  <p class="productText productDescription">Kilometraje : {{product.km}}</p>
-                  <p class="productText productDescription data">Transmisión : {{product.transmision}}</p>
-                  <p class="productText productDescription data">Combustible : {{product.combustible }}</p>
-                
+                  <p class="productText productDescription">{{ product.km }} KM</p>
+                  <p class="productText productDescription data">
+                    {{ product.transmision }}
+                  </p>
+                  <p class="productText productDescription data">
+                    {{ product.combustible }}
+                  </p>
                 </div>
-                
+
                 <div class="productPrice">
-                  <p class="productText productPriceText">Price: </p>
-                  <p class="productText productPriceNumber">${{product.price}}</p>
+                  <p class="productText productPriceText"></p>
+                  <p class="productText productPriceNumber">${{ product.price }} CLP</p>
                 </div>
-  
               </div>
-              
             </div>
           </li>
         </ul>
       </div>
+      <ProductDetail class="product-detail" v-if="selectedProduct" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" />
     </div>
-    
-      
   </main>
 </template>
 
 <script>
-import SearchItems from './SearchItems.vue';
-
+import SearchItems from './SearchItems.vue'
+import ProductDetail from './ProductDetail.vue'
 
 export default {
+  props: ['products'],
   data() {
     return {
-      products: [
-        { id: 1, name: 'Product 1', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 2, name: 'Product 2', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 3, name: 'Product 3', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 4, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-    ],
       productsFiltered: [],
-    };
-  },
-  created() {
-    this.productsFiltered = this.products;
+      productClicked: false,
+      selectedProduct: null
+    }
   },
   methods: {
-    findItems(item) {
-      this.productsFiltered = this.products.filter((product) => 
-         product.name.toLowerCase().includes(item.toLowerCase()));
+    showProductDetail(product) {
+      if (this.selectedProduct === product) {
+        this.selectedProduct = null
+      } else {
+        this.selectedProduct = product
+      }
     },
+    closeProductDetail() {
+      this.selectedProduct = null;
+    }
   },
   components: {
-    SearchItems
-  },
-};
+    SearchItems,
+    ProductDetail
+  }
+}
 </script>
 
 <style scoped>
-  .searchBar {
-    margin-top: 1%;
-    width: 20%;
+
+.productCard .imagenes {
+  width: 30%;
+  height: auto; 
+  object-fit: cover; 
 }
-.container{
-  margin-left: 5%;
-  margin-right: 1%;
-  margin-top: 1%;
-  margin-bottom: 1%;
-  padding: 1% 1% 1% 1%;
-  border-radius: 10px;
-  box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
+
+.principalContainer {
+    display: flex;
+  }
+
+  .product-detail {
+    flex: 1;
+  }
+
+.listContainer {
+  border-top-left-radius: 16px;
+}
+
+.principalContainer {
+  display: flex;
+  height: 100vh
+}
+
+.container {
   flex: 1;
-  height: 796px; /* Set a fixed height */
-  overflow: auto; /* Enable scrolling if content exceeds the height */
+  overflow-y: auto;
 }
 
-.principalContainer > .container {
-  background-color: red;
-}
-
-
-@media (max-width: 768px) {
-  .container {
-    margin-left: 10%;
-    margin-right: 10%;
-    height: auto; /* Reset the height for mobile devices */
-  }
-}
-
-
-
-.principalContainer{
-  display: flex;
-  flex-direction: row;
-  margin-top: 1%;
-  margin-right: 0;
-  border: 1px solid black;
-}
-
-@media (max-width: 768px) {
-  .principalContainer {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}
-
-.listElements{
-  display: flex;
-  margin: 20px;
-  background-color: white;
+.imagenes {
+  width: 300px;
+  height: auto;
   border-radius: 10px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
+  margin: 20px;
+}
+
+.productText {
+  color: black;
+}
+
+.productTitle {
+  font-size: 38px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.vehicleDescription {
+  flex-direction: column;
+  width: 100%;
+  margin-left: 20px;
 }
 
 .list {
-  padding-bottom: .5%;
-  padding-top: .5%;
-  background-color: white;
-  @media (max-width: 768px) {
-    margin-left: 10%;
-    margin-right: 10%;
-  }
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: auto;
 }
 
-ul {
-  list-style-type: none;
-  background-color: white;
-  @media (max-width: 768px) {
-    ul {
-      margin-left: 10%;
-      margin-right: 10%;
-    }
-  }
-}
-
-  .listElements {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  @media (max-width: 768px) {
-    .listElements {
-      flex-direction: column;
-    }
-
-    img {
-      order: -1;
-      margin-bottom: 10px;
-    }
-  }
-
-  img {
-    max-width: 100%;
-    height: auto;
-    width: 25%;
-    max-height: 400px;
-    border-radius: 4%;
-  }
-
-.description{
+.productCard {
+  border-radius: 10px;
   display: flex;
-  flex-wrap: wrap;
-}
-.productPrice{
-  margin-top: 15%;
-}
-.productText {
-  font-family: 'Roboto', sans-serif;
-  color: black;
-  margin: 0 0 0 0;
-}
-.productText.productPriceNumber{
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: left;
-}
-.productText.productPriceText{
-  font-size: 1rem;
-  opacity: 0.5;
-  text-align: left;
-}
-.productText.productDescription{
-  font-size: 1.5rem;
-  font-weight: bold;
-  opacity: 0.5;
-  text-align: left;
-}
-.productText.productDescription.data{
-  margin-left: 5%;
+  margin: 20px;
+  background-color: #efefef5f;
+  margin-right: 30px;
+  height: auto;
+  border: 2px solid #1717172c;
 }
 
-.productText.productTitle{
-  font-size: 3.5rem;
-  font-weight: bold;
-  text-align: left;
-}
-
-
-.vehicleDescription{
-  width: 100%;
-  margin-bottom: 3%;
-  /*border: 1px solid black;*/
+.productPrice {
+  font-size: 32px;
   display: flex;
-  flex-direction: column;
-  
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
+.productPriceNumber {
+  margin: 0;
+  margin-top: 20px;
+}
 
-@media (max-width: 768px) {
-  .productText.productPriceNumber{
-    font-size: 1.5rem;
-  }
-  .productText.productPriceText{
-    font-size: 0.8rem;
-  }
-  .productText.productDescription{
-    font-size: 1rem;
-  }
-  .productText.productTitle{
-    font-size: 2.2rem;
-  }
+.description {
+  font-size: 22px;
 }
 </style>
