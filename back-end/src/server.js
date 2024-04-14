@@ -31,7 +31,17 @@ app.post('/login', async (req, res) => {
         const user = await collection.findOne({rut: req.body.rut});
         if (user) {
             if (user.password === req.body.password) {
-                res.send('Inicio de sesion exitoso');
+                // Enviar un objeto que contenga el mensaje y los datos del usuario
+                res.send({
+                    message: 'Inicio de sesion exitoso',
+                    userData: {
+                        _id: user._id.toString(), //ID PARA MAS ADELANTE MANEJAR EDICIONES EN LA BASE DE DATOS
+                        nombre: user.nombre,
+                        apellido: user.apellido,
+                        rut: user.rut,
+                        mail: user.mail
+                    }
+                });
                 console.log('Inicio de sesion exitoso');
             } else {
                 res.send('Contraseña incorrecta');

@@ -8,6 +8,8 @@ import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
 import ItemView from '../views/ItemView.vue'
 import UserView from '../views/UserView.vue'
+import ProfileView from '../views/Profile.vue'
+import store from '../../back-end/src/store'; 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,6 +33,12 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: AboutView
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: ProfileView,
+      meta: { requiresAuth: true },
     },
     {
       path: '/sell',
@@ -58,6 +66,16 @@ const router = createRouter({
       component: UserView
     }
   ]
-})
+});
 
-export default router
+router.beforeEach((to, from, next) => {
+  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+
+  if (requiresAuth && !store.state.user) {
+    next('/login'); // Redirige al usuario a la página de inicio de sesión si no está autenticado
+  } else {
+    next(); // Permite que la navegación continúe normalmente si el usuario está autenticado o si la ruta no requiere autenticación
+  }
+});
+
+export default router;
