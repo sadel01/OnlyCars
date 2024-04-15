@@ -136,7 +136,7 @@ export default {
 }
 
 .searchBar {
-  flex: 0 0 20%;
+  flex: 0 0 15%;
   background-color: #fbc40e;
   display: flex;
   justify-content: center;
