@@ -4,29 +4,29 @@
       <input
         class="inputCarName"
         type="text"
-        placeholder="Buscar.."
+        placeholder="Buscar..."
         v-model="searchTerm"
         @input="emitInput"
       />
     </div>
     <select v-model="brand" @change="inputBrand" class="selects">
-      <option value="">MARCA</option>
+      <option value="">Marca</option>
       <option value="KIA">KIA</option>
       <option value="TOYOTA">TOYOTA</option>
       <option value="MAZDA">MAZDA</option>
       <option value="BMW">BMW</option>
     </select>
     <select v-model="model" @change="inputItems" class="selects">
-      <option disabled value="">MODELO</option>
+      <option disabled value="">Modelo</option>
     </select>
     <select v-model="year" @change="inputItems" class="selects">
-      <option disabled value="">AÑO</option>
+      <option disabled value="">Año</option>
     </select>
     <select v-model="fuel" @change="inputItems" class="selects">
-      <option disabled value="">COMBUSTIBLE</option>
+      <option disabled value="">Combustible</option>
     </select>
     <select v-model="transmision" @change="inputItems" class="selects">
-      <option disabled value="">TRANSMISIÓN</option>
+      <option disabled value="">Transmisión</option>
     </select>
   </div>
 </template>
@@ -60,7 +60,7 @@ export default {
 
 <style>
 .searchContainer {
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -77,17 +77,18 @@ export default {
 
 .inputCarName {
   width: 85%;
-  height: 30px;
+  height: 20px;
   border-radius: 10px;
   border: none;
   padding: 10px;
   font-size: 20px;
   outline: none;
+  font-size: 16px;
 }
 
 .selects {
   width: 90%;
-  height: 60px;
+  height: 50px;
   border-radius: 10px;
   border: none;
   padding: 10px;
