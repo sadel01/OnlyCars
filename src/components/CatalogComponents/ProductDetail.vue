@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="productDetails">
-      <p class="detalleVehiculo">{{ product.name }}</p>
+      <p class="detalleVehiculo">{{ product.brand }}</p>
       <button class="closeButton" @click="closePanel">X</button>
 
       <img :src="product.image" alt="Product image" class="content-image">
