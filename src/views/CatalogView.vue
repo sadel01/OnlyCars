@@ -1,7 +1,13 @@
 <template>
   <main class="catalog-section">
     <div class="searchBar">
-      <SearchItems @inputItems="updateSearchTerm" @inputBrand="updateSelectedBrand"/>
+      <SearchItems
+        @inputItems="updateSearchTerm"
+        @inputBrand="updateSelectedBrand"
+        @inputTransmision="updateSelectedTransmision"
+        @inputYear="updateSelectedYear"
+        @inputFuel="updateSelectedFuel"
+      />
     </div>
     <div class="productsList">
       <ProductsList :products="filteredProducts" />
@@ -22,6 +28,9 @@ export default {
     return {
       searchTerm: '',
       selectedBrand: '',
+      selectedTransmision: '',
+      selectedYear: '',
+      selectedFuel: '',
       products: [
         {
           id: 1,
@@ -114,7 +123,10 @@ export default {
       return this.products.filter(
         (product) =>
           product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-          (!this.selectedBrand || product.brand === this.selectedBrand)
+          (!this.selectedBrand || product.brand === this.selectedBrand) &&
+          (!this.selectedTransmision || product.transmision === this.selectedTransmision) &&
+          (!this.selectedYear || product.year === this.selectedYear) &&
+          (!this.selectedFuel || product.combustible === this.selectedFuel)
       )
     }
   },
@@ -124,6 +136,15 @@ export default {
     },
     updateSelectedBrand(brand) {
       this.selectedBrand = brand
+    },
+    updateSelectedTransmision(transmision) {
+      this.selectedTransmision = transmision
+    },
+    updateSelectedYear(year) {
+      this.selectedYear = year
+    },
+    updateSelectedFuel(combustible) {
+      this.selectedFuel = combustible
     }
   }
 }
@@ -136,7 +157,7 @@ export default {
 }
 
 .searchBar {
-  flex: 0 0 20%;
+  flex: 0 0 15%;
   background-color: #fbc40e;
   display: flex;
   justify-content: center;
