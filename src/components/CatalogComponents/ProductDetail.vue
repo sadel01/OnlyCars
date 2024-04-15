@@ -3,33 +3,50 @@
     <div class="productDetails">
       <p class="detalleVehiculo">{{ product.brand }}</p>
       <button class="closeButton" @click="closePanel">X</button>
-
-      <img :src="product.image" alt="Product image" class="content-image">
+      
+      <carousel :items-to-show="1">
+        <slide v-for="image in product.image" :key="slide">
+          <img :src="image" class="carousel__item " />
+        </slide>
+        <template #addons>
+          <navigation />
+          <pagination />
+        </template>
+      </carousel>
 
       <div class="description">
 
         <div class="card"> 
           <FontAwesomeIcon :icon="faGaugeHigh" class="icono"/>
-          <p class="productText productTitle">{{ product.brand }}</p> 
+          <p class="productText productTitle">ECONOMIA</p> 
         </div>
 
         <div class="card">
-          <FontAwesomeIcon :icon="faCar" class="icono"/> 
-          <p class="productText productDescription">{{ product.mileage }} KM</p> 
+          <FontAwesomeIcon :icon="faGasPump" class="icono"/> 
+          <p class="productText productDescription">COMBUSTIBLE</p> 
         </div>
 
         <div class="card">
-          <FontAwesomeIcon :icon="faGasPump" class="icono"/>
-          <p class="productText productDescription data">{{ product.transmission }}</p> 
+          <FontAwesomeIcon :icon="faLocationDot" class="icono"/>
+          <p class="productText productDescription data">UBICACION</p> 
         </div>
 
         <div class="card">
-          <FontAwesomeIcon :icon="faMoneyBill" class="icono"/> 
-          <p class="productText productPriceNumber">${{ product.fuel }} CLP</p>
+          <FontAwesomeIcon :icon="faWrench" class="icono"/> 
+          <p class="productText productPriceNumber">MOTOR</p>
         </div>
 
       </div>
-      <button class="verMas"><span>Ver más</span></button>
+
+      <div>
+        <RouterLink to="/catalog/ItemView" class="theme-features-btn">
+          <button class="verMas"><span>Ver más</span></button>
+        </RouterLink>
+        
+      </div>
+      
+      
+      
 
     </div>
   </main>
@@ -40,13 +57,17 @@
 <script>
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faGasPump, faGaugeHigh, faCar, faMoneyBill } from '@fortawesome/free-solid-svg-icons'
-
-library.add(faGasPump)
+import { faGasPump, faGaugeHigh, faCar, faMoneyBill, faLocationDot,faWrench } from '@fortawesome/free-solid-svg-icons'
+import 'vue3-carousel/dist/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 export default {
   components: {
-    FontAwesomeIcon
+    FontAwesomeIcon,
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation
   },
   props: ['open', 'product'],
   data() {
@@ -54,14 +75,18 @@ export default {
       faGasPump: faGasPump,
       faGaugeHigh: faGaugeHigh,
       faCar: faCar,
-      faMoneyBill: faMoneyBill
+      faMoneyBill: faMoneyBill,
+      faLocationDot: faLocationDot,
+      faWrench: faWrench,
+      slide: 0
     }
   },
   methods: {
     closePanel() {
       this.$emit('close')
     }
-  }
+  },
+
 }
 </script>
 
@@ -88,13 +113,14 @@ export default {
 
 .card {
   position: relative;
-  width: 150px;
-  height: 204px;
+  width: 142px;
+  height: 150px;
   border: 2px solid #1717172c;
   border-radius: 10px;
   background: efefef5f;
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin: 10px;
+  margin: 0px 10px 0 10px ;
+  
 }
 
 .description {
@@ -114,24 +140,25 @@ export default {
     font-size: 2em;
     font-weight: 700;
     text-align: center;
-    margin-top: 2%;
-    margin-bottom: 2%;
+    margin-top: 0%;
+    margin-bottom: 0%;
 }
 
 .verMas{
-  margin-top:3%;
+  margin-top:4%;
   margin-bottom:5%;
+  margin-left: 6%;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 5px;
   background: #FBC40E;
-  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   cursor: pointer;
   border: none;
-  padding: 4% 45%;
+  padding: 4% 39.3%;
+  
 }
 
 .verMas:after {
@@ -174,25 +201,6 @@ export default {
     right: 10px;
   }
 
-.productDetails {
-  position: relative;
-  top: 0;
-  right: 0;
-  width: 93.5%;
-  height: 80vh;
-  background-color: #efefef5f;
-  padding: 20px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin-top: 20px;
-  margin-right: 20px;
-  border-radius: 16px;
-  border: 2px solid #1717172c;
-}
-
-.content-image {
-  max-width: 100%;
-  border-radius: 0%;
-}
 
 .closeButton {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -212,15 +220,16 @@ export default {
   right: -4px;
   width: 93.5%;
   height: 85vh;
-  justify-content: center;
-  align-items: center;
   background-color: #efefef5f;
   padding: 20px;
+  padding-bottom: 30px;
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
   margin-top: 20px;
   margin-right: 20px;
   border-radius: 16px;
   border: 2px solid #1717172c;
+  display: flex;
+  flex-direction: column;
 }
 
 .content-image {
@@ -229,5 +238,25 @@ export default {
   margin-right: auto;
   width: 90%;
   border-radius: 10px;
+}
+
+.carousel__item {
+  min-height: 200px;
+  width: 90%;
+  background-color: var(--vc-clr-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+}
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev,
+.carousel__next {
+  box-sizing: content-box;
+  border: 5px solid white;
 }
 </style>
