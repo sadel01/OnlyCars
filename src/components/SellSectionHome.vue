@@ -1,89 +1,148 @@
-<script setup>
-import { defineProps } from 'vue'
-import { RouterLink, RouterView } from 'vue-router'
-</script>
-
 <template>
   <div id="app">
     <Navbar />
     <main>
-      <div class="wrapper">
-        <h1>Vender</h1>
-        <p>Prueba para ver cómo se ve el texto sobre la imagen que usamos de fondo. </p>
-        <p> La imagen es solo referencial, está sujeta a muchos cambios.</p>
-        <img src="@/assets/astonMartin.jpg" alt="astonMartin" class="wrapper-image">
-      </div>
-
-        <div class="boton">
-          <RouterLink to="/sell">
-            <button>Vende tu auto</button>
-          </RouterLink>
+      <div class="content-wrapper">
+        <div class="image-container">
+          <img src="@/assets/car1.png" alt="astonMartin" class="content-image">
         </div>
+        <div class="text-container">
+          <div class="text-block">
+            <strong class="title">Vende tu Auto</strong>
+            <p class="description">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis iure pariatur ullam omnis reprehenderit. Rerum vitae voluptatibus nisi numquam ad, officiis in modi odit minima corrupti eius ratione consequuntur, dicta eaque laborum ipsa neque, vel reiciendis voluptatem minus sapiente necessitatibus commodi magni accusamus? Ratione sint incidunt ipsa repudiandae, pariatur totam atque praesentium.</p>
+            <RouterLink to="/sell" class="boton">
+              <button>Vende tu auto</button>
+            </RouterLink>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
 
 <style scoped>
 
-.wrapper-image {
-  position: relative;
-  top: -115px;
-  right: -22%;
-  width: 700px; 
+.title {
+  font-size: 2rem; 
+  margin-bottom: 1rem; 
+  font-weight: bold;
+}
+
+.content-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.image-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.content-image {
+  max-width: 100%;
   border-radius: 10%;
 }
 
-.boton{
-  position: absolute;
-  top: 1150px; 
-  left: 24%; 
+.text-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.wrapper{
-    background-color: #F0F0F0;
-    justify-content: space-between;
-    padding-top: 1%;
-    width: 100%;
-    height: 100%;
-    color: black;
+.text-block {
+  padding: 1rem;
 }
 
-h1 {
-  font-weight: 500;
-  font-size: 3rem;
-  position: relative;
-  top: 80px;
-  left: -22%;
-  color: black;
+
+.description {
+  font-size: 1rem;
+  margin: 1rem 0;
+  text-align: justify;
 }
 
-p{
-    color: black;
-    font-size: 1rem;
-    margin: 1rem 30%;
-    position: relative;
-    top: 100px;
-    left: -22%;
-}
-
-main {
-  text-align: center;
+.boton {
+  text-align: center; /* Centra el botón horizontalmente */
+  margin-top: 1rem; /* Ajusta según sea necesario */
 }
 
 button {
-  background-color: green;
-  color: white;
-  padding: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-top: 2rem;
-  font-size: 20px;
+ appearance: none;
+ background-color: #FBC40E;
+ border: 1px solid rgba(27, 31, 35, 0.15);
+ border-radius: 6px;
+ box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
+ box-sizing: border-box;
+ color: #24292E;
+ cursor: pointer;
+ display: inline-block;
+ font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+ font-size: 14px;
+ font-weight: 500;
+ line-height: 20px;
+ list-style: none;
+ padding: 6px 16px;
+ position: relative;
+ transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+ user-select: none;
+ -webkit-user-select: none;
+ touch-action: manipulation;
+ vertical-align: middle;
+ white-space: nowrap;
+ word-wrap: break-word;
 }
 
 button:hover {
-  color: black;
-  background-color: greenyellow;
+ background-color: #fdd349;
+ text-decoration: none;
+ transition-duration: 0.1s;
 }
 
+button:disabled {
+ background-color: #f8d666;
+ border-color: rgba(27, 31, 35, 0.15);
+ color: #959DA5;
+ cursor: default;
+}
+
+button:active {
+ background-color: #f8d666;
+ box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+ transition: none 0s;
+}
+
+button:focus {
+ outline: 1px transparent;
+}
+
+button:before {
+ display: none;
+}
+
+button:-webkit-details-marker {
+ display: none;
+}
+
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .image-container,
+  .text-container {
+    width: 100%;
+  }
+
+  .text-block {
+    text-align: center;
+  }
+
+  .boton {
+    width: 100%;
+  }
+}
 </style>
