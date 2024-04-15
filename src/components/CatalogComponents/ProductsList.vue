@@ -8,16 +8,16 @@
               <img :src="product.image" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.name }}</p>
+                  <p class="productText productTitle">{{ product.brand }}</p>
                 </div>
 
                 <div class="description">
-                  <p class="productText productDescription">{{ product.km }} KM</p>
+                  <p class="productText productDescription">{{ product.mileage }} KM</p>
                   <p class="productText productDescription data">
-                    {{ product.transmision }}
+                    {{ product.transmission }}
                   </p>
                   <p class="productText productDescription data">
-                    {{ product.combustible }}
+                    {{ product.fuel }}
                   </p>
                 </div>
 
@@ -30,13 +30,10 @@
           </li>
         </ul>
       </div>
-
-      <div class="product-detail" v-if="selectedProduct"></div>
+      <ProductDetail class="product-detail" v-if="selectedProduct" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" />
     </div>
   </main>
 </template>
-
-// Componente para mostrar la lista de productos y el detalle de un producto seleccionado.
 
 <script>
 import SearchItems from './SearchItems.vue'
@@ -58,6 +55,9 @@ export default {
       } else {
         this.selectedProduct = product
       }
+    },
+    closeProductDetail() {
+      this.selectedProduct = null;
     }
   },
   components: {
@@ -68,32 +68,32 @@ export default {
 </script>
 
 <style scoped>
+
+.productCard .imagenes {
+  width: 30%;
+  object-fit: cover; 
+}
+
+.principalContainer {
+    display: flex;
+  }
+
+  .product-detail {
+    flex: 1;
+  }
+
 .listContainer {
   border-top-left-radius: 16px;
 }
 
 .principalContainer {
   display: flex;
+  height: 100vh
 }
 
 .container {
   flex: 1;
   overflow-y: auto;
-}
-
-.product-detail {
-  position: relative;
-  top: 0;
-  right: 0;
-  width: 40%;
-  height: 80vh;
-  background-color: #efefef5f;
-  padding: 20px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin-top: 20px;
-  margin-right: 20px;
-  border-radius: 16px;
-  border: 2px solid #1717172c;
 }
 
 .imagenes {
@@ -108,12 +108,13 @@ export default {
 }
 
 .productTitle {
-  font-size: 38px;
+  font-size: 35px;
   font-weight: bold;
   margin: 20px 0;
 }
 
 .vehicleDescription {
+  line-height: 0.85;
   flex-direction: column;
   width: 100%;
   margin-left: 20px;
@@ -132,12 +133,12 @@ export default {
   margin: 20px;
   background-color: #efefef5f;
   margin-right: 30px;
-  height: auto;
+  height: 270px;
   border: 2px solid #1717172c;
 }
 
 .productPrice {
-  font-size: 32px;
+  font-size: 30px;
   display: flex;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -150,6 +151,6 @@ export default {
 }
 
 .description {
-  font-size: 22px;
+  font-size: 20px;
 }
 </style>
