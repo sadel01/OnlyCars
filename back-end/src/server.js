@@ -81,6 +81,18 @@ app.get('/models/:brand', async (req, res) => {
     }
 });
 
+app.get('/posts', async (req, res) => {
+    try{
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('posts');
+        const posts = await collection.find().toArray();
+        res.send(posts);
+    }catch(error){
+        res.status(500).send(error.message);
+    }
+});
+
 
 app.listen(8080, () => {
   console.log('Server started on port 8080!');

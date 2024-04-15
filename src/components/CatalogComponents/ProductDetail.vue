@@ -10,26 +10,25 @@
 
         <div class="card"> 
           <FontAwesomeIcon :icon="faGaugeHigh" class="icono"/>
-          <p class="productText productTitle">{{ product.name }}</p> 
+          <p class="productText productTitle">{{ product.brand }}</p> 
         </div>
 
         <div class="card">
           <FontAwesomeIcon :icon="faCar" class="icono"/> 
-          <p class="productText productDescription">{{ product.km }} KM</p> 
+          <p class="productText productDescription">{{ product.mileage }} KM</p> 
         </div>
 
         <div class="card">
           <FontAwesomeIcon :icon="faGasPump" class="icono"/>
-          <p class="productText productDescription data">{{ product.combustible }}</p> 
+          <p class="productText productDescription data">{{ product.transmission }}</p> 
         </div>
 
         <div class="card">
           <FontAwesomeIcon :icon="faMoneyBill" class="icono"/> 
-          <p class="productText productPriceNumber">${{ product.price }} CLP</p>
+          <p class="productText productPriceNumber">${{ product.fuel }} CLP</p>
         </div>
 
       </div>
-      
       <button class="verMas"><span>Ver más</span></button>
 
     </div>
