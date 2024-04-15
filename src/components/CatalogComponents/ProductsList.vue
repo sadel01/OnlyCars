@@ -5,7 +5,7 @@
         <ul class="list">
           <li v-for="product in products" :key="product.id" @click="showProductDetail(product)">
             <div class="productCard">
-              <img :src="product.image" alt="product image" class="imagenes" />
+              <img :src="product.image[0]" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
                   <p class="productText productTitle">{{ product.brand }}</p>
@@ -15,9 +15,6 @@
                   <p class="productText productDescription">{{ product.mileage }} KM</p>
                   <p class="productText productDescription data">
                     {{ product.transmission }}
-                  </p>
-                  <p class="productText productDescription data">
-                    {{ product.fuel }}
                   </p>
                 </div>
 
