@@ -4,7 +4,7 @@ import {carItems} from './temp-data.js';
 import cors from 'cors';
 
 const app = express();
-const url = `mongodb+srv://admin:12345adminADMIN@cluster0.2sd1gmw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+const url = `mongodb://admin:12345adminADMIN@ac-sjjuxyv-shard-00-00.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-01.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-02.2sd1gmw.mongodb.net:27017/?ssl=true&replicaSet=atlas-a9gjt5-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(url);
 
 app.use(express.json());
