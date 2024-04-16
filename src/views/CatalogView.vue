@@ -117,7 +117,6 @@ export default {
           description: 'This is a product description'
         }
       ]
-      products: []
     }
   },
   computed: {
@@ -152,7 +151,8 @@ export default {
     },
     updateSelectedFuel(combustible) {
       this.selectedFuel = combustible
-      
+    },
+    
     async fetchProducts(){
       try {
         const response = await axios.get('http://localhost:8080/posts')
