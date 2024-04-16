@@ -135,7 +135,7 @@ puede
 
 <style>
 .searchContainer {
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -165,12 +165,13 @@ puede
 
 .inputCarName {
   width: 85%;
-  height: 30px;
+  height: 20px;
   border-radius: 10px;
   border: none;
   padding: 10px;
   font-size: 20px;
   outline: none;
+  font-size: 16px;
 }
 
 .selects {

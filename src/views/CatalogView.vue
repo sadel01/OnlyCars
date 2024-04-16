@@ -18,6 +18,7 @@
 <script>
 import ProductsList from '../components/CatalogComponents/ProductsList.vue'
 import SearchItems from '../components/CatalogComponents/SearchItems.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -116,18 +117,23 @@ export default {
           description: 'This is a product description'
         }
       ]
+      products: []
     }
   },
   computed: {
     filteredProducts() {
-      return this.products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-          (!this.selectedBrand || product.brand === this.selectedBrand) &&
+      try {
+        return this.products.filter(
+          (product) =>
+            product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+            (!this.selectedBrand || product.brand === this.selectedBrand) &&
           (!this.selectedTransmision || product.transmision === this.selectedTransmision) &&
           (!this.selectedYear || product.year === this.selectedYear) &&
           (!this.selectedFuel || product.combustible === this.selectedFuel)
-      )
+        )
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   methods: {
@@ -137,6 +143,7 @@ export default {
     updateSelectedBrand(brand) {
       this.selectedBrand = brand
     },
+
     updateSelectedTransmision(transmision) {
       this.selectedTransmision = transmision
     },
@@ -145,7 +152,19 @@ export default {
     },
     updateSelectedFuel(combustible) {
       this.selectedFuel = combustible
+      
+    async fetchProducts(){
+      try {
+        const response = await axios.get('http://localhost:8080/posts')
+        this.products = response.data
+        console.log(this.products)
+      } catch (error) {
+        console.error(error)
+      }
     }
+  },
+  created() {
+    this.fetchProducts()
   }
 }
 </script>

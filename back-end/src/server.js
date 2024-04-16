@@ -23,6 +23,19 @@ app.post('/register', async (req, res) => {
     }
 });
 
+app.post('/posts', async (req, res) => {
+    try {
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('posts');
+        const result = await collection.insertOne(req.body);
+        res.send({ message: 'Item publicado con éxito', itemId: result.insertedId });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: 'Error al publicar el item' });
+    }
+  });
+
 app.post('/login', async (req, res) => {
     try {
         await client.connect();
@@ -77,6 +90,18 @@ app.get('/models/:brand', async (req, res) => {
         const models = await collection.find({ make: brand }).toArray();
         res.send(models.map(model => model.model));
     } catch (error) {
+        res.status(500).send(error.message);
+    }
+});
+
+app.get('/posts', async (req, res) => {
+    try{
+        await client.connect();
+        const database = client.db('onlycars');
+        const collection = database.collection('posts');
+        const posts = await collection.find().toArray();
+        res.send(posts);
+    }catch(error){
         res.status(500).send(error.message);
     }
 });

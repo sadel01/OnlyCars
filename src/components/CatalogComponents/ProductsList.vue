@@ -8,16 +8,16 @@
               <img :src="product.image" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.name }}</p>
+                  <p class="productText productTitle">{{ product.brand }}</p>
                 </div>
 
                 <div class="description">
-                  <p class="productText productDescription">{{ product.km }} KM</p>
+                  <p class="productText productDescription">{{ product.mileage }} KM</p>
                   <p class="productText productDescription data">
-                    {{ product.transmision }}
+                    {{ product.transmission }}
                   </p>
                   <p class="productText productDescription data">
-                    {{ product.combustible }}
+                    {{ product.fuel }}
                   </p>
                 </div>
 
@@ -71,7 +71,6 @@ export default {
 
 .productCard .imagenes {
   width: 30%;
-  height: auto; 
   object-fit: cover; 
 }
 
@@ -109,12 +108,13 @@ export default {
 }
 
 .productTitle {
-  font-size: 38px;
+  font-size: 35px;
   font-weight: bold;
   margin: 20px 0;
 }
 
 .vehicleDescription {
+  line-height: 0.85;
   flex-direction: column;
   width: 100%;
   margin-left: 20px;
@@ -133,12 +133,12 @@ export default {
   margin: 20px;
   background-color: #efefef5f;
   margin-right: 30px;
-  height: auto;
+  height: 270px;
   border: 2px solid #1717172c;
 }
 
 .productPrice {
-  font-size: 32px;
+  font-size: 30px;
   display: flex;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -151,6 +151,6 @@ export default {
 }
 
 .description {
-  font-size: 22px;
+  font-size: 20px;
 }
 </style>
