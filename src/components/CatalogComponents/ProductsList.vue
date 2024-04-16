@@ -3,9 +3,9 @@
     <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
-          <li v-for="product in products" :key="product.id" @click="showProductDetail(product)">
+          <li v-for="product in paginatedProducts" :key="product.id" @click="showProductDetail(product)">
             <div class="productCard">
-              <img :src="product.image" alt="product image" class="imagenes" />
+              <img :src="product.image[0]" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
                   <p class="productText productTitle">{{ product.brand }}</p>
@@ -15,9 +15,6 @@
                   <p class="productText productDescription">{{ product.mileage }} KM</p>
                   <p class="productText productDescription data">
                     {{ product.transmission }}
-                  </p>
-                  <p class="productText productDescription data">
-                    {{ product.fuel }}
                   </p>
                 </div>
 
@@ -29,7 +26,15 @@
             </div>
           </li>
         </ul>
+        
+        <div class="pageButton">
+          <button class="buttonPage" v-if="page > 1" @click="page--">Previous</button>
+          <button class="buttonPage" v-for="n in maxPage" :key="n" @click="goToPage(n)">{{ n }}</button>
+          <button class="buttonPage" v-if="page < maxPage" @click="page++">Next</button>
+        </div>
+        
       </div>
+      
       <ProductDetail class="product-detail" v-if="selectedProduct" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" />
     </div>
   </main>
@@ -45,7 +50,9 @@ export default {
     return {
       productsFiltered: [],
       productClicked: false,
-      selectedProduct: null
+      selectedProduct: null,
+      page: 1,
+      perPage: 6
     }
   },
   methods: {
@@ -58,16 +65,53 @@ export default {
     },
     closeProductDetail() {
       this.selectedProduct = null;
+    },
+    goToPage(n) {
+      this.page = n
     }
   },
   components: {
     SearchItems,
     ProductDetail
+  },
+  computed: {
+    maxPage() {
+      return Math.ceil(this.products.length / this.perPage)
+    },
+    paginatedProducts() {
+      const start = (this.page - 1) * this.perPage
+      const end = start + this.perPage
+      return this.products.slice(start, end)
+    }
   }
 }
 </script>
 
 <style scoped>
+
+.pageButton{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 2% 1%;
+  margin-bottom: 2% 1%;
+  padding-bottom: 5px;
+}
+
+.buttonPage{
+  margin: 0 1%;
+  border-radius: 10px 10px 10px 10px;
+  border-color: rgba(255, 255, 255, 0); 
+  background-color: #FBC40E;
+}
+
+.buttonPage:hover{
+  background-color: #efefef5f;
+}
+
+
+
+
 
 .productCard .imagenes {
   width: 30%;
@@ -88,7 +132,7 @@ export default {
 
 .principalContainer {
   display: flex;
-  height: 100vh
+  height: 100vh;
 }
 
 .container {
