@@ -75,7 +75,7 @@ export default {
         />
       </svg>
       <select v-model="model" @change="inputItems" class="selects">
-        <option disabled value="">Modelo</option>
+        <option value="">Modelo</option>
       </select>
     </div>
 
@@ -88,7 +88,7 @@ export default {
         />
       </svg>
       <select v-model="year" @change="inputYear" class="selects">
-        <option disabled value="">Año</option>
+        <option value="">Año</option>
         <option v-for="yearOption in yearOptions" :key="yearOption" :value="yearOption">
           {{ yearOption }}
         </option>
@@ -104,7 +104,7 @@ export default {
         />
       </svg>
       <select v-model="fuel" @change="inputFuel" class="selects">
-        <option disabled value="">Combustible</option>
+        <option value="">Combustible</option>
         <option value="Gasolina">Gasolina</option>
         <option value="Diesel">Diesel</option>
         <option value="Eléctrico">Eléctrico</option>
@@ -120,7 +120,7 @@ export default {
         />
       </svg>
       <select v-model="transmision" @change="inputTransmision" class="selects">
-        <option disabled value="">Transmisión</option>
+        <option value="">Transmisión</option>
         <option value="Manual">Manual</option>
         <option value="Automático">Automático</option>
       </select>
@@ -171,7 +171,7 @@ puede
   padding: 10px;
   font-size: 20px;
   outline: none;
-  font-size: 16px;
+  font-size: 1px;
 }
 
 .selects {

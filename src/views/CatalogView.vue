@@ -126,9 +126,9 @@ export default {
           (product) =>
             product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
             (!this.selectedBrand || product.brand === this.selectedBrand) &&
-          (!this.selectedTransmision || product.transmision === this.selectedTransmision) &&
-          (!this.selectedYear || product.year === this.selectedYear) &&
-          (!this.selectedFuel || product.combustible === this.selectedFuel)
+            (!this.selectedTransmision || product.transmision === this.selectedTransmision) &&
+            (!this.selectedYear || product.year === this.selectedYear) &&
+            (!this.selectedFuel || product.combustible === this.selectedFuel)
         )
       } catch (error) {
         console.error(error)
@@ -152,8 +152,8 @@ export default {
     updateSelectedFuel(combustible) {
       this.selectedFuel = combustible
     },
-    
-    async fetchProducts(){
+
+    async fetchProducts() {
       try {
         const response = await axios.get('http://localhost:8080/posts')
         this.products = response.data
