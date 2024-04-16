@@ -243,6 +243,7 @@ export default {
 .carousel__item {
   min-height: 200px;
   width: 90%;
+  height: 400px;
   background-color: var(--vc-clr-primary);
   display: flex;
   justify-content: center;
