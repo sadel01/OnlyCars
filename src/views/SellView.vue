@@ -113,11 +113,21 @@
 
 <script>
 import axios from 'axios';
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+
+const user = computed(() => store.state.user);
 
 export default {
   name: 'SellView',
   data() {
     return {
+      user: {
+        nombre: '',
+        email: ''
+      },
       vehicle: {
         brand: '',
         model: '',
@@ -203,7 +213,13 @@ export default {
     },
     async submitVehicle() {
       try {
-        const response = await axios.post('http://localhost:8080/posts', {
+        const user = this.$store.state.user;
+        console.log(user);
+        const response = await axios.post('http://localhost:8080/postsPrueba', {    // SE DEBE CAMBIAR postsPrueba POR posts
+          nombre: user.nombre,
+          apellido: user.apellido,
+          mail: user.mail,         
+          rut: user.rut,
           brand:this.vehicle.brand,
           model:this.vehicle.model,
           year:this.vehicle.year,
