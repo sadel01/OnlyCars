@@ -60,7 +60,7 @@ export default {
       </svg>
       <select v-model="brand" @change="inputBrand" class="selects">
         <option value="">Marca</option>
-        <option value="Acura">Aura</option>
+        <option value="Acura">Acura</option>
         <option value="Audi">Audi</option>
         <option value="BMW">BMW</option>
         <option value="Buik">Buik</option>
