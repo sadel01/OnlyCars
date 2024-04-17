@@ -38,13 +38,7 @@
 
       </div>
 
-      <div>
-        <RouterLink to="/catalog/ItemView" class="theme-features-btn">
-          <button class="verMas"><span>Ver más</span></button>
-        </RouterLink>
-        
-      </div>
-      
+      <button @click="viewMore(product._id)" class="verMas"><span>Ver más</span></button>
       
       
 
@@ -59,7 +53,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGasPump, faGaugeHigh, faCar, faMoneyBill, faLocationDot,faWrench } from '@fortawesome/free-solid-svg-icons'
 import 'vue3-carousel/dist/carousel.css'
+import axios from 'axios';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+library.add(faGasPump)
 
 export default {
   components: {
@@ -84,9 +80,16 @@ export default {
   methods: {
     closePanel() {
       this.$emit('close')
+    },
+    viewMore(id){
+      this.$router.push(`/catalog/${id}`);
     }
   },
-
+  async created(){
+    const response = await axios.get(`http://localhost:8080/catalog/${product.id}`);
+    const post = response.data;
+    this.post = post;
+  }
 }
 </script>
 
