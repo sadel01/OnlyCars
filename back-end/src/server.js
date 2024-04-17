@@ -38,10 +38,10 @@ app.post('/register', async (req, res) => {
     }
 });
 
-app.post('/posts', async (req, res) => {
+app.post('/postsPrueba', async (req, res) => {   // SE DEBE CAMBIAR postsPrueba POR posts
     try {
         const database = client.db('onlycars');
-        const collection = database.collection('posts');
+        const collection = database.collection('postsPrueba'); // SE DEBE CAMBIAR postsPrueba POR posts
         const result = await collection.insertOne(req.body);
         res.send({ message: 'Item publicado con éxito', itemId: result.insertedId });
     } catch (error) {
