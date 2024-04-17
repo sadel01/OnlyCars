@@ -1,7 +1,13 @@
 <template>
   <main class="catalog-section">
     <div class="searchBar">
-      <SearchItems @inputItems="updateSearchTerm" @inputBrand="updateSelectedBrand"/>
+      <SearchItems
+        @inputItems="updateSearchTerm"
+        @inputBrand="updateSelectedBrand"
+        @inputTransmision="updateSelectedTransmision"
+        @inputYear="updateSelectedYear"
+        @inputFuel="updateSelectedFuel"
+      />
     </div>
     <div class="productsList">
       <ProductsList :products="filteredProducts" />
@@ -12,6 +18,7 @@
 <script>
 import ProductsList from '../components/CatalogComponents/ProductsList.vue'
 import SearchItems from '../components/CatalogComponents/SearchItems.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -22,6 +29,9 @@ export default {
     return {
       searchTerm: '',
       selectedBrand: '',
+      selectedTransmision: '',
+      selectedYear: '',
+      selectedFuel: '',
       products: [
         {
           id: 1,
@@ -33,7 +43,7 @@ export default {
           transmision: 'Manual',
           price: '10.000.000',
           km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
+          image: 'src/assets/mustang-rally.jpg',
           description: 'This is a product description'
         },
         {
@@ -43,7 +53,7 @@ export default {
           transmision: 'Manual',
           price: '10.000.000',
           km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
+          image: 'src/assets/explorer.jpg',
           description: 'This is a product description'
         },
         {
@@ -111,11 +121,18 @@ export default {
   },
   computed: {
     filteredProducts() {
-      return this.products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-          (!this.selectedBrand || product.brand === this.selectedBrand)
-      )
+      try {
+        return this.products.filter(
+          (product) =>
+            product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+            (!this.selectedBrand || product.brand === this.selectedBrand) &&
+            (!this.selectedTransmision || product.transmision === this.selectedTransmision) &&
+            (!this.selectedYear || product.year === this.selectedYear) &&
+            (!this.selectedFuel || product.combustible === this.selectedFuel)
+        )
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   methods: {
@@ -124,7 +141,30 @@ export default {
     },
     updateSelectedBrand(brand) {
       this.selectedBrand = brand
+    },
+
+    updateSelectedTransmision(transmision) {
+      this.selectedTransmision = transmision
+    },
+    updateSelectedYear(year) {
+      this.selectedYear = year
+    },
+    updateSelectedFuel(combustible) {
+      this.selectedFuel = combustible
+    },
+
+    async fetchProducts() {
+      try {
+        const response = await axios.get('http://localhost:8080/posts')
+        this.products = response.data
+        console.log(this.products)
+      } catch (error) {
+        console.error(error)
+      }
     }
+  },
+  created() {
+    this.fetchProducts()
   }
 }
 </script>
@@ -136,7 +176,7 @@ export default {
 }
 
 .searchBar {
-  flex: 0 0 20%;
+  flex: 0 0 15%;
   background-color: #fbc40e;
   display: flex;
   justify-content: center;

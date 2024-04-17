@@ -3,21 +3,18 @@
     <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
-          <li v-for="product in products" :key="product.id" @click="showProductDetail(product)">
+          <li v-for="product in paginatedProducts" :key="product.id" @click="showProductDetail(product)">
             <div class="productCard">
-              <img :src="product.image" alt="product image" class="imagenes" />
+              <img :src="product.image[0]" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.name }}</p>
+                  <p class="productText productTitle">{{ product.brand }}</p>
                 </div>
 
                 <div class="description">
-                  <p class="productText productDescription">{{ product.km }} KM</p>
+                  <p class="productText productDescription">{{ product.mileage }} KM</p>
                   <p class="productText productDescription data">
-                    {{ product.transmision }}
-                  </p>
-                  <p class="productText productDescription data">
-                    {{ product.combustible }}
+                    {{ product.transmission }}
                   </p>
                 </div>
 
@@ -29,14 +26,19 @@
             </div>
           </li>
         </ul>
+        
+        <div class="pageButton">
+          <button class="buttonPage" v-if="page > 1" @click="page--">Previous</button>
+          <button class="buttonPage" v-for="n in maxPage" :key="n" @click="goToPage(n)">{{ n }}</button>
+          <button class="buttonPage" v-if="page < maxPage" @click="page++">Next</button>
+        </div>
+        
       </div>
-
-      <div class="product-detail" v-if="selectedProduct"></div>
+      
+      <ProductDetail class="product-detail" v-if="selectedProduct" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" />
     </div>
   </main>
 </template>
-
-// Componente para mostrar la lista de productos y el detalle de un producto seleccionado.
 
 <script>
 import SearchItems from './SearchItems.vue'
@@ -48,7 +50,9 @@ export default {
     return {
       productsFiltered: [],
       productClicked: false,
-      selectedProduct: null
+      selectedProduct: null,
+      page: 1,
+      perPage: 6
     }
   },
   methods: {
@@ -58,42 +62,82 @@ export default {
       } else {
         this.selectedProduct = product
       }
+    },
+    closeProductDetail() {
+      this.selectedProduct = null;
+    },
+    goToPage(n) {
+      this.page = n
     }
   },
   components: {
     SearchItems,
     ProductDetail
+  },
+  computed: {
+    maxPage() {
+      return Math.ceil(this.products.length / this.perPage)
+    },
+    paginatedProducts() {
+      const start = (this.page - 1) * this.perPage
+      const end = start + this.perPage
+      return this.products.slice(start, end)
+    }
   }
 }
 </script>
 
 <style scoped>
+
+.pageButton{
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-top: 2% 1%;
+  margin-bottom: 2% 1%;
+  padding-bottom: 5px;
+}
+
+.buttonPage{
+  margin: 0 1%;
+  border-radius: 10px 10px 10px 10px;
+  border-color: rgba(255, 255, 255, 0); 
+  background-color: #FBC40E;
+}
+
+.buttonPage:hover{
+  background-color: #efefef5f;
+}
+
+
+
+
+
+.productCard .imagenes {
+  width: 30%;
+  object-fit: cover; 
+}
+
+.principalContainer {
+    display: flex;
+  }
+
+  .product-detail {
+    flex: 1;
+  }
+
 .listContainer {
   border-top-left-radius: 16px;
 }
 
 .principalContainer {
   display: flex;
+  height: 100vh;
 }
 
 .container {
   flex: 1;
   overflow-y: auto;
-}
-
-.product-detail {
-  position: relative;
-  top: 0;
-  right: 0;
-  width: 40%;
-  height: 80vh;
-  background-color: #efefef5f;
-  padding: 20px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin-top: 20px;
-  margin-right: 20px;
-  border-radius: 16px;
-  border: 2px solid #1717172c;
 }
 
 .imagenes {
@@ -108,12 +152,13 @@ export default {
 }
 
 .productTitle {
-  font-size: 38px;
+  font-size: 35px;
   font-weight: bold;
   margin: 20px 0;
 }
 
 .vehicleDescription {
+  line-height: 0.85;
   flex-direction: column;
   width: 100%;
   margin-left: 20px;
@@ -132,12 +177,12 @@ export default {
   margin: 20px;
   background-color: #efefef5f;
   margin-right: 30px;
-  height: auto;
+  height: 270px;
   border: 2px solid #1717172c;
 }
 
 .productPrice {
-  font-size: 32px;
+  font-size: 30px;
   display: flex;
   margin-top: 20px;
   margin-bottom: 20px;
@@ -150,6 +195,6 @@ export default {
 }
 
 .description {
-  font-size: 22px;
+  font-size: 20px;
 }
 </style>
