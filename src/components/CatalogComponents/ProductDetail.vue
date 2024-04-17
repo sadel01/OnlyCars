@@ -29,7 +29,7 @@
         </div>
 
       </div>
-      <button class="verMas"><span>Ver más</span></button>
+      <button @click="viewMore(product._id)" class="verMas"><span>Ver más</span></button>
 
     </div>
   </main>
@@ -41,7 +41,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGasPump, faGaugeHigh, faCar, faMoneyBill } from '@fortawesome/free-solid-svg-icons'
-
+import axios from 'axios';
 library.add(faGasPump)
 
 export default {
@@ -60,7 +60,15 @@ export default {
   methods: {
     closePanel() {
       this.$emit('close')
+    },
+    viewMore(id){
+      this.$router.push(`/catalog/${id}`);
     }
+  },
+  async created(){
+    const response = await axios.get(`http://localhost:8080/catalog/${product.id}`);
+    const post = response.data;
+    this.post = post;
   }
 }
 </script>

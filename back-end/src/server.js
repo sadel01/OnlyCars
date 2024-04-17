@@ -1,18 +1,33 @@
 import express from 'express';
-import {MongoClient} from 'mongodb';
 import {carItems} from './temp-data.js';
 import cors from 'cors';
+import {MongoClient, ObjectId} from 'mongodb'; 
 
 const app = express();
 const url = `mongodb://admin:12345adminADMIN@ac-sjjuxyv-shard-00-00.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-01.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-02.2sd1gmw.mongodb.net:27017/?ssl=true&replicaSet=atlas-a9gjt5-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`;
 const client = new MongoClient(url);
-
+client.connect().then(() => {
+    console.log("Connected to database");
+}).catch((error) => {
+    console.error("Failed to connect to database", error);
+});
 app.use(express.json());
 app.use(cors());
 
+app.get('/catalog/:id', async (req, res) => { 
+    const id = req.params.id; 
+    try{ 
+        const database = client.db('onlycars'); 
+        const collection = database.collection('posts'); 
+        const post = await collection.findOne({ _id: new ObjectId(id) }); 
+        res.send(post); 
+    }catch(error){ 
+        res.status(500).send(error.message); 
+    } 
+}); 
+
 app.post('/register', async (req, res) => {
     try {
-        await client.connect();
         const database = client.db('onlycars');
         const collection = database.collection('users');
         const result = await collection.insertOne(req.body);
@@ -25,7 +40,6 @@ app.post('/register', async (req, res) => {
 
 app.post('/posts', async (req, res) => {
     try {
-        await client.connect();
         const database = client.db('onlycars');
         const collection = database.collection('posts');
         const result = await collection.insertOne(req.body);
@@ -38,7 +52,6 @@ app.post('/posts', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        await client.connect();
         const database = client.db('onlycars');
         const collection = database.collection('users');
         const user = await collection.findOne({rut: req.body.rut});
@@ -71,7 +84,6 @@ app.post('/login', async (req, res) => {
 
 app.get('/brands', async (req, res) => {
     try {
-        await client.connect();
         const database = client.db('onlycars');
         const collection = database.collection('vehicles');
         const brands = await collection.distinct("make");
@@ -84,7 +96,6 @@ app.get('/brands', async (req, res) => {
 app.get('/models/:brand', async (req, res) => {
     const brand = req.params.brand;
     try {
-        await client.connect();
         const database = client.db('onlycars');
         const collection = database.collection('vehicles');
         const models = await collection.find({ make: brand }).toArray();
@@ -96,7 +107,6 @@ app.get('/models/:brand', async (req, res) => {
 
 app.get('/posts', async (req, res) => {
     try{
-        await client.connect();
         const database = client.db('onlycars');
         const collection = database.collection('posts');
         const posts = await collection.find().toArray();
