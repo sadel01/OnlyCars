@@ -1,8 +1,14 @@
 <script>
+import { computed } from 'vue'
+import axios from 'axios'
+
 export default {
+  
   data() {
     return {
       searchTerm: '',
+      brands: [],
+      models: [],
       brand: '',
       model: '',
       year: '',
@@ -16,6 +22,7 @@ export default {
     for (let i = anioActual; i >= 1900; i--) {
       this.yearOptions.push(i.toString())
     }
+    this.getBrands()
   },
 
   methods: {
@@ -33,7 +40,15 @@ export default {
     },
     inputFuel() {
       this.$emit('inputFuel', this.fuel)
-    }
+    },
+    async getBrands() {
+      try {
+        const response = await axios.get('http://localhost:8080/brands')
+        this.brands = response.data
+      } catch (error) {
+        console.error(error)
+      }
+    },
   }
 }
 </script>
@@ -60,14 +75,7 @@ export default {
       </svg>
       <select v-model="brand" @change="inputBrand" class="selects">
         <option value="">Marca</option>
-        <option value="Acura">Acura</option>
-        <option value="Audi">Audi</option>
-        <option value="BMW">BMW</option>
-        <option value="Buik">Buik</option>
-        <option value="Cadillac">Cadillac</option>
-        <option value="Chevrolet">Chevrolet</option>
-        <option value="Chrysler">Dodge</option>
-        <option value="Ford">Ford</option>
+        <option v-for="brand in brands">{{ brand }}</option>
       </select>
     </div>
 
