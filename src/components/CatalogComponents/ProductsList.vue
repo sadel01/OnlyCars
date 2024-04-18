@@ -82,6 +82,10 @@ export default {
     },
     goToPage(n) {
       this.page = n
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      })
     },
     viewMore(id){
       window.open(`/catalog/${id}`, '_blank');
