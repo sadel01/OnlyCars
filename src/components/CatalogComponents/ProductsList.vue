@@ -29,14 +29,16 @@
         </ul>
         
         <div class="pageButton">
-          <button class="buttonPage" v-if="page > 1" @click="page--">Previous</button>
-          <button class="buttonPage" v-for="n in maxPage" :key="n" @click="goToPage(n)">{{ n }}</button>
-          <button class="buttonPage" v-if="page < maxPage" @click="page++">Next</button>
+          <button v-if="page > 1" @click="page--" class="buttonPage">Anterior</button>
+          <button v-for="n in maxPage" :key="n" @click="goToPage(n)" :class="{ 'buttonPage': true, 'buttonPageActive': n === page }">{{ n }}</button>
+          <button v-if="page < maxPage" @click="page++" class="buttonPage">Siguiente</button>
         </div>
         
       </div>
       
-      <ProductDetail class="product-detail" v-if="selectedProduct && isLargeScreen" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" />
+      <ProductDetail class="product-detail" v-if="selectedProduct && isLargeScreen" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" :class="{ 'productDetailOpen': selectedProduct, 'productDetailClose': !selectedProduct }" />
+
+
     </div>
   </main>
 </template>
@@ -66,6 +68,15 @@ export default {
         this.selectedProduct = product
       }
     },
+    async fetchProductDetails(id) {
+    if (id) {
+      const response = await axios.get(`http://localhost:8080/catalog/${id}`);
+      const post = response.data;
+      this.post = post;
+    } else {
+      console.error('Product id is not defined');
+    }
+  },
     closeProductDetail() {
       this.selectedProduct = null;
     },
@@ -73,7 +84,7 @@ export default {
       this.page = n
     },
     viewMore(id){
-      this.$router.push(`/catalog/${id}`);
+      window.open(`/catalog/${id}`, '_blank');
     }
   },
   mounted() {
@@ -99,34 +110,54 @@ export default {
       this.isLargeScreen = window.innerWidth > 1024 && window.innerHeight > 768
     }
   },
-  async created(){
-    const response = await axios.get(`http://localhost:8080/catalog/${product.id}`);
-    const post = response.data;
-    this.post = post;
-  }
 }
 </script>
 
 <style scoped>
+.productDetailOpen {
+  animation: 1s cubic-bezier(.25, 1, .30, 1) wipe-in-left both;
+}
 
-.pageButton{
+@keyframes wipe-in-left {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.pageButton {
   position: relative;
   display: flex;
   justify-content: center;
-  margin-top: 2% 1%;
-  margin-bottom: 2% 1%;
+  margin-top: 2%;
+  margin-bottom: 2%;
   padding-bottom: 5px;
 }
 
-.buttonPage{
-  margin: 0 1%;
-  border-radius: 10px 10px 10px 10px;
-  border-color: rgba(255, 255, 255, 0); 
-  background-color: #FBC40E;
+.buttonPage {
+  margin: 0 0.3%;;
+  border-radius: 10px;
+  background-color: white;
+  padding: 6px 12px; 
+  font-size: 15px;
+  border: 2px solid #FBC40E;
+  transition: all 0.3s ease-in-out;
 }
 
-.buttonPage:hover{
-  background-color: #efefef5f;
+.buttonPageActive {
+  background-color: #FBC40E ;
+  transform: scale(1.13);
+  border: 1px solid #FBC40E;
+  font-weight: bold;
+}
+
+.buttonPage:hover {
+  background-color: #FBC40E;
+  border: 1px solid #C19400;
+  color: white;
+  font-weight: bold;
 }
 
 .verMas2 {
@@ -143,8 +174,8 @@ export default {
   margin-left: 75%;
   height: 15%;
   width: 20%;
-  margin-bottom:30%;
-  top: -25%; /* Ajusta la posición del botón un poco más arriba */
+  margin-bottom: 30%;
+  top: -25%;
 }
 .verMas2:after {
   content: " ";
@@ -181,7 +212,6 @@ export default {
   position: relative;
 }
 
-
 .productCard .imagenes {
   width: 30%;
   object-fit: cover; 
@@ -191,9 +221,9 @@ export default {
     display: flex;
   }
 
-  .product-detail {
-    flex: 1;
-  }
+.product-detail {
+  flex: 1;
+}
 
 .listContainer {
   border-top-left-radius: 16px;
@@ -201,12 +231,10 @@ export default {
 
 .principalContainer {
   display: flex;
-  height: 100vh;
 }
 
 .container {
   flex: 1;
-  overflow-y: auto;
 }
 
 .imagenes {
@@ -244,10 +272,17 @@ export default {
   border-radius: 10px;
   display: flex;
   margin: 20px;
-  background-color: #efefef5f;
+  background-color: #c2c2c27e;
   margin-right: 30px;
   height: 270px;
   border: 2px solid #1717172c;
+}
+.productCard:hover {
+ transform: scale(1.02);
+ border-width: 1px;
+ background-color: white;
+ box-shadow: 0 0 20px #a8a8a8;
+ cursor: pointer;
 }
 
 .productPrice {
@@ -266,14 +301,13 @@ export default {
 .description {
   font-size: 20px;
 }
+
 @media screen and (max-width: 1280px) and (max-height: 1024px) {
   .product-detail {
-    display: none; /* Ocultamos el detalle del producto */
+    display: none;
   }
   .verMas2 {
-  display: block;
+    display: block;
   }
 }
-
-
 </style>
