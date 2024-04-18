@@ -1,7 +1,14 @@
 <template>
   <main class="catalog-section">
     <div class="searchBar">
-      <SearchItems @inputItems="updateSearchTerm" @inputBrand="updateSelectedBrand"/>
+      <SearchItems
+        @inputItems="updateSearchTerm"
+        @inputBrand="updateSelectedBrand"
+        @inputModel="updateSelectedModel"
+        @inputTransmission="updateSelectedTransmission"
+        @inputYear="updateSelectedYear"
+        @inputFuel="updateSelectedFuel"
+      />
     </div>
     <div class="productsList">
       <ProductsList :products="filteredProducts" />
@@ -12,6 +19,7 @@
 <script>
 import ProductsList from '../components/CatalogComponents/ProductsList.vue'
 import SearchItems from '../components/CatalogComponents/SearchItems.vue'
+import axios from 'axios'
 
 export default {
   components: {
@@ -22,100 +30,27 @@ export default {
     return {
       searchTerm: '',
       selectedBrand: '',
-      products: [
-        {
-          id: 1,
-          name: 'Product 1 Toyota',
-          brand: 'TOYOTA',
-          model: 'Corolla',
-          year: '2020',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 2,
-          name: 'Product 2',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 3,
-          name: 'Product 3',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 4,
-          name: 'Product 4',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 5,
-          name: 'Product 5',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 6,
-          name: 'Product 6',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 7,
-          name: 'Product 7',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        },
-        {
-          id: 8,
-          name: 'Product 8',
-          combustible: 'Gasolina',
-          transmision: 'Manual',
-          price: '10.000.000',
-          km: '100.000',
-          image: 'src/components/CatalogComponents/image/auto.jpg',
-          description: 'This is a product description'
-        }
-      ]
+      selectedTransmission: '',
+      selectedYear: '',
+      selectedFuel: '',
+      products: []
     }
   },
   computed: {
     filteredProducts() {
-      return this.products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-          (!this.selectedBrand || product.brand === this.selectedBrand)
-      )
+      try {
+        return this.products.filter(
+          (product) =>
+            product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+            (!this.selectedBrand || product.brand === this.selectedBrand) &&
+            (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
+            (!this.selectedYear || product.year === this.selectedYear) &&
+            (!this.selectedFuel || product.fuel === this.selectedFuel) &&
+            (!this.selectedModel || product.model === this.selectedModel)
+        )
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   methods: {
@@ -124,7 +59,33 @@ export default {
     },
     updateSelectedBrand(brand) {
       this.selectedBrand = brand
+    },
+
+    updateSelectedTransmission(transmission) {
+      this.selectedTransmission = transmission
+    },
+    updateSelectedYear(year) {
+      this.selectedYear = year
+    },
+    updateSelectedFuel(fuel) {
+      this.selectedFuel = fuel
+    },
+    updateSelectedModel(model) {
+      this.selectedModel = model
+    },
+
+    async fetchProducts() {
+      try {
+        const response = await axios.get('http://localhost:8080/posts')
+        this.products = response.data
+        console.log(this.products)
+      } catch (error) {
+        console.error(error)
+      }
     }
+  },
+  created() {
+    this.fetchProducts()
   }
 }
 </script>
@@ -136,7 +97,7 @@ export default {
 }
 
 .searchBar {
-  flex: 0 0 20%;
+  flex: 0 0 15%;
   background-color: #fbc40e;
   display: flex;
   justify-content: center;
