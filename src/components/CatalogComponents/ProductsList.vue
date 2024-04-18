@@ -29,9 +29,9 @@
         </ul>
         
         <div class="pageButton">
-          <button v-if="page > 1" @click="page--" class="buttonPage">Anterior</button>
+          <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
           <button v-for="n in maxPage" :key="n" @click="goToPage(n)" :class="{ 'buttonPage': true, 'buttonPageActive': n === page }">{{ n }}</button>
-          <button v-if="page < maxPage" @click="page++" class="buttonPage">Siguiente</button>
+          <button v-if="page < maxPage" @click="nextPage" class="buttonPage">Siguiente</button>
         </div>
         
       </div>
@@ -61,6 +61,14 @@ export default {
     }
   },
   methods: {
+    nextPage() {
+      this.page++;
+      window.scrollTo(0, 0); 
+    },
+    previousPage() {
+      this.page--;
+      window.scrollTo(0, 0); 
+    },
     showProductDetail(product) {
       if (this.selectedProduct === product) {
         this.selectedProduct = null
@@ -83,8 +91,7 @@ export default {
     goToPage(n) {
       this.page = n
       window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+        top: 0
       })
     },
     viewMore(id){
