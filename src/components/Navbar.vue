@@ -11,12 +11,16 @@
           <RouterLink to="/catalog" class="nav-link" @click="closeNav">Catálogo</RouterLink>
           <RouterLink to="/contact" class="nav-link" @click="closeNav">Contactos</RouterLink>
           <RouterLink to="/about" class="nav-link" @click="closeNav">Nosotros</RouterLink>
+          <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
         </div>
         <div class="nav-buttons" :class="{ 'active': navActive }">
-          <RouterLink to="/login" class="nav-button" @click="closeNav">
+          <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
+            <FontAwesomeIcon :icon="faUser" /> {{ user.nombre + ' ' + user.apellido}}
+          </RouterLink>
+          <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
           </RouterLink>
-          <RouterLink to="/register" class="nav-button" @click="closeNav">Registrarse</RouterLink>
+          <RouterLink v-if="!user" to="/register" class="nav-button" @click="closeNav">Registrarse</RouterLink>
         </div>
       </nav>
     </div>
@@ -24,11 +28,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useStore } from 'vuex';
 import { RouterLink } from 'vue-router';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faRightToBracket } from '@fortawesome/free-solid-svg-icons';
+import { faRightToBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 
+const store = useStore();
 const navActive = ref(false);
 
 const toggleNav = () => {
@@ -39,15 +45,7 @@ const closeNav = () => {
   navActive.value = false;
 };
 
-const isMobile = () => window.innerWidth < 768;
-
-onMounted(() => {
-  window.addEventListener('resize', closeNav);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('resize', closeNav);
-});
+const user = computed(() => store.state.user);
 </script>
 
 <style scoped>
@@ -145,5 +143,4 @@ nav {
     color: #FBC40E; 
   }
 }
-
 </style>

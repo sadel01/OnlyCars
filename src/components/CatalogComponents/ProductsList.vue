@@ -1,273 +1,324 @@
 <template>
   <main>
-    
-
-    <div class="principalContainer">  
-      <div class="searchBar">
-        <SearchItems @inputItems="findItems" />
-      </div>
-      
-  
+    <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
-  
-          <li v-for="product in productsFiltered" :key="product.id" @click='changeProductClicked' >
-            <div class="listElements" >
-              <img :src="product.image" alt="product image" />
+          <li v-for="product in paginatedProducts" :key="product.id" @click="showProductDetail(product)">
+            <div class="productCard">
+              <img :src="product.image[0]" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.name }}</p>          
+                  <p class="productText productTitle">{{ product.brand }}</p>
                 </div>
-                
+
                 <div class="description">
-                  <p class="productText productDescription">Kilometraje : {{product.km}}</p>
-                  <p class="productText productDescription data">Transmisión : {{product.transmision}}</p>
-                  <p class="productText productDescription data">Combustible : {{product.combustible }}</p>
-                
+                  <p class="productText productDescription">{{ product.mileage }} KM</p>
+                  <p class="productText productDescription data">
+                    {{ product.transmission }}
+                  </p>
                 </div>
-                
+
                 <div class="productPrice">
-                  <p class="productText productPriceText">Price: </p>
-                  <p class="productText productPriceNumber">${{product.price}}</p>
+                  <p class="productText productPriceText"></p>
+                  <p class="productText productPriceNumber">${{ product.price }} CLP</p>
                 </div>
-  
+                <button @click="viewMore(product._id)" class="verMas2"><span>Ver más</span></button>
               </div>
-              
             </div>
           </li>
         </ul>
+        
+        <div class="pageButton">
+          <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
+          <button v-for="n in maxPage" :key="n" @click="goToPage(n)" :class="{ 'buttonPage': true, 'buttonPageActive': n === page }">{{ n }}</button>
+          <button v-if="page < maxPage" @click="nextPage" class="buttonPage">Siguiente</button>
+        </div>
+        
       </div>
-    </div>
-
-    <ProductDetail :open='productClicked' @close='closePanel'/>
-    
-    
-    
-
       
+      <ProductDetail class="product-detail" v-if="selectedProduct && isLargeScreen" :product="selectedProduct" :open="selectedProduct != null" @close="closeProductDetail" :class="{ 'productDetailOpen': selectedProduct, 'productDetailClose': !selectedProduct }" />
+
+
+    </div>
   </main>
 </template>
 
 <script>
-import SearchItems from './SearchItems.vue';
-import ProductDetail from './ProductDetail.vue';
-
-
+import SearchItems from './SearchItems.vue'
+import ProductDetail from './ProductDetail.vue'
+import axios from 'axios';
 
 export default {
-  
+  props: ['products'],
   data() {
     return {
-      products: [
-        { id: 1, name: 'Product 1', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 2, name: 'Product 2', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 3, name: 'Product 3', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 4, name: 'Product 4', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 5, name: 'Product 5', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 6, name: 'Product 6', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 7, name: 'Product 7', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        { id: 8, name: 'Product 8', combustible: 'gasolina',transmision:'manual',price: '100',km : '100', image: 'src/components/CatalogComponents/image/auto.jpg', description: 'This is a product description' },
-        ],
       productsFiltered: [],
       productClicked: false,
-    };
-  },
-  created() {
-    this.productsFiltered = this.products;
+      selectedProduct: null,
+      page: 1,
+      perPage: 6,
+      isLargeScreen: window.innerWidth > 1024 && window.innerHeight > 768
+    }
   },
   methods: {
-    findItems(item) {
-      this.productsFiltered = this.products.filter((product) => 
-         product.name.toLowerCase().includes(item.toLowerCase()));
+    nextPage() {
+      this.page++;
+      window.scrollTo(0, 0); 
     },
-    changeProductClicked() {
-      if (!this.productClicked) {
-        this.productClicked = true;
-        return;
+    previousPage() {
+      this.page--;
+      window.scrollTo(0, 0); 
+    },
+    showProductDetail(product) {
+      if (this.selectedProduct === product) {
+        this.selectedProduct = null
+      } else {
+        this.selectedProduct = product
       }
     },
-    closePanel() {
-      this.productClicked = false;
+    async fetchProductDetails(id) {
+    if (id) {
+      const response = await axios.get(`http://localhost:8080/catalog/${id}`);
+      const post = response.data;
+      this.post = post;
+    } else {
+      console.error('Product id is not defined');
+    }
+  },
+    closeProductDetail() {
+      this.selectedProduct = null;
     },
-
+    goToPage(n) {
+      this.page = n
+      window.scrollTo({
+        top: 0
+      })
+    },
+    viewMore(id){
+      window.open(`/catalog/${id}`, '_blank');
+    }
+  },
+  mounted() {
+    window.addEventListener('resize', this.handleResize)
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize)
   },
   components: {
     SearchItems,
-    ProductDetail,
+    ProductDetail
   },
-};
+  computed: {
+    maxPage() {
+      return Math.ceil(this.products.length / this.perPage)
+    },
+    paginatedProducts() {
+      const start = (this.page - 1) * this.perPage
+      const end = start + this.perPage
+      return this.products.slice(start, end)
+    },
+     handleResize() {
+      this.isLargeScreen = window.innerWidth > 1024 && window.innerHeight > 768
+    }
+  },
+}
 </script>
 
 <style scoped>
-
-
-
-
-  .searchBar {
-    margin-top: 1%;
-    width: 20%;
-}
-.container{
-  margin-left: 5%;
-  margin-right: 1%;
-  margin-top: 1%;
-  margin-bottom: 1%;
-  padding: 1% 1% 1% 1%;
-  border-radius: 10px;
-  box-shadow: 3px 4px 5px 1px rgb(185, 185, 185);
-  flex: 1;
-    
+.productDetailOpen {
+  animation: 1s cubic-bezier(.25, 1, .30, 1) wipe-in-left both;
 }
 
-.container.listContainer {
-  background-color: #1f1f1f;
-  height: 900px;
-  overflow: auto; /* Enable scrolling if content exceeds the height */
-}
-
-
-
-
-
-
-.principalContainer{
-  display: flex;
-  flex-direction: row;
-  margin-top: 1%;
-  margin-right: 0;
-  background-color: #f1f1f1;
-}
-
-@media (max-width: 768px) {
-  .principalContainer {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+@keyframes wipe-in-left {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
   }
 }
 
-.listElements{
+.pageButton {
+  position: relative;
   display: flex;
-  margin: 20px;
-  background-color: white;
+  justify-content: center;
+  margin-top: 2%;
+  margin-bottom: 2%;
+  padding-bottom: 5px;
+}
+
+.buttonPage {
+  margin: 0 0.3%;;
   border-radius: 10px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
+  background-color: white;
+  padding: 6px 12px; 
+  font-size: 15px;
+  border: 2px solid #FBC40E;
+  transition: all 0.3s ease-in-out;
+}
+
+.buttonPageActive {
+  background-color: #FBC40E ;
+  transform: scale(1.13);
+  border: 1px solid #FBC40E;
+  font-weight: bold;
+}
+
+.buttonPage:hover {
+  background-color: #FBC40E;
+  border: 1px solid #C19400;
+  color: white;
+  font-weight: bold;
+}
+
+.verMas2 {
+  position: relative;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #FBC40E;
+  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  margin-left: 75%;
+  height: 15%;
+  width: 20%;
+  margin-bottom: 30%;
+  top: -25%;
+}
+.verMas2:after {
+  content: " ";
+  width: 0%;
+  height: 100%;
+  background: #C19400;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+  top: 0.5%;
+}
+.verMas2:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+  top: 0.5%;
+}
+
+.verMas2 span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+
+.verMas2:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
+  position: relative;
+}
+
+.productCard .imagenes {
+  width: 30%;
+  object-fit: cover; 
+}
+
+.principalContainer {
+    display: flex;
+  }
+
+.product-detail {
+  flex: 1;
+}
+
+.listContainer {
+  border-top-left-radius: 16px;
+}
+
+.principalContainer {
+  display: flex;
+}
+
+.container {
+  flex: 1;
+}
+
+.imagenes {
+  width: 300px;
+  height: auto;
+  border-radius: 10px;
+  margin: 20px;
+}
+
+.productText {
+  color: black;
+}
+
+.productTitle {
+  font-size: 35px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.vehicleDescription {
+  line-height: 0.85;
+  flex-direction: column;
+  width: 100%;
+  margin-left: 20px;
 }
 
 .list {
-  padding-bottom: .5%;
-  padding-top: .5%;
-  background-color: #1f1f1f(0, 0, 0);
-  @media (max-width: 768px) {
-    margin-left: 10%;
-    margin-right: 10%;
-  }
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: auto;
 }
 
-ul {
-  list-style-type: none;
-  background-color: #1f1f1f;
-  @media (max-width: 768px) {
-    ul {
-      margin-left: 10%;
-      margin-right: 10%;
-    }
-  }
-}
-
-  .listElements {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  @media (max-width: 768px) {
-    .container {
-      margin-left: 10%;
-      margin-right: 10%;
-      height: auto; /* Reset the height for mobile devices */
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .listElements {
-      flex-direction: column;
-    }
-
-    img {
-      order: -1;
-      margin-bottom: 10px;
-    }
-  }
-
-  img {
-    max-width: 100%;
-    height: auto;
-    width: 25%;
-    max-height: 400px;
-    border-radius: 4%;
-  }
-
-.description{
+.productCard {
+  border-radius: 10px;
   display: flex;
-  flex-wrap: wrap;
+  margin: 20px;
+  background-color: #c2c2c27e;
+  margin-right: 30px;
+  height: 270px;
+  border: 2px solid #1717172c;
 }
-.productPrice{
-  margin-top: 15%;
-}
-.productText {
-  font-family: 'Roboto', sans-serif;
-  color: black;
-  margin: 0 0 0 0;
-}
-.productText.productPriceNumber{
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: left;
-}
-.productText.productPriceText{
-  font-size: 1rem;
-  opacity: 0.5;
-  text-align: left;
-}
-.productText.productDescription{
-  font-size: 1.5rem;
-  font-weight: bold;
-  opacity: 0.5;
-  text-align: left;
-}
-.productText.productDescription.data{
-  margin-left: 5%;
+.productCard:hover {
+ transform: scale(1.02);
+ border-width: 1px;
+ background-color: white;
+ box-shadow: 0 0 20px #a8a8a8;
+ cursor: pointer;
 }
 
-.productText.productTitle{
-  font-size: 3.5rem;
-  font-weight: bold;
-  text-align: left;
-}
-
-
-.vehicleDescription{
-  width: 100%;
-  margin-bottom: 3%;
-  /*border: 1px solid black;*/
+.productPrice {
+  font-size: 30px;
   display: flex;
-  flex-direction: column;
-  
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
+.productPriceNumber {
+  margin: 0;
+  margin-top: 20px;
+}
 
-@media (max-width: 768px) {
-  .productText.productPriceNumber{
-    font-size: 1.5rem;
+.description {
+  font-size: 20px;
+}
+
+@media screen and (max-width: 1280px) and (max-height: 1024px) {
+  .product-detail {
+    display: none;
   }
-  .productText.productPriceText{
-    font-size: 0.8rem;
-  }
-  .productText.productDescription{
-    font-size: 1rem;
-  }
-  .productText.productTitle{
-    font-size: 2.2rem;
+  .verMas2 {
+    display: block;
   }
 }
 </style>
