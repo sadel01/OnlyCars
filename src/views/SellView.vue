@@ -112,6 +112,7 @@
 </template>
 
 <script>
+// comentario meme para mostrar mis horas de investigación en el git
 import axios from 'axios';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
