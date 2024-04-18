@@ -4,6 +4,7 @@
       <SearchItems
         @inputItems="updateSearchTerm"
         @inputBrand="updateSelectedBrand"
+        @inputModel="updateSelectedModel"
         @inputTransmission="updateSelectedTransmission"
         @inputYear="updateSelectedYear"
         @inputFuel="updateSelectedFuel"
@@ -44,7 +45,8 @@ export default {
             (!this.selectedBrand || product.brand === this.selectedBrand) &&
             (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
             (!this.selectedYear || product.year === this.selectedYear) &&
-            (!this.selectedFuel || product.fuel === this.selectedFuel)
+            (!this.selectedFuel || product.fuel === this.selectedFuel) &&
+            (!this.selectedModel || product.model === this.selectedModel)
         )
       } catch (error) {
         console.error(error)
@@ -67,6 +69,9 @@ export default {
     },
     updateSelectedFuel(fuel) {
       this.selectedFuel = fuel
+    },
+    updateSelectedModel(model) {
+      this.selectedModel = model
     },
 
     async fetchProducts() {
