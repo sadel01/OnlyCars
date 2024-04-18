@@ -116,6 +116,19 @@ app.get('/posts', async (req, res) => {
     }
 });
 
+// implementacion para el chat
+
+app.post('/chat/:id', async (req, res) => {
+    try{
+        const database = client.db('onlycars');
+        const collection = database.collection('chat');
+        const chat = await collection.find().toArray();
+        res.send(chat);
+    }catch(error){
+        res.status(500).send(error.message);
+    }
+});
+
 
 app.listen(8080, () => {
   console.log('Server started on port 8080!');
