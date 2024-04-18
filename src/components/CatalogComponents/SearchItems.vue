@@ -150,7 +150,7 @@ puede
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #505050;
+  background-color: #1a1a1a;
 }
 
 .grupo {
@@ -161,7 +161,7 @@ puede
   align-items: flex-start; 
   margin-top: 10px;
   margin-bottom: 10px;
-  background-color: #505050;
+  background-color: #1a1a1a;
 }
 
 .searchItems {
@@ -213,14 +213,13 @@ puede
 .selects option:hover {
   font-size: 15px;
   color: white;
-  background-color: #FBC40E; 
-  font-weight: bold; 
+  font-weight: bold;
 }
 .selects:hover {
   font-size: 15px;
-  color: white;
-  background-color: #FBC40E;
-  font-weight: bold; 
+  color: black;
+  border: 3px solid #FBC40E;
+  box-sizing: border-box;
 }
 .modelo {
   width: 17%;

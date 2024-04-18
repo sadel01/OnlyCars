@@ -279,10 +279,10 @@ export default {
 }
 .productCard:hover {
  transform: scale(1.02);
- border-color: #FBC40E;
- border-width: 3px;
+ border-width: 1px;
  background-color: white;
- box-shadow: 0 0 20px #c79900;
+ box-shadow: 0 0 20px #a8a8a8;
+ cursor: pointer;
 }
 
 .productPrice {

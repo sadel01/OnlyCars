@@ -99,7 +99,6 @@ export default {
 </script>
 
 <style scoped>
-
 .productText {
   font-size: 15px;
   color: black;
@@ -126,7 +125,7 @@ export default {
   height: 150px;
   border: 2px solid #1717172c;
   border-radius: 10px;
-  background: efefef5f;
+  background-color: #efefef5f;
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
   margin: 0px 10px 0 10px ;
   
@@ -230,16 +229,21 @@ export default {
   right: -4px;
   width: 93.5%;
   height: 85vh;
-  background-color: #efefef5f;
+  background-color: #cccccc5f;
   padding: 20px;
   padding-bottom: 30px;
-  box-shadow: 3px 4px 5px rgb(185, 185, 185);
+  box-shadow: 3px 4px 5px rgb(218, 218, 218);
   margin-top: 20px;
   margin-right: 20px;
   border-radius: 16px;
-  border: 2px solid #1717172c;
+  border: 2px solid #0707072c;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+}
+
+.productDetails:hover {
+  cursor: pointer;
 }
 
 .content-image {
