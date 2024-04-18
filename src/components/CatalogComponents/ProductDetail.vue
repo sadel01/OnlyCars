@@ -2,10 +2,10 @@
   <main>
     <div class="productDetails">
       <p class="detalleVehiculo">{{ product.brand }}</p>
-      <button class="closeButton" @click="closePanel">X</button>
+      <button class="closeButton" @click="closePanel">x</button>
       
       <carousel :items-to-show="1">
-        <slide v-for="image in product.image" :key="slide">
+        <slide v-for="image in product.image" :key="image">
           <img :src="image" class="carousel__item " />
         </slide>
         <template #addons>
@@ -38,13 +38,7 @@
 
       </div>
 
-      <div>
-        <RouterLink to="/catalog/ItemView" class="theme-features-btn">
-          <button class="verMas"><span>Ver más</span></button>
-        </RouterLink>
-        
-      </div>
-      
+      <button @click="viewMore(product._id)" class="verMas"><span>Ver más</span></button>
       
       
 
@@ -59,7 +53,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faGasPump, faGaugeHigh, faCar, faMoneyBill, faLocationDot,faWrench } from '@fortawesome/free-solid-svg-icons'
 import 'vue3-carousel/dist/carousel.css'
+import axios from 'axios';
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+library.add(faGasPump)
 
 export default {
   components: {
@@ -82,11 +78,23 @@ export default {
     }
   },
   methods: {
-    closePanel() {
-      this.$emit('close')
+  closePanel() {
+    this.$emit('close')
+  },
+  async fetchProductDetails(id) {
+    if (id) {
+      const response = await axios.get(`http://localhost:8080/catalog/${id}`);
+      const post = response.data;
+      this.post = post;
+    } else {
+      console.error('Product id is not defined');
     }
   },
-
+  viewMore(id){
+    this.fetchProductDetails(id);
+    window.open(`/catalog/${id}`, '_blank');
+  },
+},
 }
 </script>
 
@@ -111,6 +119,7 @@ export default {
   left: 20px;
 }
 
+
 .card {
   position: relative;
   width: 142px;
@@ -122,15 +131,23 @@ export default {
   margin: 0px 10px 0 10px ;
   
 }
-
+.card:hover {
+ transform: scale(1.02);
+  background: white;
+  -webkit-box-shadow: 10px 5px 18px 0 rgba(255, 255, 255, 0.877);
+  box-shadow: 10px 5px 18px 0 rgb(133, 133, 133);
+}
+.card:hover .icono { 
+  color: #FBC40E;
+}
 .description {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 14px; /* Ejemplo: Cambia el tamaño de la fuente a 14px */
-  color: #333; /* Ejemplo: Cambia el color del texto a #333 */
-  line-height: 1.5; /* Ejemplo: Cambia la altura de línea a 1.5 */
-  padding: 10px; /* Ejemplo: Agrega un padding de 10px */
+  font-size: 14px;
+  color: #333; 
+  line-height: 1.5;
+  padding: 10px; 
 }
 
 .detalleVehiculo{
@@ -194,25 +211,18 @@ export default {
   animation: scaleUp 0.3s ease-in-out;
 }
 
-
-  .closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-
-
 .closeButton {
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   position: absolute;
-  top: 10px;
-  right: 15px;
+  top: 20px;
+  right: 25px;
   background: none;
   border: none;
   color: black; 
-  font-size: 22px; 
+  font-size: 25px; 
   cursor: pointer;
+  font-weight: bold;
 }
+
 
 .productDetails {
   position: relative;

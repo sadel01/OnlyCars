@@ -50,6 +50,10 @@
       rut: this.rut,
       password: this.password,
     });
+    if (!this.rut || !this.password) {
+      this.errorMessage = 'Todos los campos son obligatorios';
+      return;
+    }
     if (response.data.message === 'Inicio de sesion exitoso') {
       // Obtiene los datos del usuario de response.data.userData
       const userData = response.data.userData;
@@ -97,9 +101,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    padding-top: 12%;
+  padding-bottom: 15%;
   }
   .login-box{
+    display: flex;
     background-color: rgba(0, 0, 0, 0.7);;
     backdrop-filter: blur(20px);
     border-radius: 16px;
@@ -131,6 +137,7 @@
   }
   
   .form p {
+    display: flex;
     font-size: 24px;
     font-weight: bold;
     letter-spacing: .5px;
@@ -138,6 +145,7 @@
   }
   
   .container-1 {
+    display: flex;
     padding-top: 30px;
   }
   
