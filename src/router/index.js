@@ -77,16 +77,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (user) {
-    // Si hay información de usuario, inicia la sesión del usuario
-    store.commit('setUser', user);
-  }
-  next();
+
   if (requiresAuth && !store.state.user) {
-    next('/login'); // Redirige al usuario a la página de inicio de sesión si no está autenticado
+    next('/login'); // Si la ruta requiere autenticación y no hay usuario, redirige a login
   } else {
-    next(); // Permite que la navegación continúe normalmente si el usuario está autenticado o si la ruta no requiere autenticación
+    next(); // De lo contrario, permite que la navegación continúe
   }
 });
 

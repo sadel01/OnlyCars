@@ -39,7 +39,7 @@
 
         <div class="form-group">
           <label for="year">Año</label>
-          <input type="number" id="year" v-model="vehicle.year" placeholder="Ingrese el año" />
+          <input type="text" id="year" v-model="vehicle.year" placeholder="Ingrese el año" />
         </div>
 
         <div class="form-group">
@@ -56,6 +56,16 @@
             id="cylinderCapacity"
             v-model="vehicle.cylinderCapacity"
             placeholder="Ingrese cilindraje"
+          />
+        </div>
+        <div class="form-group">
+          <label for="price">Precio</label>
+          <input
+            type="text"
+            id="price"
+            v-model="vehicle.price"
+            placeholder="Precio del vehículo"
+            @input="formatPriceInput"
           />
         </div>
       </div>
@@ -112,23 +122,20 @@
 </template>
 
 <script>
-// comentario meme para mostrar mis horas de investigación en el git
 import axios from 'axios';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 
-const store = useStore();
-
-const user = computed(() => store.state.user);
-
 export default {
   name: 'SellView',
+  setup() {
+    const store = useStore();
+    return {
+      user: computed(() => store.state.user),
+    };
+  },
   data() {
     return {
-      user: {
-        nombre: '',
-        email: ''
-      },
       vehicle: {
         brand: '',
         model: '',
@@ -139,116 +146,117 @@ export default {
         transmission: '',
         driveTrain: '',
         cylinderCapacity: '',
-        airbag: ''
+        airbag: '',
+        price: '', //Precio del vehiculo
       },
       brands: [],
       models: [],
-      imagePreviews: []
-    }
+      filesToUpload: [],
+      imagePreviews: [],
+      imagePaths: [],
+    };
   },
   methods: {
+    formatPriceInput() {
+      let value = this.vehicle.price.replace(/[\D]/g, ''); 
+      value = parseInt(value, 10);
+      if (isNaN(value)) {
+        value = '';
+      } else {
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Para colocar puntos chavales
+      }
+      this.vehicle.price = `$${value}`; // añadir el signo de dolar
+    },
     triggerFileUpload() {
-      this.$refs.fileInput.click()
+      this.$refs.fileInput.click();
     },
+
     handleFileUpload(event) {
-      const files = event.target.files
-      Array.from(files).forEach((file) => {
-        if (!file.type.startsWith('image/')) {
-          alert('Solo se pueden subir imágenes');
-          return;
+      const files = event.target.files;
+      for (let i = 0; i < files.length; i++) {
+        if (!files[i].type.startsWith('image/')) {
+          alert('Solo se pueden subir imágenes.');
+          continue;
         }
-        const reader = new FileReader()
-        reader.onload = (e) => {
-          this.imagePreviews.push(e.target.result)
-        }
-        reader.readAsDataURL(file)
-      })
+        this.filesToUpload.push(files[i]);
+        const reader = new FileReader();
+        reader.onload = e => this.imagePreviews.push(e.target.result);
+        reader.readAsDataURL(files[i]);
+      }
+      event.target.value = '';
     },
-    removeImage() {
-      this.imagePreviews.pop();
-      let fileList = Array.from(this.$refs.fileInput.files);
-      fileList.pop();
-      this.$refs.fileInput.value = null;
-      fileList.forEach(file => this.$refs.fileInput.files.push(file));
+
+    removeImage(index) {
+      this.imagePreviews.splice(index, 1);
+      this.filesToUpload.splice(index, 1);
     },
+
     async saveImages() {
-      const formData = new FormData()
-      Array.from(this.$refs.fileInput.files).forEach((file, index) => {
-        formData.append(`image${index}`, file)
-      })
-      const response = await fetch('/api/save-images', {
-        method: 'POST',
-        body: formData
-      })
-      if (!response.ok) {
-        throw new Error('Failed to save images')
+      const formData = new FormData();
+      this.filesToUpload.forEach(file => formData.append('files', file, file.name));
+      try {
+        const response = await axios.post('http://localhost:8080/upload', formData);
+        if (response.data.filePaths) this.imagePaths = response.data.filePaths;
+      } catch (error) {
+        console.error('Error al subir las imágenes:', error);
       }
     },
+
     async fetchBrands() {
       try {
-        const response = await fetch('http://localhost:8080/brands')
-        if (response.ok) {
-          this.brands = await response.json()
-        } else {
-          throw new Error('No se pudo cargar la lista de marcas')
-        }
+        const response = await fetch('http://localhost:8080/brands');
+        if (response.ok) this.brands = await response.json();
       } catch (error) {
-        console.error('Error al recuperar las marcas:', error)
+        console.error('Error al recuperar las marcas:', error);
       }
     },
+
     async fetchModels() {
       if (!this.vehicle.brand) {
-        this.models = []
-        return
+        this.models = [];
+        return;
       }
       try {
-        const response = await fetch(`http://localhost:8080/models/${this.vehicle.brand}`)
-        if (response.ok) {
-          this.models = await response.json()
-        } else {
-          throw new Error('No se pudo cargar la lista de modelos')
-        }
+        const response = await fetch(`http://localhost:8080/models/${this.vehicle.brand}`);
+        if (response.ok) this.models = await response.json();
       } catch (error) {
-        console.error('Error al recuperar los modelos:', error)
+        console.error('Error al recuperar los modelos:', error);
       }
     },
+
     async submitVehicle() {
       try {
         const user = this.$store.state.user;
-        console.log(user);
-        const response = await axios.post('http://localhost:8080/postsPrueba', {    // SE DEBE CAMBIAR postsPrueba POR posts
-          nombre: user.nombre,
-          apellido: user.apellido,
-          mail: user.mail,         
-          rut: user.rut,
-          brand:this.vehicle.brand,
-          model:this.vehicle.model,
-          year:this.vehicle.year,
-          condition:this.vehicle.condition,
-          mileage:this.vehicle.mileage,
-          fuel:this.vehicle.fuel,
-          transmission:this.vehicle.transmission,
-          driveTrain:this.vehicle.driveTrain,
-          cylinderCapacity:this.vehicle.cylinderCapacity,
-          airbag:this.vehicle.airbag
-        });
-        console.log(response.data);
+        await this.saveImages();
+        const vehicleData = {
+          ...this.vehicle,
+          image: this.imagePaths,
+          user: {
+            _id: user._id,
+            name: user.nombre,
+            lastName: user.apellido,
+            email: user.mail,
+            rut: user.rut,
+          },
+        };
+        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData);
+        console.log('Response from the server:', response.data);
       } catch (error) {
-        console.error(error);
+        console.error('Error al publicar el vehículo:', error);
       }
-    }
+    },
   },
   watch: {
-    // cambio de marca buscara modelos que correspondan
     'vehicle.brand': function (newBrand) {
-      this.fetchModels()
-    }
+      this.fetchModels();
+    },
   },
   mounted() {
-    this.fetchBrands() // Lamada para cargar las marcas
-  }
-}
+    this.fetchBrands();
+  },
+};
 </script>
+
 
 <style scoped>
 .imagePreviews {
