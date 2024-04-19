@@ -32,19 +32,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
   padding: 2rem;
+  margin: 0 5%;
+  gap: 4rem;
+  height: 50vh;
 }
 
 .image-container {
   flex: 1;
   display: flex;
-  justify-content: center;
+  height: 50vh;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;;
 }
 
 .content-image {
   max-width: 100%;
   border-radius: 10%;
+  padding: 1rem;
 }
 
 .text-container {
@@ -72,7 +77,7 @@
 
 button {
  appearance: none;
- background-color: #FAFBFC;
+ background-color: #FBC40E;
  border: 1px solid rgba(27, 31, 35, 0.15);
  border-radius: 6px;
  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
@@ -81,11 +86,12 @@ button {
  cursor: pointer;
  display: inline-block;
  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
- font-size: 14px;
+ font-size: 18px;
  font-weight: 500;
  line-height: 20px;
  list-style: none;
- padding: 6px 16px;
+ margin-top: 2rem;
+ padding: 10px 16px;
  position: relative;
  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
  user-select: none;
@@ -97,20 +103,20 @@ button {
 }
 
 button:hover {
- background-color: #F3F4F6;
+ background-color: #fdd349;
  text-decoration: none;
  transition-duration: 0.1s;
 }
 
 button:disabled {
- background-color: #FAFBFC;
+ background-color: #f8d666;
  border-color: rgba(27, 31, 35, 0.15);
  color: #959DA5;
  cursor: default;
 }
 
 button:active {
- background-color: #EDEFF2;
+ background-color: #f8d666;
  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
  transition: none 0s;
 }

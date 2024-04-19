@@ -6,18 +6,30 @@ import Footer from './components/Footer.vue'
 <template>
   <div id="app">
     <Navbar />
-  </div>
-  <RouterView/>
-  <div>
+    <div class="main-content">
+      <RouterView/>
+    </div>
     <Footer />
   </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
+.main-content {
+  flex: 1 0 auto;
+}
 
+footer {
+  height: auto;
+}
+
+header {
+  line-height: 1.5;
+  height: auto;
+}
 </style>
