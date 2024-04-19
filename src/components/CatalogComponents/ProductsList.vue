@@ -109,8 +109,9 @@ export default {
         top: 0
       })
     },
-    viewMore(id) {
-      window.open(`/catalog/${id}`, '_blank')
+    viewMore(id){
+      const userId = this.$store.state.user._id;
+      window.open(`/catalog/${id}?userId=${userId}`, '_blank');
     }
   },
   mounted() {
