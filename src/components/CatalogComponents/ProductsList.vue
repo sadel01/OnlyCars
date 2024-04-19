@@ -95,7 +95,8 @@ export default {
       })
     },
     viewMore(id){
-      window.open(`/catalog/${id}`, '_blank');
+      const userId = this.$store.state.user._id;
+      window.open(`/catalog/${id}?userId=${userId}`, '_blank');
     }
   },
   mounted() {
