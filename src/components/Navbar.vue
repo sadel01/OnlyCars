@@ -11,6 +11,7 @@
           <RouterLink to="/catalog" class="nav-link" @click="closeNav">Catálogo</RouterLink>
           <RouterLink to="/contact" class="nav-link" @click="closeNav">Contactos</RouterLink>
           <RouterLink to="/about" class="nav-link" @click="closeNav">Nosotros</RouterLink>
+          <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
         </div>
         <div class="nav-buttons" :class="{ 'active': navActive }">
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
