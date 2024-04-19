@@ -132,7 +132,7 @@ export default {
       vehicle: {
         brand: '',
         model: '',
-        year: null,
+        year: '',
         condition: '',
         mileage: '',
         fuel: '',
