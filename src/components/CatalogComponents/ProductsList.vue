@@ -6,7 +6,7 @@
           <li
             v-for="product in paginatedProducts"
             :key="product.id"
-            @click="showProductDetail(product)"
+            @click="showProductDetail(product)" 
           >
             <div class="productCard">
               <img :src="product.image[0]" alt="product image" class="imagenes" />
@@ -31,6 +31,11 @@
             </div>
           </li>
         </ul>
+
+        <div v-if="!paginatedProducts.length" class="noProducts">
+          No hay productos disponibles.
+        </div>
+
 
         <div class="pageButton">
           <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
