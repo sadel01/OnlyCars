@@ -10,7 +10,7 @@
           </div>
         </div>
         <div class="image-container">
-          <img src="@/assets/nosotros.jpeg" alt="explorer" class="wrapper-image">
+          <img src="@/assets/nosotros.jpeg" alt="explorer" class="content-image">
         </div>
       </div>
     </main>
@@ -22,30 +22,37 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <style scoped>
-.wrapper-image {
-  width: 100%;
-  border-radius: 5%;
-}
+
 
 .content-wrapper {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  gap: 4rem;
+  margin: 0 5%;
   padding: 2rem;
-}
-.wrapper {
-  background-color: #e5e5e5;
-  justify-content: space-between;
-  width: 100%;
-  height: 100%;
-  padding-top: 1rem;
-  color: black;
+  height: 50vh;
 }
 
-.text-container,
 .image-container {
-  width: 100%;
+  flex: 1;
+  display: flex;
+  height: 50vh;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;
+}
+
+.content-image {
+  max-width: 100%;
+  border-radius: 10%;
+  padding: 1rem;
+}
+
+.text-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .text-block {
@@ -68,32 +75,4 @@ button {
   font-size: 20px;
 }
 
-p {
-  max-width: 800px;
-  overflow-wrap: break-word;
-  font-size: 1rem;
-  margin: 1rem 0;
-  text-align: justify;
-}
-
-@media (min-width: 768px) {
-  .content-wrapper {
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 2rem 5rem; /* Ajusta el padding horizontal */
-  }
-
-  .text-container {
-    flex: 2;
-    margin-right: 2rem; /* Ajusta el espacio entre el texto y la imagen */
-  }
-
-  .image-container {
-    flex: 1;
-  }
-
-  .text-block {
-    padding: 1rem 3rem; /* Ajusta el padding interior del bloque de texto */
-  }
-}
 </style>

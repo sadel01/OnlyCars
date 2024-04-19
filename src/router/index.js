@@ -9,7 +9,8 @@ import RegisterView from '../views/RegisterView.vue'
 import ItemView from '../views/ItemView.vue'
 import UserView from '../views/UserView.vue'
 import ProfileView from '../views/Profile.vue'
-import store from '../../back-end/src/store'; 
+import store from '../../back-end/src/store';
+import ChatView from '../views/ChatView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,17 +66,25 @@ const router = createRouter({
       path: '/user/:id',
       name: 'user',
       component: UserView
+    },
+    {
+      path: '/chat/:id',
+      name: 'chat',
+      component: ChatView
     }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0 }
+  }
 });
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
 
   if (requiresAuth && !store.state.user) {
-    next('/login'); // Redirige al usuario a la página de inicio de sesión si no está autenticado
+    next('/login'); // Si la ruta requiere autenticación y no hay usuario, redirige a login
   } else {
-    next(); // Permite que la navegación continúe normalmente si el usuario está autenticado o si la ruta no requiere autenticación
+    next(); // De lo contrario, permite que la navegación continúe
   }
 });
 
