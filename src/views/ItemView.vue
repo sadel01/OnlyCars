@@ -46,21 +46,24 @@ export default {
     Pagination,
     Navigation
   },
-  methods: {
-  async contactSeller() {
-    const chatId = `${this.product._id}-${this.product.seller}`
-    try {
-      const response = await axios.post(`http://localhost:8080/chat/${chatId}`, {
-        product: this.product._id,
-        seller: this.product.seller
-      })
-      console.log(response.data)
-      window.open(`/chat/${chatId}`, '_blank')
-    } catch (error) {
-      console.error(error)
+  computed: {
+    user() {
+      return this.$store.state.user
     }
-  }
-},
+  },
+  methods: {
+    async contactSeller() {
+      const response = await axios.post('http://localhost:8080/chat/startChat', {
+        buyerID: this.user._id,
+        sellerID: this.product.user._id,
+        productID: this.product._id
+      })
+
+      const chatID = response.data._id
+
+      this.$router.push(`/chat/${chatID}`)
+    }
+  },
   async created() {
     const id = this.$route.params.id
     const response = await axios.get(`http://localhost:8080/catalog/${id}`)

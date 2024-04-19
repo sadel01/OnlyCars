@@ -195,8 +195,24 @@ app.get('/posts', async (req, res) => {
 })
 
 
-// Ruta para obtener los chats, en el front el id se esta definiendo como const chatId = `${this.product._id}-${this.product.seller}`, agregar parametro
-// seller a las publicaciones para que se pueda generar el chat correctamente
+// iniciar un chat
+app.post('/chat/startChat', async (req, res) => {
+  try {
+    const {buyerID, sellerID, productID} = req.body;
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    let chat = await collection.findOne({buyerID, sellerID, productID});
+
+    if (!chat) {
+      chat = await collection.insertOne({buyerID, sellerID, productID, messages: []});
+    }
+
+    res.send(chat);
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+});
+
 app.post('/chat/:id', async (req, res) => {
   try {
     const database = client.db('onlycars')
