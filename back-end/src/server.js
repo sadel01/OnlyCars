@@ -4,10 +4,29 @@ import cors from 'cors'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Server } from 'socket.io'
 import http from 'http'
+import multer from 'multer';
+import path from 'path';
+import fs from 'fs';
+
 
 const app = express()
 const url = `mongodb://admin:12345adminADMIN@ac-sjjuxyv-shard-00-00.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-01.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-02.2sd1gmw.mongodb.net:27017/?ssl=true&replicaSet=atlas-a9gjt5-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`
 const client = new MongoClient(url)
+
+// Configuración de Multer
+const uploadDirectory = path.join(__dirname, '../../src/assets/uploads');
+fs.mkdirSync(uploadDirectory, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDirectory);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ storage: storage });
 
 // Configuracion de CORS para permitir la conexion entre el cliente y el servidor
 const corsOptions = {
@@ -47,6 +66,14 @@ io.on('connection', (socket) => {
   })
 })
 
+function formatCurrency(value) {
+  return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0
+  }).format(value);
+}
+
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
   try {
@@ -58,6 +85,22 @@ app.get('/catalog/:id', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
+
+app.post('/upload', upload.array('files'), (req, res) => {
+  // Comprueba si se subieron archivos
+  if (req.files && req.files.length > 0) {
+    // Mapea los archivos para obtener sus rutas
+    const filePaths = req.files.map(file => {
+      return `../src/assets/uploads/${file.filename}`;
+    });
+
+    // Envía las rutas de los archivos en la respuesta
+    res.json({ message: 'Images uploaded successfully!', filePaths: filePaths });
+  } else {
+    // Si no hay archivos, envía un error
+    res.status(400).json({ message: 'No files uploaded.' });
+  }
+});
 
 app.post('/register', async (req, res) => {
   try {
@@ -75,7 +118,8 @@ app.post('/postsPrueba', async (req, res) => {
   // SE DEBE CAMBIAR postsPrueba POR posts
   try {
     const database = client.db('onlycars')
-    const collection = database.collection('postsPrueba') // SE DEBE CAMBIAR postsPrueba POR posts
+    const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
+    req.body.price = req.body.price.replace('$', '');
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
@@ -95,7 +139,7 @@ app.post('/login', async (req, res) => {
         res.send({
           message: 'Inicio de sesion exitoso',
           userData: {
-            _id: user._id.toString(), //ID PARA MAS ADELANTE MANEJAR EDICIONES EN LA BASE DE DATOS
+            _id: user._id, //ID PARA MAS ADELANTE MANEJAR EDICIONES EN LA BASE DE DATOS
             nombre: user.nombre,
             apellido: user.apellido,
             rut: user.rut,
@@ -151,8 +195,24 @@ app.get('/posts', async (req, res) => {
 })
 
 
-// Ruta para obtener los chats, en el front el id se esta definiendo como const chatId = `${this.product._id}-${this.product.seller}`, agregar parametro
-// seller a las publicaciones para que se pueda generar el chat correctamente
+// iniciar un chat
+app.post('/chat/startChat', async (req, res) => {
+  try {
+    const {buyerID, sellerID, productID} = req.body;
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    let chat = await collection.findOne({buyerID, sellerID, productID});
+
+    if (!chat) {
+      chat = await collection.insertOne({buyerID, sellerID, productID, messages: []});
+    }
+
+    res.send(chat);
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+});
+
 app.post('/chat/:id', async (req, res) => {
   try {
     const database = client.db('onlycars')

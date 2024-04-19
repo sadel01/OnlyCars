@@ -90,10 +90,11 @@ export default {
           // Obtiene los datos del usuario de response.data.userData
           const userData = response.data.userData
           this.$store.commit('setUser', {
+            _id: userData._id,
             nombre: userData.nombre,
             apellido: userData.apellido,
             rut: userData.rut,
-            mail: userData.mail
+            mail: userData.mail,
           })
           localStorage.setItem('user', JSON.stringify(userData));
           this.successMessage = 'Inicio de sesion exitoso'
