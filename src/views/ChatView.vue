@@ -7,26 +7,47 @@
         </div>
       </div>
       <form @submit.prevent="sendMessage">
-        <input v-model="newMessage" type="text" placeholder="Escribe un mensaje">
-        <button type="submit">Enviar</button>
+        <input v-model="newMessage" type="text" placeholder="Escribe un mensaje" />
+        <button :disabled="newMessage.trim() === ''" type="submit">Enviar</button>
       </form>
     </div>
   </div>
 </template>
 
 <script>
+import io from 'socket.io-client'
+const socket = io('http://localhost:8080')
+
 export default {
+  // inicializa el array de mensajes y mensajes nuevos
   data() {
     return {
       messages: [],
-      newMessage: ''
+      newMessage: '',
+      error: null
     }
   },
+  // escucha el evento 'message' y agrega el mensaje al array de mensajes
+  created() {
+    socket.on('message', (message) => {
+      this.messages.push(message)
+    })
+
+    socket.on('connectError', (error) => {
+      this.error = 'Connection error, please try again later.' + error.message
+    })
+  },
   methods: {
+    // metodo para enviar el mensaje
     sendMessage() {
       if (this.newMessage.trim() !== '') {
-        this.messages.push(this.newMessage);
-        this.newMessage = '';
+        socket.emit('message', this.newMessage, (error) => {
+          if (error) {
+            console.error('Error sending message:', error)
+          } else {
+            this.newMessage = ''
+          }
+        })
       }
     }
   }
@@ -83,7 +104,7 @@ button[type='submit'] {
   cursor: pointer;
   border: none;
   padding: 3% 5%;
+  font-size: 20px;
+  font-weight: bold;
 }
-
-
 </style>

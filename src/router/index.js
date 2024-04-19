@@ -10,7 +10,7 @@ import ItemView from '../views/ItemView.vue'
 import UserView from '../views/UserView.vue'
 import ProfileView from '../views/Profile.vue'
 import store from '../../back-end/src/store';
-import Chat from '../views/Chat.vue'
+import ChatView from '../views/ChatView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,7 +70,7 @@ const router = createRouter({
     {
       path: '/chat/:id',
       name: 'chat',
-      component: Chat
+      component: ChatView
     }
   ]
 });
