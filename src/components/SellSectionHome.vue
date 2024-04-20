@@ -32,19 +32,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2rem;
   padding: 2rem;
+  margin: 0 5%;
+  gap: 4rem;
+  height: 50vh;
 }
 
 .image-container {
   flex: 1;
   display: flex;
-  justify-content: center;
+  height: 50vh;
+  margin-left: 1.5rem;
+  margin-right: 1.5rem;;
 }
 
 .content-image {
   max-width: 100%;
   border-radius: 10%;
+  padding: 1rem;
 }
 
 .text-container {
@@ -81,11 +86,12 @@ button {
  cursor: pointer;
  display: inline-block;
  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
- font-size: 14px;
+ font-size: 18px;
  font-weight: 500;
  line-height: 20px;
  list-style: none;
- padding: 6px 16px;
+ margin-top: 2rem;
+ padding: 10px 16px;
  position: relative;
  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
  user-select: none;
