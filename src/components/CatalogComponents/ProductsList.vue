@@ -150,8 +150,6 @@ export default {
 
 <style scoped>
 
-
-
 .productDetailOpen {
   animation: 1s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-left both;
 }

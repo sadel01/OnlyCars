@@ -225,6 +225,7 @@ export default {
 
 <style>
 
+
 .btnAplicar {
   background-color: #fbc40e;
   color: white;
