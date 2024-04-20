@@ -1,6 +1,6 @@
 <template>
   <div class="searchContainer">
-    <FontAwesomeIcon :icon="faCar" class="icono-marca" />
+    <FontAwesomeIcon :icon="faCar" class="icono-marca"/>
     <div class="searchItems">
       <FontAwesomeIcon :icon="faPhone" class="iconos" />
       <input
@@ -17,7 +17,7 @@
         <option value="">Marca</option>
         <option v-for="brand in brands">{{ brand }}</option>
       </select>
-      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
 
     <div class="grupo">
@@ -26,7 +26,7 @@
         <option value="">Modelo</option>
         <option v-for="model in models" :key="model">{{ model }}</option>
       </select>
-      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
 
     <div class="grupo">
@@ -37,7 +37,7 @@
           {{ yearOption }}
         </option>
       </select>
-      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
 
     <div class="grupo">
@@ -48,7 +48,7 @@
         <option value="diesel">Diesel</option>
         <option value="electric">Eléctrico</option>
       </select>
-      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
 
     <div class="grupo">
@@ -58,9 +58,8 @@
         <option value="manual">Manual</option>
         <option value="automatic">Automático</option>
       </select>
-      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
-
     <div class="grupo">
       <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
       <select v-model="location" @change="inputLocation" class="selects">
@@ -70,7 +69,7 @@
         <option value="region2">Antofagasta</option>
         <option value="region3">Atacama</option>
         <option value="region4">Coquimbo</option>
-        <option value="region5">alparaíso</option>
+        <option value="region5">Valparaíso</option>
         <option value="regionRM">Metropolitana</option>
         <option value="region6">Bernardo O'Higgins</option>
         <option value="region7">Maule</option>
@@ -122,7 +121,7 @@
         </div>
       </div>
     </div>
-
+  
   </div>
 </template>
 
@@ -165,12 +164,7 @@ export default {
       this.$emit('inputItems', this.searchTerm)
     },
     inputBrand() {
-      if (this.brand === '') {
-        this.model = ''
-        this.models = []
-      } else {
-        this.getModels(this.brand)
-      }
+      this.getModels(this.brand)
       this.$emit('inputBrand', this.brand)
     },
     inputModel() {
@@ -252,21 +246,20 @@ export default {
 }
 .price-inputs-container {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between; 
 }
 
-.price-input,
-.selects {
-  box-sizing: border-box;
-  width: calc(50% - 12px);
-  padding: 10px;
-  margin: 0;
+.price-input, .selects {
+  box-sizing: border-box; 
+  width: calc(50% - 12px); 
+  padding: 10px; 
+  margin: 0; 
   border: none;
+  
 }
 
 .price-input {
-  background-color: #fff;
+  background-color: #fff; 
   padding: 10px;
   border-radius: 5px;
   border: none;
@@ -280,14 +273,10 @@ input:focus {
   outline: none;
 }
 
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button {
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-input[type='number'] {
-  -moz-appearance: textfield;
 }
 
 .price-input:last-child {
@@ -295,14 +284,14 @@ input[type='number'] {
 }
 
 .price-separator {
-  display: inline-block;
-  width: auto;
+  display: inline-block; 
+  width: auto; 
   margin: 0 5px;
-  align-self: center;
+  align-self: center; 
 }
 
 .price-label {
-  margin-bottom: 10px;
+  margin-bottom: 10px; 
   color: #fff;
 }
 
@@ -311,7 +300,7 @@ input[type='number'] {
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  pointer-events: none;
+  pointer-events: none; 
   color: #fff;
 }
 
@@ -330,22 +319,22 @@ input[type='number'] {
 }
 
 .inputCarName {
-  box-sizing: border-box;
-  width: 100%;
-  padding: 10px;
+  box-sizing: border-box; 
+  width: 100%; 
+  padding: 10px; 
   font-size: 15px;
   border: none;
   border-radius: 4px 4px 2px 2px;
   background-color: white;
   outline: none;
-  margin: 0;
+  margin: 0; 
 }
 
 .input {
   max-width: 190px;
   background-color: #f5f5f5;
   color: #242424;
-  padding: 0.15rem 0.5rem;
+  padding: .15rem .5rem;
   min-height: 40px;
   border-radius: 4px;
   outline: none;
@@ -361,12 +350,13 @@ input:focus {
 
 .iconos {
   position: absolute;
-  left: 10px;
+  left: 10px; 
   top: 50%;
   transform: translateY(-50%);
   color: #fbc40e;
   z-index: 10;
 }
+
 
 .grupo {
   width: 90%;
@@ -385,6 +375,7 @@ input:focus {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+
 }
 
 .grupo:hover .selects {
@@ -402,12 +393,14 @@ input:focus {
   color: white;
 }
 
+
 .icono-marca {
   position: absolute;
-  left: 10px;
+  left: 10px; 
   top: 50%;
   transform: translateY(-50%);
   color: #fbc40e;
   z-index: 10;
 }
+
 </style>

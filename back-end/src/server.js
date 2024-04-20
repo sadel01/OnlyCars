@@ -54,7 +54,9 @@ client
   .catch((error) => {
     console.error('Failed to connect to database', error)
   })
-app.use(express.json())
+
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));  
 
 // Configuracion de eventos para el chat
 io.on('connection', (socket) => {
@@ -86,22 +88,6 @@ app.get('/catalog/:id', async (req, res) => {
   }
 })
 
-app.post('/upload', upload.array('files'), (req, res) => {
-  // Comprueba si se subieron archivos
-  if (req.files && req.files.length > 0) {
-    // Mapea los archivos para obtener sus rutas
-    const filePaths = req.files.map(file => {
-      return `../src/assets/uploads/${file.filename}`;
-    });
-
-    // Envía las rutas de los archivos en la respuesta
-    res.json({ message: 'Images uploaded successfully!', filePaths: filePaths });
-  } else {
-    // Si no hay archivos, envía un error
-    res.status(400).json({ message: 'No files uploaded.' });
-  }
-});
-
 app.post('/register', async (req, res) => {
   try {
     const database = client.db('onlycars')
@@ -115,7 +101,6 @@ app.post('/register', async (req, res) => {
 })
 
 app.post('/postsPrueba', async (req, res) => {
-  // SE DEBE CAMBIAR postsPrueba POR posts
   try {
     const database = client.db('onlycars')
     const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
