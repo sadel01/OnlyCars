@@ -37,6 +37,7 @@ export default {
       selectedTransmission: '',
       selectedYear: '',
       selectedFuel: '',
+      selectedModel: '',
       products: [],
       isLoading: false
     }

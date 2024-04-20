@@ -6,11 +6,18 @@
         <div class="text-container">
           <div class="text-block">
             <strong class="title">Nosotros</strong>
-            <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint omnis quis ad asperiores ab exercitationem nesciunt, minus voluptatum nihil repudiandae impedit perferendis laborum sapiente iste quo modi molestias provident natus. Cupiditate, nesciunt officia! Repellat nam assumenda aperiam blanditiis porro officiis vel enim accusantium autem. At iusto similique nemo. Veniam dolorum quia pariatur minus ipsa placeat. Impedit, tenetur nesciunt! Officia deleniti ducimus maiores corporis nisi!</p>
+            <p>
+              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint omnis quis ad
+              asperiores ab exercitationem nesciunt, minus voluptatum nihil repudiandae impedit
+              perferendis laborum sapiente iste quo modi molestias provident natus. Cupiditate,
+              nesciunt officia! Repellat nam assumenda aperiam blanditiis porro officiis vel enim
+              accusantium autem. At iusto similique nemo. Veniam dolorum quia pariatur minus ipsa
+              placeat. Impedit, tenetur nesciunt! Officia deleniti ducimus maiores corporis nisi!
+            </p>
           </div>
         </div>
         <div class="image-container">
-          <img src="@/assets/nosotros.jpeg" alt="explorer" class="content-image">
+          <img src="@/assets/nosotros.jpeg" alt="explorer" class="content-image" />
         </div>
       </div>
     </main>
@@ -22,8 +29,6 @@ import { RouterLink } from 'vue-router'
 </script>
 
 <style scoped>
-
-
 .content-wrapper {
   display: flex;
   align-items: center;
@@ -38,8 +43,7 @@ import { RouterLink } from 'vue-router'
   flex: 1;
   display: flex;
   height: 50vh;
-  margin-left: 1.5rem;
-  margin-right: 1.5rem;
+  margin: 1.5rem;
 }
 
 .content-image {
@@ -64,6 +68,7 @@ import { RouterLink } from 'vue-router'
   margin-bottom: 1rem;
   font-weight: bold;
 }
+
 button {
   background-color: green;
   color: white;
@@ -75,4 +80,37 @@ button {
   font-size: 20px;
 }
 
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column;
+    height: auto;
+    gap: 2rem;
+    padding: 1rem;
+  }
+
+  .image-container,
+  .text-container {
+    width: 100%;
+    margin: 0;
+  }
+
+  .content-image {
+    height: auto;
+  }
+
+  .title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.25rem;
+  }
+
+  button {
+    font-size: 18px;
+    padding: 0.75rem;
+  }
+}
 </style>

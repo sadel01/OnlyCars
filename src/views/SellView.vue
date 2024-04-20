@@ -74,17 +74,17 @@
         <div class="form-group">
           <label for="fuel">Combustible</label>
           <select id="fuel" v-model="vehicle.fuel">
-            <option value="gasoline">Gasolina</option>
-            <option value="diesel">Diésel</option>
-            <option value="electric">Eléctrico</option>
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diésel">Diésel</option>
+            <option value="Eléctrico">Eléctrico</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="transmission">Transmisión</label>
           <select id="transmission" v-model="vehicle.transmission">
-            <option value="manual">Manual</option>
-            <option value="automatic">Automático</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatico">Automático</option>
           </select>
         </div>
 
@@ -126,6 +126,15 @@
 import axios from 'axios';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+
+function imageToBase64(img) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(img);
+  });
+}
 
 export default {
   name: 'SellView',
@@ -195,16 +204,12 @@ export default {
     },
 
     async saveImages() {
-      const formData = new FormData();
-      this.filesToUpload.forEach(file => formData.append('files', file, file.name));
-      try {
-        const response = await axios.post('http://localhost:8080/upload', formData);
-        if (response.data.filePaths) this.imagePaths = response.data.filePaths;
-      } catch (error) {
-        console.error('Error al subir las imágenes:', error);
+      this.imagePaths = [];
+      for (let i = 0; i < this.filesToUpload.length; i++) {
+        const base64 = await imageToBase64(this.filesToUpload[i]);
+        this.imagePaths.push(base64);
       }
     },
-
     async fetchBrands() {
       try {
         const response = await fetch('http://localhost:8080/brands');
@@ -259,7 +264,7 @@ export default {
         }, 1500);
         console.error('Error al publicar el vehículo:', error);
       }
-    },
+    }
   },
   watch: {
     'vehicle.brand': function (newBrand) {
