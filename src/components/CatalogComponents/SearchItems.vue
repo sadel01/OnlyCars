@@ -61,7 +61,6 @@
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
 
-    <SearchItems @inputPrice="handlePriceChange" />
     <div class="grupo">
       <div class="price-filter-container">
         <div class="price-label">Precio</div>
