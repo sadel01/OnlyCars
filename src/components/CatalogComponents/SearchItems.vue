@@ -61,13 +61,66 @@
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
     <div class="grupo">
+      <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
+      <select v-model="location" @change="inputLocation" class="selects">
+        <option value="">Región</option>
+        <option value="region15">Arica y Parinacota</option>
+        <option value="region1">Tarapacá</option>
+        <option value="region2">Antofagasta</option>
+        <option value="region3">Atacama</option>
+        <option value="region4">Coquimbo</option>
+        <option value="region5">Valparaíso</option>
+        <option value="regionRM">Metropolitana</option>
+        <option value="region6">Bernardo O'Higgins</option>
+        <option value="region7">Maule</option>
+        <option value="region8">Biobío</option>
+        <option value="region9">La Araucanía</option>
+        <option value="region14">Los Ríos</option>
+        <option value="region10">Los Lagos</option>
+        <option value="region11">Aysén</option>
+        <option value="region12">Magallanes</option>
+      </select>
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+    </div>
+
+    <div class="grupo">
       <div class="price-filter-container">
-  <div class="price-label">Precio</div>
-  <div class="price-inputs-container">
-    <input type="number" class="price-input" placeholder="Min.">
-    <div class="price-separator">a</div>
-    <input type="number" class="price-input" placeholder="Max.">
-  </div>
+        <div class="price-label">Precio</div>
+        <div class="price-inputs-container">
+          <input
+            type="text"
+            class="price-input"
+            placeholder="Min."
+            v-model="minPrice"
+            @input="formatPriceInput('minPrice')"
+          />
+          <div class="price-separator">a</div>
+          <input
+            type="text"
+            class="price-input"
+            placeholder="Max."
+            v-model="maxPrice"
+            @input="formatPriceInput('maxPrice')"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="grupo">
+      <div class="km-filter-container">
+        <div class="price-label">Kilometraje</div>
+        <div class="price-inputs-container">
+          <input
+            type="text"
+            class="price-input"
+            placeholder="Km."
+            v-model="mileage"
+            @input="inputKM('minPrice')"
+          />
+          <button class="btnAplicar" @click="emitInput">Aplicar</button>
+        </div>
+      </div>
+    </div>
 </div>
     </div>
     
@@ -92,7 +145,12 @@ export default {
       model: '',
       year: '',
       fuel: '',
+      price: '',
       transmission: '',
+      location:'',
+      minPrice: '',
+      maxPrice: '',
+      mileage: '',
       yearOptions: []
     }
   },
@@ -124,6 +182,30 @@ export default {
     inputFuel() {
       this.$emit('inputFuel', this.fuel)
     },
+    inputLocation() {
+      this.$emit('inputLocation', this.location)
+    },
+    inputKM() {
+      this.$emit('inputKM', this.mileage)
+    },
+    updatePrice() {
+      this.price = [this.formatPriceInput(this.minPrice), this.formatPriceInput(this.maxPrice)]
+      this.$emit('inputPrice', this.price)
+    },
+    formatPriceInput(priceType) {
+      let value = this[priceType].replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (isNaN(value)) {
+        value = ''
+      } else {
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
+      }
+      this[priceType] = `$${value}` // añadir el signo de dolar
+      this.$emit('priceChange', { minPrice: this.minPrice, maxPrice: this.maxPrice });
+    },
+    handlePriceChange(minPrice, maxPrice) {
+      this.price = [minPrice, maxPrice]
+    },
     async getBrands() {
       try {
         const response = await axios.get('http://localhost:8080/brands')
@@ -145,6 +227,22 @@ export default {
 </script>
 
 <style>
+
+.btnAplicar {
+  background-color: #fbc40e;
+  color: white;
+  padding: 10px 0px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: calc(100% - 150px);
+  box-sizing: border-box;
+  margin: 0 10px;
+}
+
+.btnAplicar:hover {
+  background-color: #c19400;
+}
 
 .price-separator {
   color: #fff;

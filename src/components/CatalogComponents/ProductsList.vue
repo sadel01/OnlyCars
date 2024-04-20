@@ -3,14 +3,18 @@
     <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
-          <li v-for="product in paginatedProducts" :key="product.id" @click="showProductDetail(product)">
+          <li
+            v-for="product in paginatedProducts"
+            :key="product.id"
+            @click="showProductDetail(product)" 
+          >
             <div class="productCard">
               <div class="imageContainer">
                 <img :src="product.image[0]" alt="product image" class="imagenes" />
               </div>
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.brand }}</p>
+                  <p class="productText productTitle">{{ product.brand }} {{ product.model }}</p>
                 </div>
                 <div class="description">
                   <div class="detail">
@@ -32,6 +36,9 @@
             </div>
           </li>
         </ul>
+        <div v-if="!paginatedProducts.length" class="noProducts">
+          No hay productos disponibles.
+        </div>
         <div class="pageButton">
           <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
           <button v-for="n in maxPage" :key="n" @click="goToPage(n)" :class="{ buttonPage: true, buttonPageActive: n === page }">

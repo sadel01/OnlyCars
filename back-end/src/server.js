@@ -200,14 +200,21 @@ app.post('/chat/startChat', async (req, res) => {
 
 app.post('/chat/:id', async (req, res) => {
   try {
-    const database = client.db('onlycars')
-    const collection = database.collection('chat')
-    const chat = await collection.find().toArray()
-    res.send(chat)
+    const id = req.params.id;
+    const messages = req.body.message;
+    const database = client.db('onlycars');
+    const collection = database.collection('chat');
+    const chat = await collection.findOne({ _id: new ObjectId(id) });
+    
+    console.log('messages: '+messages);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { messages: messages} });
+    //console.log('Chat id : '+chat._id+' Chat message'+chat.messages);
+    res.send(chat);
   } catch (error) {
-    res.status(500).send(error.message)
+    res.status(500).send(error.message);
   }
-})
+});
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

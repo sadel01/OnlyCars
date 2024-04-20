@@ -37,6 +37,7 @@ export default {
       selectedTransmission: '',
       selectedYear: '',
       selectedFuel: '',
+      selectedModel: '',
       products: [],
       isLoading: false
     }
@@ -84,7 +85,6 @@ export default {
       try {
         const response = await axios.get('http://localhost:8080/posts')
         this.products = response.data
-        console.log(this.products)
       } catch (error) {
         console.error(error)
       } finally {
