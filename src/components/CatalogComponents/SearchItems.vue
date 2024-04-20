@@ -93,11 +93,7 @@ export default {
       year: '',
       fuel: '',
       transmission: '',
-      yearOptions: [],
-      minValue: 34000,
-      maxValue: 805000,
-      min: 10000,
-      max: 500000000
+      yearOptions: []
     }
   },
   created() {
@@ -108,34 +104,7 @@ export default {
     this.getBrands()
   },
 
-  computed: {
-    formattedMinValue() {
-      return this.formatCurrency(this.minValue)
-    },
-    formattedMaxValue() {
-      return this.formatCurrency(this.maxValue)
-    },
-    leftThumbPosition() {
-      return ((this.minValue - this.min) / (this.max - this.min)) * 100
-    },
-    rightThumbPosition() {
-      return ((this.max - this.maxValue) / (this.max - this.min)) * 100
-    }
-  },
   methods: {
-    handleMinInput(event) {
-      const value = Math.min(parseInt(event.target.value, 10), this.maxValue - 1000)
-      this.minValue = value
-    },
-    handleMaxInput(event) {
-      const value = Math.max(parseInt(event.target.value, 10), this.minValue + 1000)
-      this.maxValue = value
-    },
-    formatCurrency(value) {
-      // Formatea el número como moneda en formato chileno
-      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value)
-    },
-
     emitInput() {
       this.$emit('inputItems', this.searchTerm)
     },
@@ -246,7 +215,7 @@ input[type="number"] {
 }
 
 .searchContainer {
-  width: 90%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
