@@ -8,27 +8,28 @@
             :key="product.id"
             @click="showProductDetail(product)"
           >
-            <div class="productCard">
-              <img :src="product.image[0]" alt="product image" class="imagenes" />
-              <div class="vehicleDescription">
-                <div>
-                  <p class="productText productTitle">{{ product.brand }}</p>
-                </div>
+          <div class="productCard">
+  <div class="imageContainer">
+    <img :src="product.image[0]" alt="product image" class="imagenes" />
+  </div>
+  <div class="vehicleDescription">
+    <div>
+      <p class="productText productTitle">{{ product.brand }}</p>
+    </div>
+    <div class="description">
+      <p class="productText productDescription">{{ product.mileage }} KM</p>
+      <p class="productText productDescription data">
+        {{ product.transmission }}
+      </p>
+    </div>
+    <div class="productPrice">
+      <p class="productText productPriceText"></p>
+      <p class="productText productPriceNumber">${{ product.price }} CLP</p>
+    </div>
+    <button @click="viewMore(product._id)" class="verMas2"><span>Ver más</span></button>
+  </div>
+</div>
 
-                <div class="description">
-                  <p class="productText productDescription">{{ product.mileage }} KM</p>
-                  <p class="productText productDescription data">
-                    {{ product.transmission }}
-                  </p>
-                </div>
-
-                <div class="productPrice">
-                  <p class="productText productPriceText"></p>
-                  <p class="productText productPriceNumber">${{ product.price }} CLP</p>
-                </div>
-                <button @click="viewMore(product._id)" class="verMas2"><span>Ver más</span></button>
-              </div>
-            </div>
           </li>
         </ul>
 
@@ -143,6 +144,7 @@ export default {
 </script>
 
 <style scoped>
+
 .productDetailOpen {
   animation: 1s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-left both;
 }
@@ -241,9 +243,20 @@ export default {
   position: relative;
 }
 
+.imageContainer {
+  flex: 0 0 300px;
+  height: 200px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  object-fit: cover; 
+}
+
 .productCard .imagenes {
-  width: 30%;
-  object-fit: cover;
+  max-width: 100%;     
+  max-height: 100%;    
+  object-fit: cover; 
 }
 
 .principalContainer {
@@ -267,10 +280,10 @@ export default {
 }
 
 .imagenes {
-  width: 300px;
-  height: auto;
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
   border-radius: 10px;
-  margin: 20px;
 }
 
 .productText {
@@ -299,20 +312,18 @@ export default {
 }
 
 .productCard {
-  border-radius: 10px;
   display: flex;
-  margin: 20px;
-  background-color: #c2c2c27e;
-  margin-right: 30px;
-  height: 270px;
-  border: 2px solid #1717172c;
-  min-width: 350px;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  margin: 20px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  overflow: hidden; 
 }
+
 .productCard:hover {
-  transform: scale(1.02);
-  border-width: 1px;
-  background-color: white;
-  box-shadow: 0 0 20px #a8a8a8;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); 
+  background-color: #dadada;
   cursor: pointer;
 }
 
