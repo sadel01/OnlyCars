@@ -251,6 +251,7 @@ export default {
   align-items: center;
   overflow: hidden;
   object-fit: cover; 
+  margin: 20px;
 }
 
 .productCard .imagenes {
@@ -316,14 +317,14 @@ export default {
   flex-direction: row;
   align-items: center;
   border-radius: 10px;
-  margin: 20px 0;
+  margin: 20px 10px 0px 0px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   overflow: hidden; 
 }
 
 .productCard:hover {
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); 
-  background-color: #dadada;
+  box-shadow: 0 6px 10px 0 rgba(0,0,0,0.2); 
+  background-color: #cccccc5f;
   cursor: pointer;
 }
 
