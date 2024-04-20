@@ -43,11 +43,10 @@ export default {
       if (this.newMessage.trim() !== '') {
         socket.emit('message', this.newMessage, (error) => {
           if (error) {
-            console.error('Error sending message:', error)
-          } else {
-            this.newMessage = ''
+            console.error('Error sending message:', error);
           }
-        })
+        });
+        this.newMessage = '';
       }
     }
   }

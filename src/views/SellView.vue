@@ -116,7 +116,8 @@
         </div>
       </div>
     </div>
-
+    <p v-if="errorMessage" class="error" style="font-size: 12px; color:red; margin-left:20px">{{ errorMessage }}</p>
+    <p v-if="successMessage" class="success" style="font-size: 12px; color:green; margin-left:20px">{{ successMessage }}</p>
     <button type="button" @click="submitVehicle">Publicar</button>
   </div>
 </template>
@@ -149,6 +150,8 @@ export default {
         airbag: '',
         price: '', //Precio del vehiculo
       },
+      errorMessage: '',
+      successMessage: '',
       brands: [],
       models: [],
       filesToUpload: [],
@@ -225,6 +228,10 @@ export default {
     },
 
     async submitVehicle() {
+      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price) {
+        this.errorMessage = 'Todos los campos son obligatorios';
+      return;
+    }
       try {
         const user = this.$store.state.user;
         await this.saveImages();
@@ -239,9 +246,17 @@ export default {
             rut: user.rut,
           },
         };
+        this.successMessage = 'Auto publicado con éxito';
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 1500);
         const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData);
         console.log('Response from the server:', response.data);
       } catch (error) {
+        this.errorMessage = 'Error al publicar';
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 1500);
         console.error('Error al publicar el vehículo:', error);
       }
     },
