@@ -57,14 +57,26 @@ client
 app.use(express.json())
 
 // Configuracion de eventos para el chat
+
+
+
 io.on('connection', (socket) => {
-  socket.on('message', (msg) => {
-    console.log('message: ' + msg)
-    io.emit('message', msg)
-  })
+  // Cuando un cliente se conecta, se une a una sala específica
+  socket.on('join', (room) => {
+    socket.join(room);
+    console.log('joined room: ' + room)
+  });
+
+  // Cuando se recibe un mensaje, se emite solo a la sala específica
+  socket.on('message', (room, message) => {
+    console.log('message: ' + message)
+    io.to(room).emit('message', message);
+  });
+
   socket.on('disconnect', () => {
-  })
-})
+    // Cuando un cliente se desconecta, se puede manejar aquí
+  });
+});
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('es-CL', {
@@ -73,6 +85,7 @@ function formatCurrency(value) {
       minimumFractionDigits: 0
   }).format(value);
 }
+
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -193,6 +206,8 @@ app.get('/posts', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
+
+
 
 
 // iniciar un chat
