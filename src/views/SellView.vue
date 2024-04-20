@@ -83,8 +83,8 @@
         <div class="form-group">
           <label for="transmission">Transmisión</label>
           <select id="transmission" v-model="vehicle.transmission">
-            <option value="manual">Manual</option>
-            <option value="automatic">Automático</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatico">Automático</option>
           </select>
         </div>
 

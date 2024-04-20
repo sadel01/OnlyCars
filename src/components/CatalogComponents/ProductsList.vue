@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCar } from '@fortawesome/free-solid-svg-icons'
 import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
 import axios from 'axios'
