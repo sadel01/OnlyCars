@@ -61,6 +61,15 @@ export default {
 
       const chatID = response.data._id
 
+      this.$store.commit('setChat', {
+        _id: chatID,
+        buyerID: this.user._id,
+        sellerID: this.product.user._id,
+        productID: this.product._id
+      });
+
+      console.log(this.$store.state.chat)
+
       this.$router.push(`/chat/${chatID}`)
     }
   },

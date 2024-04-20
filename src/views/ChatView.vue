@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import io from 'socket.io-client'
 const socket = io('http://localhost:8080')
 
@@ -31,6 +32,7 @@ export default {
   created() {
     socket.on('message', (message) => {
       this.messages.push(message)
+      this.uploadMessages()
     })
 
     socket.on('connectError', (error) => {
@@ -48,7 +50,14 @@ export default {
             this.newMessage = ''
           }
         })
-      }
+      }        
+    },
+    async uploadMessages() {
+      const chatID = this.$store.state.chat._id
+      await axios.post('http://localhost:8080/chat/'+chatID, {
+        id : chatID,
+        message: this.messages,
+      })
     }
   }
 }
