@@ -60,6 +60,18 @@
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron"/>
     </div>
+    <div class="grupo">
+      <div class="price-filter-container">
+  <div class="price-label">Precio</div>
+  <div class="price-inputs-container">
+    <input type="number" class="price-input" placeholder="Min.">
+    <div class="price-separator">a</div>
+    <input type="number" class="price-input" placeholder="Max.">
+  </div>
+</div>
+    </div>
+    
+
   </div>
 </template>
 
@@ -133,6 +145,65 @@ export default {
 </script>
 
 <style>
+
+.price-separator {
+  color: #fff;
+}
+.price-inputs-container {
+  display: flex;
+  justify-content: space-between; 
+}
+
+.price-input, .selects {
+  box-sizing: border-box; 
+  width: calc(50% - 12px); 
+  padding: 10px; 
+  margin: 0; 
+  border: none;
+  
+}
+
+.price-input {
+  background-color: #fff; 
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+}
+
+.price-input:hover {
+  background-color: #d1d1d1;
+}
+
+input:focus {
+  outline: none;
+}
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.price-input:last-child {
+  margin-right: 0;
+}
+
+.price-separator {
+  display: inline-block; 
+  width: auto; 
+  margin: 0 5px;
+  align-self: center; 
+}
+
+.price-label {
+  margin-bottom: 10px; 
+  color: #fff;
+}
 
 .icono-chevron {
   position: absolute;
