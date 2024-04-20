@@ -57,20 +57,36 @@ export default {
         buyerID: this.user._id,
         sellerID: this.product.user._id,
         productID: this.product._id
+      }).then((response) => {
+        //Si se puede refactorizar este codigo, por favor haganlo :D
+        if (response.data._id === undefined) {
+          this.$store.commit('setChat', {
+            _id: response.data.insertedId,
+            buyerID: this.user._id,
+            sellerID: this.product.user._id,
+            productID: this.product._id
+          });
+        }else{
+          this.$store.commit('setChat', {
+            _id: response.data._id,
+            buyerID: this.user._id,
+            sellerID: this.product.user._id,
+            productID: this.product._id
+          });
+        } 
+        
+        console.log(this.$store.state.chat)
+
+        this.$router.push(`/chat/${this.$store.state.chat._id}`)
+
+      }).catch((error) => {
+        console.log(error)
       })
+      
+      
+    
 
-      const chatID = response.data._id
-
-      this.$store.commit('setChat', {
-        _id: chatID,
-        buyerID: this.user._id,
-        sellerID: this.product.user._id,
-        productID: this.product._id
-      });
-
-      console.log(this.$store.state.chat)
-
-      this.$router.push(`/chat/${chatID}`)
+      
     }
   },
   async created() {
