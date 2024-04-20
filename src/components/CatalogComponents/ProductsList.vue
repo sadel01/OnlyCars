@@ -12,7 +12,7 @@
               <img :src="product.image[0]" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.brand }}</p>
+                  <p class="productText productTitle">{{ product.brand }} {{ product.model }}</p>
                 </div>
 
                 <div class="description">
@@ -64,6 +64,8 @@
 </template>
 
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCar } from '@fortawesome/free-solid-svg-icons'
 import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
 import axios from 'axios'

@@ -1,7 +1,7 @@
 <template>
   <main>
     <div class="productDetails">
-      <p class="detalleVehiculo">{{ product.brand }}</p>
+      <p class="detalleVehiculo">{{ product.brand }} {{ product.model }}</p>
       <button class="closeButton" @click="closePanel">x</button>
 
       <carousel :items-to-show="1">
@@ -16,13 +16,13 @@
 
       <div class="description">
         <div class="card">
-          <FontAwesomeIcon :icon="faGaugeHigh" class="icono" />
-          <p class="productText productTitle">ECONOMIA</p>
+          <FontAwesomeIcon :icon="faCalendarDays" class="icono" />
+          <p class="productText productTitle">{{ product.year }}</p>
         </div>
 
         <div class="card">
           <FontAwesomeIcon :icon="faGasPump" class="icono" />
-          <p class="productText productDescription">COMBUSTIBLE</p>
+          <p class="productText productDescription">{{ product.fuel }}</p>
         </div>
 
         <div class="card">
@@ -32,7 +32,7 @@
 
         <div class="card">
           <FontAwesomeIcon :icon="faWrench" class="icono" />
-          <p class="productText productPriceNumber">MOTOR</p>
+          <p class="productText productPriceNumber">{{ product.cylinderCapacity }}</p>
         </div>
       </div>
 
@@ -48,7 +48,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faGasPump,
-  faGaugeHigh,
+  faCalendarDays,
   faCar,
   faMoneyBill,
   faLocationDot,
@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       faGasPump: faGasPump,
-      faGaugeHigh: faGaugeHigh,
+      faCalendarDays: faCalendarDays,
       faCar: faCar,
       faMoneyBill: faMoneyBill,
       faLocationDot: faLocationDot,
@@ -131,15 +131,7 @@ export default {
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
   margin: 0px 10px 0 10px;
 }
-.card:hover {
-  transform: scale(1.02);
-  background: white;
-  -webkit-box-shadow: 10px 5px 18px 0 rgba(255, 255, 255, 0.877);
-  box-shadow: 10px 5px 18px 0 rgb(133, 133, 133);
-}
-.card:hover .icono {
-  color: #fbc40e;
-}
+
 .description {
   display: flex;
   justify-content: center;
@@ -239,11 +231,6 @@ export default {
   border: 2px solid #0707072c;
   display: flex;
   flex-direction: column;
-  cursor: pointer;
-}
-
-.productDetails:hover {
-  cursor: pointer;
 }
 
 .content-image {

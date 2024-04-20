@@ -42,19 +42,19 @@ const limpiarMensaje = () => {
       <div class="enviarCorreo">
         <p class="textoContactanos">Contáctanos</p>
         <form class="form" type="contacto">
-            <div class="groupC">
-            <input placeholder="‎" type="text" required="">
+          <div class="groupC">
+            <input placeholder="‎" type="text" required="" />
             <label for="name">Nombre</label>
           </div>
           <div class="groupC">
-            <input placeholder="‎" type="email" id="email" name="email" required="">
+            <input placeholder="‎" type="email" id="email" name="email" required="" />
             <label for="email">Correo Electrónico</label>
           </div>
           <div class="groupC">
             <textarea placeholder="‎" id="comment" name="comment" rows="5" required=""></textarea>
             <label for="comment">Mensaje</label>
           </div>
-          </form>
+        </form>
         <button type="botonsubmit" @click="enviarFormulario"><span>ENVIAR</span></button>
         <div v-if="enviado" class="mensajeExito">(*)Mensaje enviado con éxito</div>
       </div>
@@ -63,7 +63,7 @@ const limpiarMensaje = () => {
 </template>
 
 <style>
-.form[type="contacto"]{
+.form[type='contacto'] {
   bottom: 20%;
   display: flex;
   flex-direction: column;
@@ -74,16 +74,16 @@ const limpiarMensaje = () => {
   position: relative;
 }
 
-.form[type="contacto"] .groupC label {
-  color: #FBC40E;
+.form[type='contacto'] .groupC label {
+  color: #fbc40e;
   position: absolute;
-  top:-3%;
+  top: -3%;
   left: 10px;
-  transition: all .3s ease;
+  transition: all 0.3s ease;
 }
 
-.form[type="contacto"] .groupC input,
-.form[type="contacto"] .groupC textarea {
+.form[type='contacto'] .groupC input,
+.form[type='contacto'] .groupC textarea {
   color: white;
   padding: 2%;
   border-radius: 5px;
@@ -92,49 +92,46 @@ const limpiarMensaje = () => {
   outline: 0;
   width: 100%;
   height: 50%;
-  bottom:10%;
+  bottom: 10%;
   background-color: transparent;
   font-size: 16px;
 }
 
-.form[type="contacto"] .groupC input:placeholder-shown+ label, .form .groupC textarea:placeholder-shown +label {
+.form[type='contacto'] .groupC input:placeholder-shown + label,
+.form .groupC textarea:placeholder-shown + label {
   top: 15px;
   background-color: transparent;
   color: white;
 }
 
-.form[type="contacto"] .groupC input:focus,
-.form[type="contacto"] .groupC textarea:focus {
-  border-color: #FBC40E;
+.form[type='contacto'] .groupC input:focus,
+.form[type='contacto'] .groupC textarea:focus {
+  border-color: #fbc40e;
 }
 
-.form[type="contacto"] .groupC input:focus+ label, .form .groupC textarea:focus +label {
+.form[type='contacto'] .groupC input:focus + label,
+.form .groupC textarea:focus + label {
   top: -2%;
   left: 10px;
   background-color: transparent;
-  color: #FBC40E;
+  color: #fbc40e;
   font-weight: 600;
   font-size: 14px;
 }
 
-.form[type="contacto"] .groupC textarea {
+.form[type='contacto'] .groupC textarea {
   resize: none;
   height: 120px;
 }
 
-
-
-
-
 .principal {
-  background-image: url("@/assets/amogus.jpg");
+  background-image: url('@/assets/amogus.jpg');
   background-size: cover;
   background-position: center;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  
 }
 
 .iconos {
@@ -200,7 +197,7 @@ const limpiarMensaje = () => {
   backdrop-filter: blur(20px);
   background-color: rgba(0, 0, 0, 0.7);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  color: #FBC40E;
+  color: #fbc40e;
 }
 
 .linea {
@@ -209,7 +206,7 @@ const limpiarMensaje = () => {
   bottom: 10%;
   left: 50%;
   width: 1px;
-  background-color: #FBC40E;
+  background-color: #fbc40e;
 }
 
 .enviarCorreo {
@@ -246,7 +243,7 @@ const limpiarMensaje = () => {
 
 button[type='botonsubmit'] {
   margin-top: 5%;
-  bottom:10%;
+  bottom: 10%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -287,10 +284,10 @@ button[type='botonsubmit'] span {
   z-index: 20;
   transition: all 0.3s ease-in-out;
 }
-button[type="botonsubmit"]:hover span {
-    color: white;
-    animation: scaleUp 0.3s ease-in-out;
-  }
+button[type='botonsubmit']:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
+}
 .mensajeExito {
   position: absolute;
   top: 10px;

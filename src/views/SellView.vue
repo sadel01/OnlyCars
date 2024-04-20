@@ -74,17 +74,17 @@
         <div class="form-group">
           <label for="fuel">Combustible</label>
           <select id="fuel" v-model="vehicle.fuel">
-            <option value="gasoline">Gasolina</option>
-            <option value="diesel">Diésel</option>
-            <option value="electric">Eléctrico</option>
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diésel">Diésel</option>
+            <option value="Eléctrico">Eléctrico</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="transmission">Transmisión</label>
           <select id="transmission" v-model="vehicle.transmission">
-            <option value="manual">Manual</option>
-            <option value="automatic">Automático</option>
+            <option value="Manual">Manual</option>
+            <option value="Automatico">Automático</option>
           </select>
         </div>
 
