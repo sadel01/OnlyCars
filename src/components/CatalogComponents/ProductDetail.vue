@@ -177,6 +177,9 @@ export default {
   padding: 4% 39.3%;
   width: auto;
 }
+.verMas:hover{
+  cursor: pointer;
+}
 
 .verMas:after {
   content: ' ';
@@ -239,12 +242,8 @@ export default {
   border: 2px solid #0707072c;
   display: flex;
   flex-direction: column;
-  cursor: pointer;
 }
 
-.productDetails:hover {
-  cursor: pointer;
-}
 
 .content-image {
   display: block;

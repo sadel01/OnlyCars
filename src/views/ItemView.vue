@@ -23,7 +23,7 @@
             <p>{{ product.location }}</p>
             <p>{{ product.engine }}</p>
           </div>
-          <p v-if="errorMessage" class="error" style="font-size: 17px; color: red">{{ errorMessage }}</p>
+          <p v-if="errorMessage" class="errorMessage" style="font-size: 17px; color: red">{{ errorMessage }}</p>
           <button id="botonContactar" type="submit" @click="contactSeller">
             <span>Contactar al vendedor </span>
           </button>
@@ -85,7 +85,7 @@ export default {
 .info{
   margin-bottom: 5%;
 }
-.error{
+.errorMessage{
   margin-top: 5%;
 }
 .imagen {
