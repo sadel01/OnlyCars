@@ -15,15 +15,19 @@
               </template>
             </carousel>
           </div>
-          <h1>{{ product.price }}</h1>
-          <p>{{ product.fuel }}</p>
-          <p>{{ product.transmission }}</p>
-          <p>{{ product.mileage }}</p>
-          <p>{{ product.location }}</p>
-          <p>{{ product.engine }}</p>
+          <div class="info">
+            <h1>{{ product.price }}</h1>
+            <p>{{ product.fuel }}</p>
+            <p>{{ product.transmission }}</p>
+            <p>{{ product.mileage }}</p>
+            <p>{{ product.location }}</p>
+            <p>{{ product.engine }}</p>
+          </div>
+          <p v-if="errorMessage" class="error" style="font-size: 17px; color: red">{{ errorMessage }}</p>
           <button id="botonContactar" type="submit" @click="contactSeller">
             <span>Contactar al vendedor </span>
           </button>
+          
         </div>
       </div>
     </div>
@@ -37,7 +41,8 @@ import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 export default {
   data() {
     return {
-      product: null
+      product: null,
+      errorMessage: ''
     }
   },
   components: {
@@ -53,6 +58,11 @@ export default {
   },
   methods: {
     async contactSeller() {
+      if (!this.user) {
+        this.errorMessage = 'Debe iniciar sesión para contactar al vendedor'
+        return
+      }
+      
       const response = await axios.post('http://localhost:8080/chat/startChat', {
         buyerID: this.user._id,
         sellerID: this.product.user._id,
@@ -71,8 +81,13 @@ export default {
   }
 }
 </script>
-
 <style scoped>
+.info{
+  margin-bottom: 5%;
+}
+.error{
+  margin-top: 5%;
+}
 .imagen {
   width: auto;
   height: auto;
@@ -108,7 +123,6 @@ export default {
 }
 
 button[type='submit'] {
-  margin-top: 5%;
   margin-bottom: 5%;
   position: relative;
   display: flex;

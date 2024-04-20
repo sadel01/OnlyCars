@@ -90,6 +90,10 @@ nav {
   display: flex;
   align-items: center;
 }
+.nav-link:hover{
+  color: #FBC40E;
+
+}
 
 .nav-link, .nav-button {
   margin: 0 1rem;
@@ -101,6 +105,9 @@ nav {
 
 .nav-button {
   color: #FBC40E;
+}
+.nav-button:hover{
+  color: #c19400;
 }
 
 @media (max-width: 768px) {
