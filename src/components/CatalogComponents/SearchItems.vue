@@ -13,7 +13,11 @@ export default {
       year: '',
       fuel: '',
       transmission: '',
-      yearOptions: []
+      yearOptions: [],
+      minValue: 34000,
+      maxValue: 805000,
+      min: 10000,
+      max: 500000000
     }
   },
   created() {
@@ -24,7 +28,34 @@ export default {
     this.getBrands()
   },
 
+  computed: {
+    formattedMinValue() {
+      return this.formatCurrency(this.minValue)
+    },
+    formattedMaxValue() {
+      return this.formatCurrency(this.maxValue)
+    },
+    leftThumbPosition() {
+      return ((this.minValue - this.min) / (this.max - this.min)) * 100
+    },
+    rightThumbPosition() {
+      return ((this.max - this.maxValue) / (this.max - this.min)) * 100
+    }
+  },
   methods: {
+    handleMinInput(event) {
+      const value = Math.min(parseInt(event.target.value, 10), this.maxValue - 1000)
+      this.minValue = value
+    },
+    handleMaxInput(event) {
+      const value = Math.max(parseInt(event.target.value, 10), this.minValue + 1000)
+      this.maxValue = value
+    },
+    formatCurrency(value) {
+      // Formatea el número como moneda en formato chileno
+      return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(value)
+    },
+
     emitInput() {
       this.$emit('inputItems', this.searchTerm)
     },
@@ -63,7 +94,6 @@ export default {
   }
 }
 </script>
-
 
 <template>
   <div class="searchContainer">
@@ -156,6 +186,43 @@ export default {
         <option value="automatic">Automático</option>
       </select>
     </div>
+
+    <div class="price-range-container">
+      <div class="price-range-header">
+        <h3>RANGO DE PRECIOS</h3>
+      </div>
+      <div class="input-group">
+        <label for="min">Mínimo</label>
+        <input type="text" id="min" :value="formattedMinValue" readonly />
+        <label for="max">Máximo</label>
+        <input type="text" id="max" :value="formattedMaxValue" readonly />
+      </div>
+      <div class="slider-container">
+        <input
+          type="range"
+          :min="min"
+          :max="max"
+          v-model="minValue"
+          @input="handleMinInput"
+          step="1000"
+        />
+        <input
+          type="range"
+          :min="min"
+          :max="max"
+          v-model="maxValue"
+          @input="handleMaxInput"
+          step="1000"
+        />
+        <div class="track">
+          <div
+            class="range"
+            :style="{ left: leftThumbPosition + '%', right: rightThumbPosition + '%' }"
+          ></div>
+        </div>
+      </div>
+      <button class="apply-button">Aplicar</button>
+    </div>
   </div>
 </template>
 
@@ -165,6 +232,102 @@ no agregar todas las marcas que existan, solo las que esten en la base de datos,
 puede
 
 <style>
+.price-range-container {
+  width: 70%; /* Ajusta este valor según tus necesidades */
+  height: auto;
+  padding: 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: auto;
+}
+
+.price-range-header h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.input-group {
+  height: auto;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.input-group input[type='text'] {
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.input-group span {
+  font-size: 1rem;
+  color: #333;
+}
+
+.slider-container {
+  position: relative;
+  margin: 1rem 0;
+}
+
+.slider-container input[type='range'] {
+  width: 100%;
+  background: transparent;
+  -webkit-appearance: none;
+}
+
+.slider-container input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 1.5rem;
+  width: 1.5rem;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #ddd;
+  cursor: pointer;
+  margin-top: -0.5rem; /* Required to align thumb with the track */
+}
+
+.slider-container .track {
+  height: 0.4rem;
+  background: #ddd;
+  border-radius: 0.2rem;
+  position: relative;
+}
+
+.slider-container .range {
+  position: absolute;
+  background: #fbc40e;
+  border-radius: 0.2rem;
+  height: 0.4rem;
+}
+
+.apply-button {
+  background: #fbc40e;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.6rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.apply-button:hover {
+  background: #c19400;
+}
+
 .searchContainer {
   width: 90%;
   display: flex;
@@ -174,11 +337,11 @@ puede
 }
 
 .grupo {
-  width: 80%; 
-  max-width: 600px; 
+  width: 80%;
+  max-width: 600px;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start; 
+  align-items: flex-start;
   margin-top: 10px;
   margin-bottom: 10px;
   background-color: #1a1a1a;
@@ -193,7 +356,6 @@ puede
   margin-bottom: 20px;
 }
 
-
 .inputCarName {
   width: 85%;
   height: 20px;
@@ -207,7 +369,7 @@ puede
 }
 
 .inputCarName:focus {
-  border-color: #FBC40E;
+  border-color: #fbc40e;
   box-shadow: 0 0 0 0.2rem #ffdd6f;
 }
 
@@ -239,7 +401,7 @@ puede
 .selects:hover {
   font-size: 15px;
   color: black;
-  border: 3px solid #FBC40E;
+  border: 3px solid #fbc40e;
   box-sizing: border-box;
 }
 .modelo {

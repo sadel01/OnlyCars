@@ -74,9 +74,9 @@
         <div class="form-group">
           <label for="fuel">Combustible</label>
           <select id="fuel" v-model="vehicle.fuel">
-            <option value="gasoline">Gasolina</option>
-            <option value="diesel">Diésel</option>
-            <option value="electric">Eléctrico</option>
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diésel">Diésel</option>
+            <option value="Eléctrico">Eléctrico</option>
           </select>
         </div>
 
