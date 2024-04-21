@@ -12,7 +12,7 @@
               <img :src="product.image[0]" alt="product image" class="imagenes" />
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.brand }} {{ product.model }}</p>
+                  <p class="productText productTitle">{{ product.year }} {{ product.brand }} {{ product.model }}</p>
                 </div>
                   
                 <div class="description">

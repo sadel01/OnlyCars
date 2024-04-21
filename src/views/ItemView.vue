@@ -71,7 +71,7 @@ export default {
 
       const chatID = response.data._id
 
-      this.$router.push(`/chat/${chatID}`)
+      window.open(`/chat/${chatID}`)
     }
   },
   async created() {
