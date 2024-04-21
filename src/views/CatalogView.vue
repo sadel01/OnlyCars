@@ -8,6 +8,7 @@
         @inputTransmission="updateSelectedTransmission"
         @inputYear="updateSelectedYear"
         @inputFuel="updateSelectedFuel"
+        @inputKM="updateSelectedMileage"
       />
     </div>
     <div class="productsList">
@@ -38,6 +39,7 @@ export default {
       selectedYear: '',
       selectedFuel: '',
       selectedModel: '',
+      selectedMileage: '',
       products: [],
       isLoading: false
     }
@@ -52,7 +54,9 @@ export default {
             (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
             (!this.selectedYear || product.year === this.selectedYear) &&
             (!this.selectedFuel || product.fuel === this.selectedFuel) &&
-            (!this.selectedModel || product.model === this.selectedModel)
+            (!this.selectedModel || product.model === this.selectedModel) &&
+            (!this.selectedMileage ||
+              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage))
         )
       } catch (error) {
         console.error(error)
@@ -78,6 +82,9 @@ export default {
     },
     updateSelectedModel(model) {
       this.selectedModel = model
+    },
+    updateSelectedMileage(mileage) {
+      this.selectedMileage = mileage
     },
 
     async fetchProducts() {
@@ -133,7 +140,6 @@ export default {
   background-color: rgba(0, 0, 0, 0.5); /* Opcional: fondo semitransparente */
 }
 
-
 #loading-text {
   font-size: 1.5rem;
   margin-bottom: 20px;
@@ -149,7 +155,11 @@ export default {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
