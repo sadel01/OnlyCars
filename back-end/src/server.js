@@ -204,10 +204,16 @@ app.post('/chat/startChat', async (req, res) => {
     let chat = await collection.findOne({buyerID, sellerID, productID});
 
     if (!chat) {
+      if (buyerID === sellerID) {
+        const chats = await collection.find({sellerID}).toArray();
+        res.send({success : true, message: 'No puedes iniciar un chat contigo mismo',sellerID });
+        return;
+      }
       chat = await collection.insertOne({buyerID, sellerID, productID, messages: []});
+    }else{
+      res.send(chat);
     }
-
-    res.send(chat);
+    
   } catch (error) {
     res.status(500).send(error.message)
   }
