@@ -45,6 +45,7 @@
         <div class="form-group">
           <label for="condition">Condición</label>
           <select id="condition" v-model="vehicle.condition">
+            <option value="" disabled selected>Seleccione una condición</option>
             <option value="new">Nuevo</option>
             <option value="used">Usado</option>
           </select>
@@ -68,12 +69,34 @@
             @input="formatPriceInput"
           />
         </div>
+
+        <div class="form-group">
+          <label for="seguro">Seguro</label>
+          <select id="seguro" v-model="vehicle.seguro">
+            <option value="" disabled selected>Seleccione un seguro</option>
+            <option value="RS">Responsabilidad social</option>
+            <option value="C">Colisión</option>
+            <option value="CRV">Contra robos y vandalismo</option>
+            <option value="MSS/CSI">Motorista sin seguro o con seguro insuficiente</option>
+            <option value="PAP">Protección para accidentes personales</option>
+            <option value="AA">Alquiler de automóviles</option>
+            <option value="AC">Asistencia en carretera</option>
+            <option value="GAP">GAP</option>
+            <option value="SS">Sin seguro</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="interiorColor">Color Interior</label>
+          <input type="text" id="interiorColor" v-model="vehicle.interiorColor" placeholder="Ingrese un color"/>
+        </div>
       </div>
 
       <div class="details-column">
         <div class="form-group">
           <label for="fuel">Combustible</label>
           <select id="fuel" v-model="vehicle.fuel">
+            <option value="" disabled selected>Selecciona un combustible</option>
             <option value="Gasolina">Gasolina</option>
             <option value="Diésel">Diésel</option>
             <option value="Eléctrico">Eléctrico</option>
@@ -83,6 +106,7 @@
         <div class="form-group">
           <label for="transmission">Transmisión</label>
           <select id="transmission" v-model="vehicle.transmission">
+            <option value="" disabled selected>Selecciona una transmisión</option>
             <option value="Manual">Manual</option>
             <option value="Automatico">Automático</option>
           </select>
@@ -91,6 +115,7 @@
         <div class="form-group">
           <label for="driveTrain">Tracción</label>
           <select id="driveTrain" v-model="vehicle.driveTrain">
+            <option value="" disabled selected>Selecciona una tracción</option>
             <option value="fwd">FWD - Tracción delantera</option>
             <option value="rwd">RWD - Tracción trasera</option>
             <option value="awd">AWD - Tracción total</option>
@@ -104,17 +129,38 @@
             id="mileage"
             v-model="vehicle.mileage"
             placeholder="Ingrese kilometraje"
+            @input="formatKMInput"
           />
         </div>
 
         <div class="form-group">
           <label for="airbag">Airbag</label>
           <select id="airbag" v-model="vehicle.airbag">
+            <option value="" disabled selected>¿Tiene airbag?</option>
             <option value="yes">Sí</option>
             <option value="no">No</option>
           </select>
         </div>
+
+        <div class="form-group">
+          <label for="owners">N° propietarios anteriores</label>
+          <input type="text" id="owners" v-model="vehicle.owners" placeholder="Ingrese el número" />
+        </div>
+
+        <div class="form-group">
+          <label for="doors">N° puertas</label>
+          <input type="text" id="doors" v-model="vehicle.doors" placeholder="Ingrese el número" />
+        </div>
+
+        <div class="form-group">
+          <label for="exteriorColor">Color Exterior</label>
+          <input type="text" id="exteriorColor" v-model="vehicle.exteriorColor" placeholder="Ingrese el color"/>
+        </div>
       </div>
+    </div>
+    <div class="form-group">
+      <label for="description">Descripción</label>
+      <textarea type="text" id="description" v-model="vehicle.description" placeholder="Ingrese descripción"/>
     </div>
     <p v-if="errorMessage" class="error" style="font-size: 12px; color:red; margin-left:20px">{{ errorMessage }}</p>
     <p v-if="successMessage" class="success" style="font-size: 12px; color:green; margin-left:20px">{{ successMessage }}</p>
@@ -165,6 +211,12 @@ export default {
         cylinderCapacity: '',
         airbag: '',
         price: '', //Precio del vehiculo
+        owners: '', //Numero de propietarios anteriores
+        seguro: '', //Tipo de seguro
+        doors: '', //Numero de puertas
+        interiorColor: '', //Color interior
+        exteriorColor: '', //Color exterior
+        description: '',
       },
       errorMessage: '',
       successMessage: '',
@@ -177,6 +229,16 @@ export default {
     };
   },
   methods: {
+    formatKMInput() {
+      let value = this.vehicle.mileage.replace(/[\D]/g, ''); 
+      value = parseInt(value, 10);
+      if (isNaN(value)) {
+        value = '';
+      } else {
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Para colocar puntos chavales
+      }
+      this.vehicle.mileage = value
+    },
     formatPriceInput() {
       let value = this.vehicle.price.replace(/[\D]/g, ''); 
       value = parseInt(value, 10);
@@ -241,7 +303,7 @@ export default {
     },
 
     async submitVehicle() {
-      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price) {
+      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price || !this.vehicle.owners || !this.vehicle.seguro || !this.vehicle.doors || !this.vehicle.interiorColor || !this.vehicle.exteriorColor) {
         this.errorMessage = 'Todos los campos son obligatorios';
         setTimeout(() => {
           this.errorMessage = '';
@@ -282,6 +344,12 @@ export default {
           cylinderCapacity: '',
           airbag: '',
           price: '',
+          owners: '',
+          seguro: '',
+          doors: '',
+          interiorColor: '',
+          exteriorColor: '',
+          description: '',
         };
       } catch (error) {
         this.errorMessage = 'Error al publicar';
@@ -308,6 +376,18 @@ export default {
 
 
 <style scoped>
+
+#description {
+  width: 98%;
+  height: 150px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  resize: none; /* Esto desactiva la capacidad de cambiar el tamaño del textarea */
+  margin-left: 9px;
+}
+
 .imagePreviews {
   display: flex;
   flex-wrap: wrap;
