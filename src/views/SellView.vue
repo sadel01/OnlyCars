@@ -118,7 +118,14 @@
     </div>
     <p v-if="errorMessage" class="error" style="font-size: 12px; color:red; margin-left:20px">{{ errorMessage }}</p>
     <p v-if="successMessage" class="success" style="font-size: 12px; color:green; margin-left:20px">{{ successMessage }}</p>
-    <button type="button" @click="submitVehicle">Publicar</button>
+    <button type="button" @click="submitVehicle" :disabled="isLoading">
+      <span v-if="isLoading">
+        <i class="fa fa-spinner fa-spin"></i> Cargando...
+      </span>
+      <span v-else>
+        Publicar
+      </span>
+    </button>
   </div>
 </template>
 
@@ -166,6 +173,7 @@ export default {
       filesToUpload: [],
       imagePreviews: [],
       imagePaths: [],
+      isLoading: false,
     };
   },
   methods: {
@@ -235,9 +243,13 @@ export default {
     async submitVehicle() {
       if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price) {
         this.errorMessage = 'Todos los campos son obligatorios';
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 2000);
       return;
     }
       try {
+        this.isLoading = true;
         const user = this.$store.state.user;
         await this.saveImages();
         const vehicleData = {
@@ -254,15 +266,32 @@ export default {
         this.successMessage = 'Auto publicado con éxito';
         setTimeout(() => {
           this.successMessage = '';
-        }, 1500);
+        }, 2000);
         const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData);
         console.log('Response from the server:', response.data);
+        // Reset vehicle data
+        this.vehicle = {
+          brand: '',
+          model: '',
+          year: '',
+          condition: '',
+          mileage: '',
+          fuel: '',
+          transmission: '',
+          driveTrain: '',
+          cylinderCapacity: '',
+          airbag: '',
+          price: '',
+        };
       } catch (error) {
         this.errorMessage = 'Error al publicar';
         setTimeout(() => {
-          this.successMessage = '';
+          this.errorMessage = '';
         }, 1500);
         console.error('Error al publicar el vehículo:', error);
+      } finally {
+        this.isLoading = false;
+        this.imagePreviews = [];
       }
     }
   },
