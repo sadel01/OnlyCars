@@ -60,7 +60,6 @@
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
-
     <div class="grupo">
       <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
       <select v-model="location" @change="inputLocation" class="selects">
@@ -70,7 +69,7 @@
         <option value="region2">Antofagasta</option>
         <option value="region3">Atacama</option>
         <option value="region4">Coquimbo</option>
-        <option value="region5">alparaíso</option>
+        <option value="region5">Valparaíso</option>
         <option value="regionRM">Metropolitana</option>
         <option value="region6">Bernardo O'Higgins</option>
         <option value="region7">Maule</option>
@@ -111,18 +110,11 @@
       <div class="km-filter-container">
         <div class="price-label">Kilometraje</div>
         <div class="price-inputs-container">
-          <input
-            type="text"
-            class="price-input"
-            placeholder="Km."
-            v-model="mileage"
-            @input="inputKM('minPrice')"
-          />
+          <input type="text" class="price-input" placeholder="Km." v-model="mileage" />
           <button class="btnAplicar" @click="emitInput">Aplicar</button>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
@@ -145,7 +137,7 @@ export default {
       fuel: '',
       price: '',
       transmission: '',
-      location:'',
+      location: '',
       minPrice: '',
       maxPrice: '',
       mileage: '',
@@ -162,12 +154,12 @@ export default {
 
   methods: {
     emitInput() {
-      this.$emit('inputItems', this.searchTerm)
+      this.$emit('inputKM', this.mileage)
     },
     inputBrand() {
       if (this.brand === '') {
         this.model = ''
-        this.models = []
+        this.models = ''
       } else {
         this.getModels(this.brand)
       }
@@ -204,7 +196,7 @@ export default {
         value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
       }
       this[priceType] = `$${value}` // añadir el signo de dolar
-      this.$emit('priceChange', { minPrice: this.minPrice, maxPrice: this.maxPrice });
+      this.$emit('priceChange', { minPrice: this.minPrice, maxPrice: this.maxPrice })
     },
     handlePriceChange(minPrice, maxPrice) {
       this.price = [minPrice, maxPrice]
@@ -253,7 +245,6 @@ export default {
 .price-inputs-container {
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
 .price-input,
@@ -284,10 +275,6 @@ input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
-}
-
-input[type='number'] {
-  -moz-appearance: textfield;
 }
 
 .price-input:last-child {

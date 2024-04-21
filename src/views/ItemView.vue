@@ -1,32 +1,185 @@
 <template>
-  <main>
-    <div>
-      <div class="container">
-        <div class="fila_uno">
-          <p class="Title">{{ product.year }} {{ product.brand }} {{ product.model }}</p>
-          <div class="imagen">
-            <carousel :items-to-show="1">
-              <slide v-for="image in product.image" :key="image">
-                <img :src="image" class="carousel__item" />
-              </slide>
-              <template #addons>
-                <navigation />
-                <pagination />
-              </template>
-            </carousel>
+  <main class="vehicle-listing">
+    <div class="vehicle-header">
+      <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
+      <p class="vehicle-price">${{ product.price }} CLP</p>
+    </div>
+
+    <!-- Sección principal del vehículo -->
+    <section class="vehicle-section">
+      <!-- Carrusel de imágenes del vehículo -->
+      <div class="vehicle-carousel-container">
+        <carousel :items-to-show="1" v-if="product && product.image">
+          <slide v-for="(image, index) in product.image" :key="index">
+            <img :src="image" alt="Vehicle Image" class="vehicle-image" />
+          </slide>
+        </carousel>
+        <div v-else class="no-images">Cargando imágenes o no hay imágenes disponibles.</div>
+      </div>
+
+      <!-- Detalles del vehículo con íconos -->
+      <div class="vehicle-details-container">
+        <h2 class="details-title">Detalles</h2>
+        <div class="vehicle-specs-container">
+          <!-- Columna izquierda -->
+          <div class="specs-left">
+            <p>
+              <img src="@/assets/icons/mileage.svg" class="icon" alt="Kilometraje" />
+              <strong>Kilometraje: </strong> {{ ' ' + product.mileage }}
+            </p>
+            <p>
+              <img src="@/assets/icons/paint-roller-solid.svg" class="icon" alt="Color" />
+              <strong>Color: </strong> {{ product.exteriorColor }}
+            </p>
+            <p>
+              <img src="@/assets/icons/engine.svg" class="icon" alt="Motor" />
+              <strong>Motor: </strong> {{ product.engine }}
+            </p>
           </div>
-          <h1>{{ product.price }}</h1>
-          <p>{{ product.fuel }}</p>
-          <p>{{ product.transmission }}</p>
-          <p>{{ product.mileage }}</p>
-          <p>{{ product.location }}</p>
-          <p>{{ product.engine }}</p>
-          <button id="botonContactar" type="submit" @click="contactSeller">
-            <span>Contactar al vendedor </span>
-          </button>
+          <!-- Columna derecha -->
+          <div class="specs-right">
+            <p>
+              <img src="@/assets/icons/gas-pump-solid.svg" class="icon" alt="Combustible" />
+              <strong>Combustible: </strong> {{ product.fuel }}
+            </p>
+            <p>
+              <img src="@/assets/icons/gearbox.svg" class="icon" alt="Transmisión" />
+              <strong>Transmisión:</strong> {{ ' ' + product.transmission }}
+            </p>
+            <p>
+              <img src="@/assets/icons/camera-solid.svg" class="icon" alt="Cámara trasera" />
+              <strong>Cámara trasera: </strong> {{ product.hasBackupCamera ? 'Sí' : 'No' }}
+            </p>
+          </div>
+        </div>
+        <!-- Botón de contacto -->
+        <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
+      </div>
+    </section>
+
+    <!-- Sección del perfil del usuario ajustada -->
+    <section class="user-profile">
+      <div class="user-avatar-name">
+        <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
+        <div class="user-info">
+          <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
+          <p class="user-email">{{ product.user.email }}</p>
         </div>
       </div>
-    </div>
+    </section>
+
+    <!-- Sección de verificación del vendedor -->
+    <section class="seller-verification">
+      <div class="verification-header">
+        <h2>Verificaciones del vendedor</h2>
+      </div>
+      <div class="verification-items">
+        <div class="verification-item">
+          <img src="@/assets/icons/verified.svg" alt="Email Verified" class="icon" />
+          Email
+        </div>
+        <div class="verification-item">
+          <img src="@/assets/icons/verified.svg" alt="Mobile Verified" class="icon" />
+          Mobile
+        </div>
+        <div class="verification-item">
+          <img src="@/assets/icons/verified.svg" alt="Driver's License Verified" class="icon" />
+          Driver's License
+        </div>
+        <div class="verification-item">
+          <img src="@/assets/icons/verified.svg" alt="Payment Verified" class="icon" />
+          Payment Verified
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de descripción del vehículo -->
+    <section class="vehicle-description">
+      <h2>Description</h2>
+      <p>vehicleDescription</p>
+    </section>
+
+    <!-- Sección de información adicional desplegable -->
+    <section class="additional-info">
+      <h2 @click="toggleDetails">
+        Additional Info
+        <span class="toggle-icon">{{ isDetailsVisible ? '−' : '+' }}</span>
+      </h2>
+      <div v-show="isDetailsVisible" class="details-content">
+        <!-- Primera columna de detalles -->
+        <div class="detail-column">
+          <div class="detail-row"><span class="boldd">Trim:</span> {{ product.trim }}</div>
+          <div class="detail-row">
+            <span class="boldd">Number of cylinders:</span> {{ product.numberOfCylinders }}
+          </div>
+          <div class="detail-row"><span class="boldd">VIN:</span> {{ product.vin }}</div>
+          <div class="detail-row">
+            <span class="boldd">Number of doors:</span> {{ product.numberOfDoors }}
+          </div>
+          <div class="detail-row">
+            <span class="boldd">Title in hand:</span> {{ product.titleInHand ? 'Yes' : 'No' }}
+          </div>
+        </div>
+        <!-- Segunda columna de detalles -->
+        <div class="detail-column">
+          <div class="detail-row">
+            <span class="boldd">Body style:</span> {{ product.bodyStyle }}
+          </div>
+          <div class="detail-row">
+            <span class="boldd">Exterior color:</span> {{ product.exteriorColor }}
+          </div>
+          <div class="detail-row"><span class="boldd">Title type:</span> que pasa perra</div>
+          <div class="detail-row">
+            <span class="boldd">Outstanding lien:</span>
+            {{ product.outstandingLien ? 'Yes' : 'No' }}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección de servicios adicionales -->
+    <section class="addon-services">
+      <!-- Contenedor de servicios adicionales aquí -->
+    </section>
+
+    <section class="onlycars-section">
+      <div class="onlycars-info">
+        <h3>¿Por qué usar OnlyCars?</h3>
+        <div class="onlycars-benefits">
+          <div class="benefit">
+            <img src="@/assets/icons/moneyTransfer.png" alt="Transferencia segura" />
+            <div>
+              <h4>Transferencia segura de dinero</h4>
+              <p>
+                Transfiere dinero de manera instantánea entre las partes con OnlyCars Pay. Sin
+                tarifas de transacción.
+              </p>
+            </div>
+          </div>
+
+          <div class="benefit">
+            <img src="@/assets/icons/easyBuy.png" alt="Compra fácil" />
+            <div>
+              <h4>Compra fácil</h4>
+              <p>
+                Programa fácilmente pruebas de manejo, haz ofertas y firma el contrato de venta
+                electrónicamente en una sola app.
+              </p>
+            </div>
+          </div>
+
+          <div class="benefit">
+            <img src="@/assets/icons/scammer.png" alt="Evita estafadores" />
+            <div>
+              <h4>Evita estafadores</h4>
+              <p>
+                Conéctate con usuarios verificados y chatea sin compartir tu información personal.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </template>
 
@@ -34,17 +187,19 @@
 import axios from 'axios'
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
+
 export default {
-  data() {
-    return {
-      product: null
-    }
-  },
   components: {
     Carousel,
     Slide,
     Pagination,
     Navigation
+  },
+  data() {
+    return {
+      product: null,
+      isDetailsVisible: false
+    }
   },
   computed: {
     user() {
@@ -52,106 +207,381 @@ export default {
     }
   },
   methods: {
+    toggleDetails() {
+      this.isDetailsVisible = !this.isDetailsVisible
+    },
     async contactSeller() {
-      const response = await axios.post('http://localhost:8080/chat/startChat', {
-        buyerID: this.user._id,
-        sellerID: this.product.user._id,
-        productID: this.product._id
-      })
+      try {
+        const response = await axios.post('http://localhost:8080/chat/startChat', {
+          buyerID: this.user._id,
+          sellerID: this.product.user._id,
+          productID: this.product._id
+        })
 
-      const chatID = response.data._id
+        this.$store.commit('setChat', {
+          _id: response.data._id || response.data.insertedId,
+          buyerID: this.user._id,
+          sellerID: this.product.user._id,
+          productID: this.product._id
+        })
 
-      this.$router.push(`/chat/${chatID}`)
+        console.log(this.$store.state.chat)
+        this.$router.push(`/chat/${this.$store.state.chat._id}`)
+      } catch (error) {
+        console.error(error)
+      }
     }
   },
   async created() {
     const id = this.$route.params.id
-    const response = await axios.get(`http://localhost:8080/catalog/${id}`)
-    this.product = response.data
+    try {
+      const response = await axios.get(`http://localhost:8080/catalog/${id}`)
+      this.product = response.data
+    } catch (error) {
+      console.error(error)
+    }
   }
 }
 </script>
 
 <style scoped>
-.imagen {
-  width: auto;
-  height: auto;
-}
-.container {
+.additional-info h2 {
+  user-select: none;
+  cursor: pointer;
   display: flex;
-  flex-direction: column;
-  width: 60%;
-  margin-left: 10%;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
-.Title {
-  font-size: 2rem;
+
+.additional-info h2 {
+  width: 100%;
+  text-align: left;
+}
+
+.details-content {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: 16px;
+  width: calc(100% - 40px);
+  margin-top: 20px;
+}
+
+.boldd {
   font-weight: bold;
 }
-.carousel__item {
-  width: 100%;
-  height: 100%;
-  background-color: var(--vc-clr-primary);
-  display: flex;
-  justify-content: center;
+
+.detail-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
   align-items: center;
-  border-radius: 15px;
+  gap: 8px;
 }
 
-.carousel__slide {
-  padding: 10px;
-}
-
-.carousel__prev,
-.carousel__next {
-  box-sizing: content-box;
-  border: 5px solid white;
-}
-
-button[type='submit'] {
-  margin-top: 5%;
-  margin-bottom: 5%;
-  position: relative;
+.onlycars-section {
+  background-color: #f4f4f4;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  background: #fbc40e;
-  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-  cursor: pointer;
-  border: none;
-  padding: 3% 5%;
-}
-button[type='submit']:after {
-  content: ' ';
-  width: 0%;
-  height: 100%;
-  background: #c19400;
-  position: absolute;
-  transition: all 0.4s ease-in-out;
-  right: 0;
+  flex-direction: column;
 }
 
-button[type='submit']:hover::after {
-  right: auto;
-  left: 0;
-  width: 100%;
+.onlycars-info {
+  display: flex;
+  flex-direction: column;
 }
 
-button[type='submit'] span {
+.onlycars-info h3 {
   text-align: center;
-  text-decoration: none;
-  width: 100%;
-  color: black;
-  font-size: 1.125em;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  z-index: 20;
-  transition: all 0.3s ease-in-out;
+  color: #333;
+  font-size: 1.5em;
+  margin-bottom: 20px;
 }
 
-button[type='submit']:hover span {
+.onlycars-benefits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.benefit {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  width: 80%;
+}
+
+.benefit:last-child {
+  margin-bottom: 0;
+}
+
+.benefit img {
+  width: 40px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.benefit h4 {
+  margin: 0;
+  color: #333;
+  font-size: 1.2em;
+}
+
+.benefit p {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.user-profile {
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 10px;
+  align-items: flex-start;
+}
+
+.user-avatar-name {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-right: 20px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.user-email {
+  font-size: 1em;
+}
+
+.seller-verification {
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+
+.verification-header h2 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.verification-items {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.verification-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.verification-item .icon {
+  margin-right: 10px;
+  width: 24px;
+  height: 24px;
+}
+
+.vehicle-description h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.vehicle-description p {
+  font-size: 1em;
+  margin-bottom: 10px;
+}
+
+.additional-info h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.accordion {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.accordion-toggle {
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-content {
+  display: none;
+}
+
+.accordion-content.open {
+  display: block;
+}
+
+strong {
+  margin-right: 0.3em;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.detail-col {
+  display: flex;
+  align-items: center;
+}
+
+.icon {
+  margin-right: 0.5rem;
+  width: 24px;
+  height: auto;
+}
+
+.details-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+}
+
+.vehicle-listing {
+  display: flex;
+  flex-direction: column;
+  max-width: 1200px;
+  margin: 20px auto;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vehicle-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.vehicle-carousel-container {
+  flex: 1;
+  padding-right: 20px;
+  max-width: 50%;
+}
+
+.vehicle-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.vehicle-details-container {
+  flex: 1;
+  padding-left: 20px;
+  max-width: 50%;
+}
+
+.vehicle-title {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333;
+}
+
+.vehicle-price {
+  font-size: 28px;
+  color: #fbc40e;
+}
+
+.vehicle-specs-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.specs-left,
+.specs-right {
+  flex: 1 1 45%;
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.btn-contact-seller {
+  padding: 10px 20px;
+  background-color: #fbc40e;
   color: white;
-  animation: scaleUp 0.3s ease-in-out;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: auto;
+}
+
+.user-container,
+.vehicle-description,
+.additional-info,
+.addon-services {
+  background: #f4f4f4;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.icon-svg {
+  height: 24px;
+  width: 24px;
+  margin-right: 10px;
+}
+
+.specs-left p,
+.specs-right p {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .vehicle-carousel-container,
+  .vehicle-details-container {
+    flex: 1 1 100%;
+  }
+  .specs-left,
+  .specs-right {
+    flex: 1 1 100%;
+  }
+}
+
+.user-container {
+  /* Agrega estilos aca xavales */
+}
+
+.vehicle-description {
+  /* Agrega estilos aca xavales */
+}
+
+.additional-info {
+  /* Agrega estilos aca xavales */
+}
+
+.addon-services {
+  /* Agrega estilos aca xavales */
 }
 </style>

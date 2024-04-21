@@ -54,17 +54,31 @@ client
   .catch((error) => {
     console.error('Failed to connect to database', error)
   })
-app.use(express.json())
+
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ limit: '50mb', extended: true }));  
 
 // Configuracion de eventos para el chat
+
+
+
 io.on('connection', (socket) => {
-  socket.on('message', (msg) => {
-    console.log('message: ' + msg)
-    io.emit('message', msg)
-  })
+  // Cuando un cliente se conecta, se une a una sala específica
+  socket.on('join', (room) => {
+    socket.join(room);
+    console.log('joined room: ' + room)
+  });
+
+  // Cuando se recibe un mensaje, se emite solo a la sala específica
+  socket.on('message', (room, message) => {
+    console.log('message: ' + message)
+    io.to(room).emit('message', message);
+  });
+
   socket.on('disconnect', () => {
-  })
-})
+    // Cuando un cliente se desconecta, se puede manejar aquí
+  });
+});
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('es-CL', {
@@ -73,6 +87,7 @@ function formatCurrency(value) {
       minimumFractionDigits: 0
   }).format(value);
 }
+
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -85,22 +100,6 @@ app.get('/catalog/:id', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
-
-app.post('/upload', upload.array('files'), (req, res) => {
-  // Comprueba si se subieron archivos
-  if (req.files && req.files.length > 0) {
-    // Mapea los archivos para obtener sus rutas
-    const filePaths = req.files.map(file => {
-      return `../src/assets/uploads/${file.filename}`;
-    });
-
-    // Envía las rutas de los archivos en la respuesta
-    res.json({ message: 'Images uploaded successfully!', filePaths: filePaths });
-  } else {
-    // Si no hay archivos, envía un error
-    res.status(400).json({ message: 'No files uploaded.' });
-  }
-});
 
 app.post('/register', async (req, res) => {
   try {
@@ -115,10 +114,9 @@ app.post('/register', async (req, res) => {
 })
 
 app.post('/postsPrueba', async (req, res) => {
-  // SE DEBE CAMBIAR postsPrueba POR posts
   try {
     const database = client.db('onlycars')
-    const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
+    const collection = database.collection('postsPrueba') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '');
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
@@ -195,6 +193,8 @@ app.get('/posts', async (req, res) => {
 })
 
 
+
+
 // iniciar un chat
 app.post('/chat/startChat', async (req, res) => {
   try {
@@ -215,14 +215,21 @@ app.post('/chat/startChat', async (req, res) => {
 
 app.post('/chat/:id', async (req, res) => {
   try {
-    const database = client.db('onlycars')
-    const collection = database.collection('chat')
-    const chat = await collection.find().toArray()
-    res.send(chat)
+    const id = req.params.id;
+    const messages = req.body.message;
+    const database = client.db('onlycars');
+    const collection = database.collection('chat');
+    const chat = await collection.findOne({ _id: new ObjectId(id) });
+    
+    console.log('messages: '+messages);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { messages: messages} });
+    //console.log('Chat id : '+chat._id+' Chat message'+chat.messages);
+    res.send(chat);
   } catch (error) {
-    res.status(500).send(error.message)
+    res.status(500).send(error.message);
   }
-})
+});
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
