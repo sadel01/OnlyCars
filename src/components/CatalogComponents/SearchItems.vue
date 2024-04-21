@@ -222,6 +222,7 @@ export default {
 </script>
 
 <style>
+
 .btnAplicar {
   background-color: #fbc40e;
   color: white;

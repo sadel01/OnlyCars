@@ -376,7 +376,7 @@ export default {
 
 .lebal-email {
   color: #d8d8d8;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: normal;
   position: absolute;
   pointer-events: none;
