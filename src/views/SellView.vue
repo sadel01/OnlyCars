@@ -24,7 +24,7 @@
         <div class="form-group">
           <label for="brand">Marca</label>
           <select id="brand" v-model="vehicle.brand" @change="fetchModels">
-            <option disabled value="">Seleccione una marca</option>
+            <option value="" disabled selected>Seleccione una marca</option>
             <option v-for="brand in brands" :key="brand" :value="brand">{{ brand }}</option>
           </select>
         </div>
@@ -90,6 +90,23 @@
           <label for="interiorColor">Color Interior</label>
           <input type="text" id="interiorColor" v-model="vehicle.interiorColor" placeholder="Ingrese un color"/>
         </div>
+
+        <div class="form-group">
+          <label for="region">Región</label>
+          <select id="region" v-model="vehicle.region" @change="fetchRegion">
+            <option value="" disabled selected>Seleccione una región</option>
+            <option v-for="region in regions" :key="region" :value="region">{{ region }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="comuna">Comuna</label>
+          <select id="comuna" v-model="vehicle.comuna">
+            <option value="" disabled selected>Seleccione una comuna</option>
+            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option>
+          </select>
+        </div>
+        
       </div>
 
       <div class="details-column">
@@ -156,6 +173,14 @@
           <label for="exteriorColor">Color Exterior</label>
           <input type="text" id="exteriorColor" v-model="vehicle.exteriorColor" placeholder="Ingrese el color"/>
         </div>
+
+        <div class="form-group">
+          <label for="provincia">Provincia</label>
+          <select id="provincia" v-model="vehicle.provincia">
+            <option value="" disabled selected>Seleccione una provincia</option>
+            <option v-for="provincia in provincias" :key="provincia" :value="provincia">{{ provincia }}</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="form-group">
@@ -217,11 +242,18 @@ export default {
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
         description: '',
+        region: '',
+        provincia: '',
+        comuna: '',
       },
+      
       errorMessage: '',
       successMessage: '',
       brands: [],
       models: [],
+      regions: [],
+      provincias: [],
+      comunas: [],
       filesToUpload: [],
       imagePreviews: [],
       imagePaths: [],
@@ -302,8 +334,50 @@ export default {
       }
     },
 
+    async fetchRegion() {
+      try {
+        const response = await fetch('http://localhost:8080/regions');
+        if (response.ok) this.regions = await response.json();
+      } catch (error) {
+        console.error('Error al recuperar las regiones:', error);
+      }
+    },
+
+    async fetchProvincia() {
+      if (!this.vehicle.region) {
+        this.provincias = [];
+        this.comunas = []; // Resetea las comunas si las usas
+        return;
+      }
+      try {
+        const response = await fetch(`http://localhost:8080/provincia/${this.vehicle.region}`);
+        if (response.ok) {
+          this.provincias = await response.json();
+          this.provincia = ''; // Resetea la provincia seleccionada
+        }
+      } catch (error) {
+        console.error('Error al recuperar las provincias:', error);
+      }
+    },
+
+    async fetchComunas() { // Añade este método si gestionas comunas
+      if (!this.vehicle.provincia) {
+        this.comunas = [];
+        return;
+      }
+      try {
+        // Debes tener un endpoint para obtener comunas basado en la provincia
+        const response = await fetch(`http://localhost:8080/comuna/${this.vehicle.provincia}`);
+        if (response.ok) {
+          this.comunas = await response.json();
+        }
+      } catch (error) {
+        console.error('Error al recuperar las comunas:', error);
+      }
+    },
+
     async submitVehicle() {
-      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price || !this.vehicle.owners || !this.vehicle.seguro || !this.vehicle.doors || !this.vehicle.interiorColor || !this.vehicle.exteriorColor) {
+      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price || !this.vehicle.owners || !this.vehicle.seguro || !this.vehicle.doors || !this.vehicle.interiorColor || !this.vehicle.exteriorColor || !this.vehicle.region || !this.vehicle.provincia || !this.vehicle.comuna) {
         this.errorMessage = 'Todos los campos son obligatorios';
         setTimeout(() => {
           this.errorMessage = '';
@@ -350,6 +424,9 @@ export default {
           interiorColor: '',
           exteriorColor: '',
           description: '',
+          region: '',
+          provincia: '',
+          comuna: '',
         };
       } catch (error) {
         this.errorMessage = 'Error al publicar';
@@ -367,9 +444,16 @@ export default {
     'vehicle.brand': function (newBrand) {
       this.fetchModels();
     },
+    'vehicle.region'() {
+      this.fetchProvincia();
+    },
+    'vehicle.provincia'() {
+      this.fetchComunas(); // Añade esto si gestionas comunas
+    }
   },
   mounted() {
     this.fetchBrands();
+    this.fetchRegion();
   },
 };
 </script>
