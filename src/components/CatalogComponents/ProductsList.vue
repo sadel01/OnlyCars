@@ -6,23 +6,29 @@
           <li
             v-for="product in paginatedProducts"
             :key="product.id"
-            @click="showProductDetail(product)"
+            @click="showProductDetail(product)" 
           >
             <div class="productCard">
-              <img :src="product.image[0]" alt="product image" class="imagenes" />
+              <div class="imageContainer">
+                <img :src="product.image[0]" alt="product image" class="imagenes" />
+              </div>
               <div class="vehicleDescription">
                 <div>
-                  <p class="productText productTitle">{{ product.year }} {{ product.brand }} {{ product.model }}</p>
+                  <p class="productText productTitle">{{ product.brand }} {{ product.model }}</p>
                 </div>
-                  
                 <div class="description">
-                  <p class="productText productDescription">Año: {{ product.year }}</p>
-                  <p class="productText productDescription">Kilometraje: {{ product.mileage }} KM</p>
-                  <p class="productText productDescription data">Transmisión: {{ product.transmission }}</p>
+                  <div class="detail">
+                    <img src="@/assets/icons/mileage.svg" alt="KM Icon" class="icon-svg" />
+                    <p class="productText productDescription">{{ product.mileage }} KM</p>
+                  </div>
+                  <div class="detail">
+                    <img src="@/assets/icons/gearbox.svg" alt="Transmission Icon" class="icon-svg" />
+                    <p class="productText productDescription data">
+                      {{ product.transmission }}
+                    </p>
+                  </div>
                 </div>
-
                 <div class="productPrice">
-                  <p class="productText productPriceText"></p>
                   <p class="productText productPriceNumber">${{ product.price }} CLP</p>
                 </div>
                 <button @click="viewMore(product._id)" class="verMas2"><span>Ver más</span></button>
@@ -30,21 +36,17 @@
             </div>
           </li>
         </ul>
-
+        <div v-if="!paginatedProducts.length" class="noProducts">
+          No hay productos disponibles.
+        </div>
         <div class="pageButton">
           <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
-          <button
-            v-for="n in maxPage"
-            :key="n"
-            @click="goToPage(n)"
-            :class="{ buttonPage: true, buttonPageActive: n === page }"
-          >
+          <button v-for="n in maxPage" :key="n" @click="goToPage(n)" :class="{ buttonPage: true, buttonPageActive: n === page }">
             {{ n }}
           </button>
           <button v-if="page < maxPage" @click="nextPage" class="buttonPage">Siguiente</button>
         </div>
       </div>
-
       <ProductDetail
         class="product-detail"
         v-if="selectedProduct && isLargeScreen"
@@ -57,7 +59,14 @@
   </main>
 </template>
 
+
+
 <script>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faCar } from '@fortawesome/free-solid-svg-icons'
+import mileageIcon from '@/assets/icons/mileage.svg';
+import gearboxIcon from '@/assets/icons/gearbox.svg';
+
 import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
 import axios from 'axios'
@@ -149,6 +158,9 @@ export default {
 </script>
 
 <style scoped>
+
+
+
 .productDetailOpen {
   animation: 1s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-left both;
 }
@@ -160,6 +172,19 @@ export default {
   to {
     clip-path: inset(0 0 0 0);
   }
+}
+
+.icon-svg {
+  height: 1.4em; 
+  width: auto; 
+  vertical-align: middle;
+  margin-right: 8px; 
+}
+
+.detail {
+  display: flex;
+  align-items: center; 
+  margin-bottom: 4px;
 }
 
 .pageButton {
@@ -247,9 +272,21 @@ export default {
   position: relative;
 }
 
+.imageContainer {
+  flex: 0 0 300px;
+  height: 200px; 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  object-fit: cover; 
+  margin: 20px;
+}
+
 .productCard .imagenes {
-  width: 30%;
-  object-fit: cover;
+  max-width: 100%;     
+  max-height: 100%;    
+  object-fit: cover; 
 }
 
 .principalContainer {
@@ -273,10 +310,10 @@ export default {
 }
 
 .imagenes {
-  width: 300px;
-  height: auto;
+  width: 100%; 
+  height: 100%; 
+  object-fit: cover; 
   border-radius: 10px;
-  margin: 20px;
 }
 
 .productText {
@@ -305,20 +342,20 @@ export default {
 }
 
 .productCard {
-  border-radius: 10px;
+  border: 2px solid transparent;
   display: flex;
-  margin: 20px;
-  background-color: #c2c2c27e;
-  margin-right: 30px;
-  height: 270px;
-  border: 2px solid #1717172c;
-  min-width: 350px;
+  flex-direction: row;
+  align-items: center;
+  border-radius: 10px;
+  margin: 20px 10px 0px 0px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  overflow: hidden; 
 }
+
 .productCard:hover {
-  transform: scale(1.02);
-  border-width: 1px;
-  background-color: white;
-  box-shadow: 0 0 20px #a8a8a8;
+  border: 2px solid #0707072c;
+  box-shadow: 3px 4px 5px rgb(218, 218, 218);
+  background-color: #cccccc5f;
   cursor: pointer;
 }
 

@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import io from 'socket.io-client'
 const socket = io('http://localhost:8080')
 export default {
@@ -70,13 +71,24 @@ export default {
     return {
       messages: [],
       newMessage: '',
-      error: null
+      error: null,
+      chatId: null
     }
   },
   // escucha el evento 'message' y agrega el mensaje al array de mensajes
   created() {
+    
+    this.chatId = this.$route.params.id
+
+    socket.emit('join', this.$store.state.chat._id, this.$store.state.chat.buyerID , (error) => {
+      if (error) {
+        console.error('Error joining chat:', error);
+      }
+    });
+
     socket.on('message', (message) => {
       this.messages.push(message)
+      this.uploadMessages()
     })
 
     socket.on('connectError', (error) => {
@@ -92,19 +104,25 @@ export default {
     // método para enviar el mensaje
     sendMessage() {
       if (this.newMessage.trim() !== '') {
-        socket.emit('message', this.newMessage, (error) => {
-          this.newMessage = '';
-          if (error) {
-            console.error('Error sending message:', error)
-          } else {
-            // Si no hay error al enviar el mensaje, limpiar el campo de entrada
-            this.newMessage = '';
-          }
+        console.log('Sending message:', this.newMessage)
+        console.log('Chat ID:', this.chatId)
+        axios.post(`http://localhost:8080/chat/${this.chatId}`,{
+          chatId: this.chatId,
+          message: this.newMessage
         })
+        socket.emit('message', this.chatId, this.newMessage)
+        this.newMessage = ''
       }
     },
+    async uploadMessages() {
+      const chatID = this.$store.state.chat._id
+      await axios.post('http://localhost:8080/chat/'+chatID, {
+        id : chatID,
+        message: this.messages,
+      })
     }
   }
+}
   </script>
 
 <style scoped>
