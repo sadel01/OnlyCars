@@ -110,13 +110,7 @@
       <div class="km-filter-container">
         <div class="price-label">Kilometraje</div>
         <div class="price-inputs-container">
-          <input
-            type="text"
-            class="price-input"
-            placeholder="Km."
-            v-model="mileage"
-            @input="inputKM('minPrice')"
-          />
+          <input type="text" class="price-input" placeholder="Km." v-model="mileage" />
           <button class="btnAplicar" @click="emitInput">Aplicar</button>
         </div>
       </div>
