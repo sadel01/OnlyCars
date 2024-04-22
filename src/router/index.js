@@ -11,6 +11,7 @@ import UserView from '../views/UserView.vue'
 import ProfileView from '../views/Profile.vue'
 import store from '../../back-end/src/store';
 import ChatView from '../views/ChatView.vue'
+import SellerChatView from '../views/SellerChatView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -62,6 +63,12 @@ const router = createRouter({
       name: 'catalog-item',
       component: ItemView
     },
+    {
+      path: '/seller-chat/:id',
+      name: 'seler-chat-view',
+      component: SellerChatView
+    }
+    ,
     {
       path: '/user/:id',
       name: 'user',

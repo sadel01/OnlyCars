@@ -169,6 +169,9 @@ export default {
   padding: 4% 39.3%;
   width: auto;
 }
+.verMas:hover{
+  cursor: pointer;
+}
 
 .verMas:after {
   content: ' ';
@@ -232,6 +235,7 @@ export default {
   display: flex;
   flex-direction: column;
 }
+
 
 .content-image {
   display: block;
