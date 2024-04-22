@@ -71,7 +71,7 @@ io.on('connection', (socket) => {
 
   // Cuando se recibe un mensaje, se emite solo a la sala específica
   socket.on('message', (room, message) => {
-    console.log('message: ' + message)
+    console.log('message1: ' + message)
     io.to(room).emit('message', message);
   });
 
@@ -222,20 +222,52 @@ app.post('/chat/startChat', async (req, res) => {
 app.post('/chat/:id', async (req, res) => {
   try {
     const id = req.params.id;
-    const messages = req.body.message;
+    const message = req.body.message.text;
+    const user = req.body.message.user;
     const database = client.db('onlycars');
     const collection = database.collection('chat');
     const chat = await collection.findOne({ _id: new ObjectId(id) });
-    
-    console.log('messages: '+messages);
 
-    await collection.updateOne({ _id: new ObjectId(id) }, { $set: { messages: messages} });
-    //console.log('Chat id : '+chat._id+' Chat message'+chat.messages);
+    console.log('message: '+message);
+    console.log('user: '+user);
+
+    await collection.updateOne({ _id: new ObjectId(id) }, { $push: { messages: {text: message, user: user}} });
     res.send(chat);
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
+
+app.get('/chat/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db('onlycars');
+    const collection = database.collection('chat');
+    const chat = await collection.findOne({ _id: new ObjectId(id) });
+    res.send(chat);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+// Buscar un chat en la base de datos entre dos usuarios, user1 y user2, independiente de quien es el comprador y quien es el vendedor
+
+app.get('/findChat', async (req, res) => {
+  try {
+    const user1 = req.params.user1;
+    const user2 = req.params.user2;
+    const database = client.db('onlycars');
+    const collection = database.collection('chat');
+    const chat = await collection.findOne({ $or: [{buyerID: user1, sellerID: user2}, {buyerID: user2, sellerID: user1}] });
+    console.log('chat encontrado');
+    res.send(chat);
+  } catch (error) {
+    res.status(500).send(error.message);
+    console.log('chat no encontrado');
+  }
+}
+);
+
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
