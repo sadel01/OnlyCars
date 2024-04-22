@@ -15,11 +15,11 @@
 
     <div class="chat">
       <div class="chat-header">
-        <h1>Nombre Vendedor</h1>
+        <h1>{{receiver.nombre}} {{receiver.apellido}}</h1>
       </div>
       <div class="messages">
-        <div v-for="(message, index) in messages" :key="index" :class="{ 'sent-message': message.user === user, 'received-message': message.user !== user }">
-          <p>{{user}}: {{ message }}</p>
+        <div v-for="(message, index) in messages" :key="index" :class="{ 'sent-message': message.user === receiver, 'received-message': message.user !== receiver }">
+          <p>{{ message }}</p>
         </div>
       </div>
       <div>
@@ -72,14 +72,17 @@ export default {
       messages: [],
       newMessage: '',
       error: null,
-      chatId: null
+      chatId: null,
+      sender:'',
+      receiver:'',
     }
   },
   // escucha el evento 'message' y agrega el mensaje al array de mensajes
   created() {
     
     this.chatId = this.$route.params.id
-
+    this.sender=this.$store.state.user
+    this.getReceiver()
     socket.emit('join', this.$store.state.chat._id, this.$store.state.chat.buyerID , (error) => {
       if (error) {
         console.error('Error joining chat:', error);
@@ -98,9 +101,18 @@ export default {
   computed: {
     user() {
       return this.$store.state.user.nombre
-    }
+    },
   },
   methods: {
+    async getReceiver(){
+      const response = await axios.get(`http://localhost:8080/users/${this.$store.state.chat.sellerID}`,{
+        params: {
+          id: this.$store.state.chat.sellerID
+        }
+      })
+      console.log(response.data)
+      this.receiver = response.data
+    },
     // método para enviar el mensaje
     sendMessage() {
       if (this.newMessage.trim() !== '') {
@@ -120,7 +132,16 @@ export default {
         id : chatID,
         message: this.messages,
       })
-    }
+    },
+    async fetchProductDetails(id) {
+      if (id) {
+        const response = await axios.get(`http://localhost:8080/catalog/${id}`)
+        const post = response.data
+        this.post = post
+      } else {
+        console.error('Product id is not defined')
+      }
+    },
   }
 }
   </script>
@@ -155,6 +176,7 @@ h2{
   text-align: center;
   height: 85vh;
   background-color: #ececec;
+  
 }
 #messageInput:focus ~ #sendButton svg path,
 #messageInput:valid ~ #sendButton svg path {
@@ -190,24 +212,32 @@ h2{
   color: white; /* Color de texto */
   border-radius: 10px; /* Borde redondeado */
   padding: 5px 10px; /* Espaciado interno */
-  margin-bottom: 5px; /* Espaciado inferior */
+  margin-bottom: 0.1%; /* Espaciado inferior */
+  margin-top: 0.1%;
+  margin-left: 2%;
+  margin-right: 1%;
+  text-align: right; /* Alinea el texto a la derecha */
+  display: block; /* Hace que el contenedor se ajuste al tamaño del contenido */
+  word-wrap: break-word; /* Permite que las palabras largas se rompan y pasen a la siguiente línea */
+  position: relative;
+  align-self: flex-end;
 }
 
-/* Establece estilos para los mensajes recibidos */
 .received-message {
   background-color: #d1d1d1; /* Color de fondo */
   color: black; /* Color de texto */
   border-radius: 20px; /* Borde redondeado */
   padding: 5px 10px; /* Espaciado interno */
-  margin-top: 0.5%; /* Espaciado inferior */
+  margin-bottom: 0.1%; /* Espaciado inferior */
+  margin-top: 0.1%;
   margin-left: 1%;
-  margin-right: 1%;
-  text-align: right; /* Alinea el texto a la derecha */
-  display: flex; /* Activa el modelo de caja flexible */
-  align-items: center; /* Alinea verticalmente los elementos */
-  height: 50px; /* Altura deseada para los mensajes */
-  align-self: flex-end; /* Alinea el mensaje a la derecha */
+  margin-right: 2%;
+  text-align: left; /* Alinea el texto a la izquierda */
   display: inline-block; /* Hace que el contenedor se ajuste al tamaño del contenido */
+  word-wrap: break-word; /* Permite que las palabras largas se rompan y pasen a la siguiente línea */
+  position: relative;
+  align-self: flex-start;
+  
 }
 
 .general-container {

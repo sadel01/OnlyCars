@@ -237,5 +237,17 @@ app.post('/chat/:id', async (req, res) => {
   }
 });
 
+app.get('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db('onlycars');
+    const collection = database.collection('users');
+    const post = await collection.findOne({ _id: new ObjectId(id) });
+    res.send(post);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
