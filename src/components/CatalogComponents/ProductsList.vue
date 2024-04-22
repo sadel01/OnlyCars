@@ -80,7 +80,7 @@ export default {
       selectedProduct: null,
       page: 1,
       perPage: 6,
-      isLargeScreen: window.innerWidth > 1024 && window.innerHeight > 768
+      isLargeScreen: window.innerWidth > 1280 || window.innerHeight > 1024
     }
   },
   methods: {
@@ -118,15 +118,27 @@ export default {
       })
     },
     viewMore(id){
-      const userId = this.$store.state.user._id;
-      window.open(`/catalog/${id}?userId=${userId}`, '_blank');
+      this.fetchProductDetails(id)
+      window.open(`/catalog/${id}`, '_blank')
+    },
+    handleResize() {
+      this.isLargeScreen = window.innerWidth > 1280 || window.innerHeight > 1024;
+      if (!this.isLargeScreen && this.selectedProduct) {
+        this.selectedProduct = null; // Cierra el detalle del producto si la pantalla no es lo suficientemente grande
+      }
     }
   },
   mounted() {
-    window.addEventListener('resize', this.handleResize)
+    // Llama al método handleResize cuando se monta el componente
+    this.handleResize();
+    window.addEventListener('resize', () => {
+      this.handleResize();
+    });
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.handleResize)
+    window.removeEventListener('resize', () => {
+      this.handleResize();
+    });
   },
   components: {
     SearchItems,
@@ -140,9 +152,6 @@ export default {
       const start = (this.page - 1) * this.perPage
       const end = start + this.perPage
       return this.products.slice(start, end)
-    },
-    handleResize() {
-      this.isLargeScreen = window.innerWidth > 1024 && window.innerHeight > 768
     }
   }
 }

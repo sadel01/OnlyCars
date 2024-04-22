@@ -94,6 +94,10 @@ nav {
   justify-content: flex-start;
   flex-grow: 1;
 }
+.nav-link:hover{
+  color: #FBC40E;
+
+}
 
 .nav-link,
 .nav-button {
@@ -113,6 +117,9 @@ nav {
   justify-content: flex-end;
   flex-grow: 1;
   color: #fbc40e;
+}
+.nav-button:hover{
+  color: #c19400;
 }
 
 @media (max-width: 768px) {

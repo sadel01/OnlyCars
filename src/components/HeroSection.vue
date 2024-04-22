@@ -121,6 +121,7 @@ p {
 
 .theme-features-btn:hover {
   background-color: #c19400;
+  color: white;
 }
 
 .theme-features-btn svg {
