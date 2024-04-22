@@ -6,7 +6,6 @@
         class="search-chat"
         type="text"
         placeholder="Buscar.."
-        v-model="searchTerm"
         @input="emitInput"
       />
       <p>Aqui van los chats del user
@@ -19,7 +18,7 @@
       </div>
       <div class="messages">
         <div v-for="(message, index) in messages" :key="index" :class="{ 'sent-message': message.user === user, 'received-message': message.user !== user }">
-          <p>{{user}}: {{ message }}</p>
+          <p>{{message.user}}: {{ message.text }}</p>
         </div>
       </div>
       <div>
@@ -49,7 +48,6 @@
       </form>
       </div>
     </div>
-    
 
     </div>
     <div class="sell-data">
@@ -66,7 +64,6 @@ import axios from 'axios'
 import io from 'socket.io-client'
 const socket = io('http://localhost:8080')
 export default {
-  // inicializa el array de mensajes y mensajes nuevos
   data() {
     return {
       messages: [],
@@ -75,9 +72,12 @@ export default {
       chatId: null
     }
   },
-  // escucha el evento 'message' y agrega el mensaje al array de mensajes
+  async mounted() {
+    const chatID = this.$route.params.id;
+    const response = await axios.get('http://localhost:8080/chat/' + chatID);
+    this.messages = response.data.messages;
+  },
   created() {
-    
     this.chatId = this.$route.params.id
 
     socket.emit('join', this.$store.state.chat._id, this.$store.state.chat.buyerID , (error) => {
@@ -106,11 +106,7 @@ export default {
       if (this.newMessage.trim() !== '') {
         console.log('Sending message:', this.newMessage)
         console.log('Chat ID:', this.chatId)
-        axios.post(`http://localhost:8080/chat/${this.chatId}`,{
-          chatId: this.chatId,
-          message: this.newMessage
-        })
-        socket.emit('message', this.chatId, this.newMessage)
+        socket.emit('message', this.chatId, {text: this.newMessage, user: this.user})
         this.newMessage = ''
       }
     },
@@ -118,7 +114,7 @@ export default {
       const chatID = this.$store.state.chat._id
       await axios.post('http://localhost:8080/chat/'+chatID, {
         id : chatID,
-        message: this.messages,
+        message: this.messages[this.messages.length - 1],
       })
     }
   }
