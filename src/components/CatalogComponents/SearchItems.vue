@@ -61,6 +61,15 @@
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
     <div class="grupo">
+      <font-awesome-icon :icon="['fas', 'shield']" class="icono-marca" />
+      <select v-model="airbag" @change="inputAirbag" class="selects">
+        <option value="">Airbag</option>
+        <option value="yes">Si</option>
+        <option value="no">No</option>
+      </select>
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+    </div>
+    <div class="grupo">
       <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
       <select v-model="location" @change="inputLocation" class="selects">
         <option value="">Región</option>
@@ -93,6 +102,8 @@
             placeholder="Min."
             v-model="minPrice"
             @input="formatPriceInput('minPrice')"
+            @blur="updateSelectedMinPrice(minPrice)"
+            @change="$emit('inputMinPrice', minPrice)"
           />
           <div class="price-separator">a</div>
           <input
@@ -101,6 +112,8 @@
             placeholder="Max."
             v-model="maxPrice"
             @input="formatPriceInput('maxPrice')"
+            @blur="updateSelectedMaxPrice(maxPrice)"
+            @change="$emit('inputMaxPrice', maxPrice)"
           />
         </div>
       </div>
@@ -141,6 +154,7 @@ export default {
       minPrice: '',
       maxPrice: '',
       mileage: '',
+      airbag: '',
       yearOptions: []
     }
   },
@@ -164,6 +178,9 @@ export default {
         this.getModels(this.brand)
       }
       this.$emit('inputBrand', this.brand)
+    },
+    inputAirbag() {
+      this.$emit('inputAirbag', this.airbag)
     },
     inputModel() {
       this.$emit('inputModel', this.model)
@@ -222,7 +239,6 @@ export default {
 </script>
 
 <style>
-
 .btnAplicar {
   background-color: #fbc40e;
   color: white;
