@@ -15,25 +15,41 @@
       </carousel>
 
       <div class="description">
-        <div class="card">
-          <FontAwesomeIcon :icon="faCalendarDays" class="icono" />
-          <p class="productText productTitle">{{ product.year }}</p>
+        <div class="cards-container">
+          <div class="card">
+            <FontAwesomeIcon :icon="faCalendarDays" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Fecha</strong></p>
+              <p class="year-text">{{ product.year }}</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <FontAwesomeIcon :icon="faGasPump" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Combustible</strong></p>
+              <p class="year-text">{{ product.fuel }}</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <FontAwesomeIcon :icon="faLocationDot" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Ubicación</strong></p>
+              <p class="year-text">{{ product.fuel }}</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <FontAwesomeIcon :icon="faWrench" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Motor</strong></p>
+              <p class="year-text">{{ product.cylinderCapacity }}</p>
+            </div>
+          </div>
         </div>
 
-        <div class="card">
-          <FontAwesomeIcon :icon="faGasPump" class="icono" />
-          <p class="productText productDescription">{{ product.fuel }}</p>
-        </div>
-
-        <div class="card">
-          <FontAwesomeIcon :icon="faLocationDot" class="icono" />
-          <p class="productText productDescription data">UBICACION</p>
-        </div>
-
-        <div class="card">
-          <FontAwesomeIcon :icon="faWrench" class="icono" />
-          <p class="productText productPriceNumber">{{ product.cylinderCapacity }}</p>
-        </div>
+        <div class="map">AQUI VA EL MAPA DEL MARTÍN</div>
       </div>
 
       <button @click="viewMore(product._id)" class="verMas"><span>Ver más</span></button>
@@ -101,6 +117,15 @@ export default {
 </script>
 
 <style scoped>
+.map {
+  width: 300px;
+  display: flex;
+  height: 300px;
+  background-color: yellow;
+  justify-content: center;
+  align-items: center;
+}
+
 .productText {
   font-size: 15px;
   color: black;
@@ -111,35 +136,73 @@ export default {
   height: 100%;
 }
 
-.icono {
-  color: #333;
-  font-size: 40px;
-  margin-right: 10px;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
 .card {
-  position: relative;
-  width: 20%;
-  height: 150px;
-  max-height: 150px;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  padding: 10px;
   border: 2px solid #1717172c;
   border-radius: 10px;
   background-color: #efefef5f;
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin: 0px 10px 0 10px;
+  margin-bottom: 10px; /* Añade espacio entre tarjetas */
+}
+
+.icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  font-size: 28px;
+  color: #333;
+  margin-right: 20px;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fecha-text,
+.year-text {
+  text-align: left;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.fecha-text {
+  width: 80;
+  margin-bottom: 4px;
+}
+
+.year-text {
+  width: 120px;
+}
+
+.card-container,
+map {
+  flex: 1%;
+  display: flex;
+  flex-direction: column;
+  margin: 0 10px;
+  min-width: 300px;
+  max-width: 300px;
+  height: auto;
 }
 
 .description {
   display: flex;
   justify-content: center;
-  align-items: center;
+  gap: 150px;
+  flex-wrap: wrap;
+  align-items: flex-start;
   font-size: 14px;
   color: #333;
   line-height: 1.5;
   padding: 10px;
+  flex: auto;
 }
 
 .detalleVehiculo {
@@ -168,6 +231,9 @@ export default {
   border: none;
   padding: 4% 39.3%;
   width: auto;
+}
+.verMas:hover {
+  cursor: pointer;
 }
 
 .verMas:after {
