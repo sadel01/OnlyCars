@@ -6,7 +6,8 @@
         type="file"
         id="image-upload"
         ref="fileInput"
-        multiple accept="image/*"
+        multiple
+        accept="image/*"
         style="display: none"
         @change="handleFileUpload"
       />
@@ -15,7 +16,6 @@
           <img :src="src" alt="Image preview" class="previewImage" />
         </div>
       </div>
-      
     </div>
     <button @click="removeImage(index)">Eliminar</button>
 
@@ -88,7 +88,12 @@
 
         <div class="form-group">
           <label for="interiorColor">Color Interior</label>
-          <input type="text" id="interiorColor" v-model="vehicle.interiorColor" placeholder="Ingrese un color"/>
+          <input
+            type="text"
+            id="interiorColor"
+            v-model="vehicle.interiorColor"
+            placeholder="Ingrese un color"
+          />
         </div>
       </div>
 
@@ -143,6 +148,28 @@
         </div>
 
         <div class="form-group">
+          <label for="location">Región</label>
+          <select id="location" v-model="vehicle.location">
+            <option value="">Región</option>
+            <option value="region15">Arica y Parinacota</option>
+            <option value="region1">Tarapacá</option>
+            <option value="region2">Antofagasta</option>
+            <option value="region3">Atacama</option>
+            <option value="region4">Coquimbo</option>
+            <option value="region5">Valparaíso</option>
+            <option value="regionRM">Metropolitana</option>
+            <option value="region6">Bernardo O'Higgins</option>
+            <option value="region7">Maule</option>
+            <option value="region8">Biobío</option>
+            <option value="region9">La Araucanía</option>
+            <option value="region14">Los Ríos</option>
+            <option value="region10">Los Lagos</option>
+            <option value="region11">Aysén</option>
+            <option value="region12">Magallanes</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label for="owners">N° propietarios anteriores</label>
           <input type="text" id="owners" v-model="vehicle.owners" placeholder="Ingrese el número" />
         </div>
@@ -154,48 +181,62 @@
 
         <div class="form-group">
           <label for="exteriorColor">Color Exterior</label>
-          <input type="text" id="exteriorColor" v-model="vehicle.exteriorColor" placeholder="Ingrese el color"/>
+          <input
+            type="text"
+            id="exteriorColor"
+            v-model="vehicle.exteriorColor"
+            placeholder="Ingrese el color"
+          />
         </div>
       </div>
     </div>
     <div class="form-group">
       <label for="description">Descripción</label>
-      <textarea type="text" id="description" v-model="vehicle.description" placeholder="Ingrese descripción"/>
+      <textarea
+        type="text"
+        id="description"
+        v-model="vehicle.description"
+        placeholder="Ingrese descripción"
+      />
     </div>
-    <p v-if="errorMessage" class="error" style="font-size: 12px; color:red; margin-left:20px">{{ errorMessage }}</p>
-    <p v-if="successMessage" class="success" style="font-size: 12px; color:green; margin-left:20px">{{ successMessage }}</p>
+    <p v-if="errorMessage" class="error" style="font-size: 12px; color: red; margin-left: 20px">
+      {{ errorMessage }}
+    </p>
+    <p
+      v-if="successMessage"
+      class="success"
+      style="font-size: 12px; color: green; margin-left: 20px"
+    >
+      {{ successMessage }}
+    </p>
     <button type="button" @click="submitVehicle" :disabled="isLoading">
-      <span v-if="isLoading">
-        <i class="fa fa-spinner fa-spin"></i> Cargando...
-      </span>
-      <span v-else>
-        Publicar
-      </span>
+      <span v-if="isLoading"> <i class="fa fa-spinner fa-spin"></i> Cargando... </span>
+      <span v-else> Publicar </span>
     </button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { computed } from 'vue';
-import { useStore } from 'vuex';
+import axios from 'axios'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 
 function imageToBase64(img) {
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(img);
-  });
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result)
+    reader.onerror = reject
+    reader.readAsDataURL(img)
+  })
 }
 
 export default {
   name: 'SellView',
   setup() {
-    const store = useStore();
+    const store = useStore()
     return {
-      user: computed(() => store.state.user),
-    };
+      user: computed(() => store.state.user)
+    }
   },
   data() {
     return {
@@ -217,6 +258,7 @@ export default {
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
         description: '',
+        location: ''
       },
       errorMessage: '',
       successMessage: '',
@@ -225,95 +267,112 @@ export default {
       filesToUpload: [],
       imagePreviews: [],
       imagePaths: [],
-      isLoading: false,
-    };
+      isLoading: false
+    }
   },
   methods: {
     formatKMInput() {
-      let value = this.vehicle.mileage.replace(/[\D]/g, ''); 
-      value = parseInt(value, 10);
+      let value = this.vehicle.mileage.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
       if (isNaN(value)) {
-        value = '';
+        value = ''
       } else {
-        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Para colocar puntos chavales
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
       }
       this.vehicle.mileage = value
     },
     formatPriceInput() {
-      let value = this.vehicle.price.replace(/[\D]/g, ''); 
-      value = parseInt(value, 10);
+      let value = this.vehicle.price.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
       if (isNaN(value)) {
-        value = '';
+        value = ''
       } else {
-        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Para colocar puntos chavales
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
       }
-      this.vehicle.price = `$${value}`; // añadir el signo de dolar
+      this.vehicle.price = `$${value}` // añadir el signo de dolar
     },
     triggerFileUpload() {
-      this.$refs.fileInput.click();
+      this.$refs.fileInput.click()
     },
 
     handleFileUpload(event) {
-      const files = event.target.files;
+      const files = event.target.files
       for (let i = 0; i < files.length; i++) {
         if (!files[i].type.startsWith('image/')) {
-          alert('Solo se pueden subir imágenes.');
-          continue;
+          alert('Solo se pueden subir imágenes.')
+          continue
         }
-        this.filesToUpload.push(files[i]);
-        const reader = new FileReader();
-        reader.onload = e => this.imagePreviews.push(e.target.result);
-        reader.readAsDataURL(files[i]);
+        this.filesToUpload.push(files[i])
+        const reader = new FileReader()
+        reader.onload = (e) => this.imagePreviews.push(e.target.result)
+        reader.readAsDataURL(files[i])
       }
-      event.target.value = '';
+      event.target.value = ''
     },
 
     removeImage(index) {
-      this.imagePreviews.splice(index, 1);
-      this.filesToUpload.splice(index, 1);
+      this.imagePreviews.splice(index, 1)
+      this.filesToUpload.splice(index, 1)
     },
 
     async saveImages() {
-      this.imagePaths = [];
+      this.imagePaths = []
       for (let i = 0; i < this.filesToUpload.length; i++) {
-        const base64 = await imageToBase64(this.filesToUpload[i]);
-        this.imagePaths.push(base64);
+        const base64 = await imageToBase64(this.filesToUpload[i])
+        this.imagePaths.push(base64)
       }
     },
     async fetchBrands() {
       try {
-        const response = await fetch('http://localhost:8080/brands');
-        if (response.ok) this.brands = await response.json();
+        const response = await fetch('http://localhost:8080/brands')
+        if (response.ok) this.brands = await response.json()
       } catch (error) {
-        console.error('Error al recuperar las marcas:', error);
+        console.error('Error al recuperar las marcas:', error)
       }
     },
 
     async fetchModels() {
       if (!this.vehicle.brand) {
-        this.models = [];
-        return;
+        this.models = []
+        return
       }
       try {
-        const response = await fetch(`http://localhost:8080/models/${this.vehicle.brand}`);
-        if (response.ok) this.models = await response.json();
+        const response = await fetch(`http://localhost:8080/models/${this.vehicle.brand}`)
+        if (response.ok) this.models = await response.json()
       } catch (error) {
-        console.error('Error al recuperar los modelos:', error);
+        console.error('Error al recuperar los modelos:', error)
       }
     },
 
     async submitVehicle() {
-      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price || !this.vehicle.owners || !this.vehicle.seguro || !this.vehicle.doors || !this.vehicle.interiorColor || !this.vehicle.exteriorColor) {
-        this.errorMessage = 'Todos los campos son obligatorios';
+      if (
+        !this.vehicle.brand ||
+        !this.vehicle.model ||
+        !this.vehicle.year ||
+        !this.vehicle.condition ||
+        !this.vehicle.mileage ||
+        !this.vehicle.fuel ||
+        !this.vehicle.transmission ||
+        !this.vehicle.driveTrain ||
+        !this.vehicle.cylinderCapacity ||
+        !this.vehicle.airbag ||
+        !this.vehicle.price ||
+        !this.vehicle.owners ||
+        !this.vehicle.seguro ||
+        !this.vehicle.doors ||
+        !this.vehicle.interiorColor ||
+        !this.vehicle.exteriorColor
+      ) {
+        this.errorMessage = 'Todos los campos son obligatorios'
         setTimeout(() => {
-          this.errorMessage = '';
-        }, 2000);
-      return;
-    }
+          this.errorMessage = ''
+        }, 2000)
+        return
+      }
       try {
-        this.isLoading = true;
-        const user = this.$store.state.user;
-        await this.saveImages();
+        this.isLoading = true
+        const user = this.$store.state.user
+        await this.saveImages()
         const vehicleData = {
           ...this.vehicle,
           image: this.imagePaths,
@@ -322,15 +381,15 @@ export default {
             name: user.nombre,
             lastName: user.apellido,
             email: user.mail,
-            rut: user.rut,
-          },
-        };
-        this.successMessage = 'Auto publicado con éxito';
+            rut: user.rut
+          }
+        }
+        this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {
-          this.successMessage = '';
-        }, 2000);
-        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData);
-        console.log('Response from the server:', response.data);
+          this.successMessage = ''
+        }, 2000)
+        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData)
+        console.log('Response from the server:', response.data)
         // Reset vehicle data
         this.vehicle = {
           brand: '',
@@ -350,33 +409,32 @@ export default {
           interiorColor: '',
           exteriorColor: '',
           description: '',
-        };
+          location: ''
+        }
       } catch (error) {
-        this.errorMessage = 'Error al publicar';
+        this.errorMessage = 'Error al publicar'
         setTimeout(() => {
-          this.errorMessage = '';
-        }, 1500);
-        console.error('Error al publicar el vehículo:', error);
+          this.errorMessage = ''
+        }, 1500)
+        console.error('Error al publicar el vehículo:', error)
       } finally {
-        this.isLoading = false;
-        this.imagePreviews = [];
+        this.isLoading = false
+        this.imagePreviews = []
       }
     }
   },
   watch: {
     'vehicle.brand': function (newBrand) {
-      this.fetchModels();
-    },
+      this.fetchModels()
+    }
   },
   mounted() {
-    this.fetchBrands();
-  },
-};
+    this.fetchBrands()
+  }
+}
 </script>
 
-
 <style scoped>
-
 #description {
   width: 98%;
   height: 150px;
