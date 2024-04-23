@@ -128,7 +128,7 @@ export default {
     async fetchProducts() {
       this.isLoading = true
       try {
-        const response = await axios.get('http://localhost:8080/posts')
+        const response = await axios.get('http://localhost:8080/postsPrueba')
         this.products = response.data
       } catch (error) {
         console.error(error)
