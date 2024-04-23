@@ -39,7 +39,20 @@
 
         <div class="form-group">
           <label for="year">Año</label>
-          <input type="text" id="year" v-model="vehicle.year" placeholder="Ingrese el año" />
+          <input
+            type="text"
+            id="year"
+            v-model="vehicle.year"
+            placeholder="Ingrese el año"
+            @input="formatYearInput"
+          />
+          <p
+            v-if="errorMessage"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ errorMessage }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -330,6 +343,17 @@ export default {
         console.error('Error al recuperar las marcas:', error)
       }
     },
+    isValidYear() {
+      const value = this.vehicle.year.trim()
+      if (value === '') {
+        return false // El campo está vacío
+      }
+      if (!/^\d{4}$/.test(value)) {
+        return false // No tiene 4 dígitos
+      }
+      const year = parseInt(value, 10)
+      return year >= 1900 && year <= 2024 // Devuelve true si el año está dentro del rango válido
+    },
 
     async fetchModels() {
       if (!this.vehicle.brand) {
@@ -361,7 +385,8 @@ export default {
         !this.vehicle.seguro ||
         !this.vehicle.doors ||
         !this.vehicle.interiorColor ||
-        !this.vehicle.exteriorColor
+        !this.vehicle.exteriorColor ||
+        !this.isValidYear()
       ) {
         this.errorMessage = 'Todos los campos son obligatorios'
         setTimeout(() => {
@@ -420,6 +445,22 @@ export default {
       } finally {
         this.isLoading = false
         this.imagePreviews = []
+      }
+    },
+    formatYearInput() {
+      let value = this.vehicle.year.trim() // Eliminar espacios al inicio y al final
+      if (value === '') {
+        this.errorMessage = '' // Limpiar el mensaje de error si el campo está vacío
+      } else if (!/^\d{4}$/.test(value)) {
+        // Verificar si el valor tiene 4 dígitos
+        this.errorMessage = 'Ingrese un año válido con 4 dígitos'
+      } else {
+        const year = parseInt(value, 10) // Convertir a número entero
+        if (year < 1900 || year > 2024) {
+          this.errorMessage = 'Ingrese un año válido entre 1900 y 2024'
+        } else {
+          this.errorMessage = '' // Limpiar mensaje de error si el valor es válido
+        }
       }
     }
   },
