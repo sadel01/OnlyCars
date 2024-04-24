@@ -53,7 +53,10 @@
           </div>
         </div>
         <!-- Botón de contacto -->
-        <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
+        <button @click="contactSeller" class="btn-contact-seller"><span>Contactar Vendedor</span></button>
+        <div v-if="errorMessage" class="error" style="font-size: 16px; color: red;">
+              {{ errorMessage }}
+        </div>
       </div>
     </section>
 
@@ -189,17 +192,18 @@ import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 
 export default {
+  data() {
+    return {
+      product: null,
+      errorMessage: '',
+      isDetailsVisible: false
+    }
+  },
   components: {
     Carousel,
     Slide,
     Pagination,
     Navigation
-  },
-  data() {
-    return {
-      product: null,
-      isDetailsVisible: false
-    }
   },
   computed: {
     user() {
@@ -211,25 +215,43 @@ export default {
       this.isDetailsVisible = !this.isDetailsVisible
     },
     async contactSeller() {
-      try {
-        const response = await axios.post('http://localhost:8080/chat/startChat', {
-          buyerID: this.user._id,
-          sellerID: this.product.user._id,
-          productID: this.product._id
-        })
-
-        this.$store.commit('setChat', {
-          _id: response.data._id || response.data.insertedId,
-          buyerID: this.user._id,
-          sellerID: this.product.user._id,
-          productID: this.product._id
-        })
-
-        console.log(this.$store.state.chat)
-        this.$router.push(`/chat/${this.$store.state.chat._id}`)
-      } catch (error) {
-        console.error(error)
+      if (!this.user) {
+        this.errorMessage = 'Debe iniciar sesión para contactar al vendedor'
+        return
       }
+      
+        const response = await axios.post('http://localhost:8080/chat/startChat', {
+        buyerID: this.user._id,
+        sellerID: this.product.user._id,
+        productID: this.product._id
+      }).then((response) => {
+      //Si se puede refactorizar este codigo, por favor haganlo :D
+      if (response.data._id === undefined) {
+        this.$store.commit('setChat', {
+          _id: response.data.insertedId,
+          buyerID: this.user._id,
+          sellerID: this.product.user._id,
+          productID: this.product._id
+        });
+      }else{
+        this.$store.commit('setChat', {
+          _id: response.data._id,
+          buyerID: this.user._id,
+          sellerID: this.product.user._id,
+          productID: this.product._id
+        });
+      }   
+       
+        if(response.data.success){
+          this.$router.push(`/seller-chat/${response.data.sellerID}`)
+        }else{
+          this.$router.push(`/chat/${this.$store.state.chat._id}`)
+        }
+        }).catch((error) => {
+          console.log(error)
+        })
+    
+      
     }
   },
   async created() {
@@ -243,8 +265,8 @@ export default {
   }
 }
 </script>
-
 <style scoped>
+
 .additional-info h2 {
   user-select: none;
   cursor: pointer;
@@ -341,7 +363,7 @@ export default {
   background-color: #ecf0f1;
   padding: 20px;
   border-radius: 10px;
-  margin-top: 10px;
+  margin-top: 1%;
   align-items: flex-start;
 }
 
@@ -360,6 +382,7 @@ export default {
 .user-info {
   display: flex;
   flex-direction: column;
+  margin-top: 2%;
 }
 
 .user-name {
@@ -527,13 +550,56 @@ strong {
 }
 
 .btn-contact-seller {
-  padding: 10px 20px;
-  background-color: #fbc40e;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  margin-top: 4%;
+  margin-bottom: 5%;
+  margin-left: 6%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #fbc40e;
+  overflow: hidden;
   cursor: pointer;
-  margin-top: auto;
+  border: none;
+  padding: 3% 3.5%;
+}
+.btn-contact-seller:hover{
+  cursor: pointer;
+}
+
+.btn-contact-seller:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #c19400;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+}
+
+.btn-contact-seller:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+.btn-contact-seller span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-contact-seller:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
+  position: relative;
 }
 
 .user-container,
