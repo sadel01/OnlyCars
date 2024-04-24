@@ -44,9 +44,9 @@
       <font-awesome-icon :icon="['fas', 'gas-pump']" class="icono-marca" />
       <select v-model="fuel" @change="inputFuel" class="selects">
         <option value="">Combustible</option>
-        <option value="gas">Gasolina</option>
-        <option value="diesel">Diesel</option>
-        <option value="electric">Eléctrico</option>
+        <option value="Gasolina">Gasolina</option>
+        <option value="Diésel">Diesel</option>
+        <option value="Eléctrico">Eléctrico</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
@@ -55,8 +55,8 @@
       <font-awesome-icon :icon="['fas', 'screwdriver-wrench']" class="icono-marca" />
       <select v-model="transmission" @change="inputTransmission" class="selects">
         <option value="">Transmisión</option>
-        <option value="manual">Manual</option>
-        <option value="automatic">Automático</option>
+        <option value="Manual">Manual</option>
+        <option value="Automatico">Automático</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
