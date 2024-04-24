@@ -48,8 +48,6 @@
             </div>
           </div>
         </div>
-
-        <div class="map">AQUI VA EL MAPA DEL MARTÍN</div>
       </div>
 
       <button @click="viewMore(product._id)" class="verMas"><span>Ver más</span></button>
@@ -117,14 +115,6 @@ export default {
 </script>
 
 <style scoped>
-.map {
-  width: 300px;
-  display: flex;
-  height: 300px;
-  background-color: yellow;
-  justify-content: center;
-  align-items: center;
-}
 
 .productText {
   font-size: 15px;
@@ -137,26 +127,24 @@ export default {
 }
 
 .card {
-  display: flex;
-  width: 100%;
-  align-items: center;
+  width: calc(25% - 20px);
   padding: 10px;
   border: 2px solid #1717172c;
   border-radius: 10px;
   background-color: #efefef5f;
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
-  margin-bottom: 10px; /* Añade espacio entre tarjetas */
+  margin: 0px 10px 0 10px;
+  margin-top: 3%;
 }
 
 .icono {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 35px;
-  height: 35px;
-  font-size: 28px;
+  font-size: 25px;
   color: #333;
   margin-right: 20px;
+  margin-bottom: 8%;
 }
 
 .text-container {
@@ -181,28 +169,23 @@ export default {
   width: 120px;
 }
 
-.card-container,
-map {
-  flex: 1%;
+.cards-container{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: nowrap;
   margin: 0 10px;
-  min-width: 300px;
-  max-width: 300px;
   height: auto;
 }
 
 .description {
-  display: flex;
+  flex-direction: row;
   justify-content: center;
   gap: 150px;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  flex-wrap: nowrap;
   font-size: 14px;
   color: #333;
   line-height: 1.5;
   padding: 10px;
-  flex: auto;
 }
 
 .detalleVehiculo {
@@ -217,9 +200,11 @@ map {
 }
 
 .verMas {
-  margin-top: 4%;
-  margin-bottom: 5%;
-  margin-left: 6%;
+  font-family: "Poppins", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 16px;
+  margin: auto;
+  margin-top: 3%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -229,8 +214,8 @@ map {
   overflow: hidden;
   cursor: pointer;
   border: none;
-  padding: 4% 39.3%;
-  width: auto;
+  padding: 1em 2em;
+  width: calc(100% - 63px);
 }
 .verMas:hover {
   cursor: pointer;

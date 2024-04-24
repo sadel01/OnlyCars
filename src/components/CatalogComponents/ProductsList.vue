@@ -36,7 +36,7 @@
             </div>
           </li>
         </ul>
-        <div v-if="!paginatedProducts.length" class="noProducts">
+        <div v-if="!paginatedProducts.length && isLoading" class="noProducts">
           No hay productos disponibles.
         </div>
         <div class="pageButton">

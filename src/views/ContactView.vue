@@ -23,17 +23,17 @@ const limpiarMensaje = () => {
     <div class="transparent-box">
       <div class="datos">
         <div class="container1">
-          <FontAwesomeIcon :icon="faPhone" class="iconos" />
+          <FontAwesomeIcon :icon="faPhone" class="iconosContacto" />
           <p class="textoDatos">Teléfono</p>
         </div>
         <p class="textoDatos2">+56 9 7358 8879</p>
         <div class="container1">
-          <FontAwesomeIcon :icon="faLocationDot" class="iconos" />
+          <FontAwesomeIcon :icon="faLocationDot" class="iconosContacto" />
           <p class="textoDatos">Ubicación</p>
         </div>
         <p class="textoDatos2">Donde no llegan las pelaitas.</p>
         <div class="container1">
-          <FontAwesomeIcon :icon="faClock" class="iconos" />
+          <FontAwesomeIcon :icon="faClock" class="iconosContacto" />
           <p class="textoDatos">Horario</p>
         </div>
         <p class="textoDatos2">No disponible. Somos universitarios.</p>
@@ -134,7 +134,7 @@ const limpiarMensaje = () => {
   height: 100vh;
 }
 
-.iconos {
+.iconosContacto {
   font-size: 40px;
 }
 
