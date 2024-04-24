@@ -39,7 +39,22 @@
 
         <div class="form-group">
           <label for="year">Año</label>
-          <input type="text" id="year" v-model="vehicle.year" placeholder="Ingrese el año" />
+          <input
+            type="text"
+            id="year"
+            v-model="vehicle.year"
+            placeholder="Ingrese el año"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            @input="formatYearInput"
+          />
+          <p
+            v-if="vehicle.errorMessage.year"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.year }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -77,8 +92,12 @@
             <option value="Responsabilidad social">Responsabilidad social</option>
             <option value="Colisión">Colisión</option>
             <option value="Contra robos y vandalismo">Contra robos y vandalismo</option>
-            <option value="Motorista sin seguro o con seguro insuficiente">Motorista sin seguro o con seguro insuficiente</option>
-            <option value="Protección para accidentes personales">Protección para accidentes personales</option>
+            <option value="Motorista sin seguro o con seguro insuficiente">
+              Motorista sin seguro o con seguro insuficiente
+            </option>
+            <option value="Protección para accidentes personales">
+              Protección para accidentes personales
+            </option>
             <option value="Alquiler de automóviles">Alquiler de automóviles</option>
             <option value="Asistencia en carretera">Asistencia en carretera</option>
             <option value="GAP">GAP</option>
@@ -136,6 +155,13 @@
             placeholder="Ingrese kilometraje"
             @input="formatKMInput"
           />
+          <p
+            v-if="vehicle.errorMessage.mileage"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.mileage }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -176,7 +202,20 @@
 
         <div class="form-group">
           <label for="doors">N° puertas</label>
-          <input type="text" id="doors" v-model="vehicle.doors" placeholder="Ingrese el número" />
+          <input
+            type="text"
+            id="doors"
+            v-model="vehicle.doors"
+            placeholder="Ingrese el número"
+            @input="formatDoorInput"
+          />
+          <p
+            v-if="vehicle.errorMessage.doors"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.doors }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -250,7 +289,13 @@ export default {
         doors: '', //Numero de puertas
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
-        description: ''
+        description: '',
+        location: '',
+        errorMessage: {
+          mileage: '',
+          year: '',
+          doors: ''
+        }
       },
       errorMessage: '',
       successMessage: '',
@@ -266,12 +311,15 @@ export default {
     formatKMInput() {
       let value = this.vehicle.mileage.replace(/[\D]/g, '')
       value = parseInt(value, 10)
-      if (isNaN(value)) {
-        value = ''
+      if (this.vehicle.mileage.trim() === '') {
+        this.vehicle.errorMessage.mileage = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.mileage = 'Ingrese un kilometraje válido'
       } else {
+        this.vehicle.errorMessage.mileage = ''
         value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
+        this.vehicle.mileage = value
       }
-      this.vehicle.mileage = value
     },
     formatPriceInput() {
       let value = this.vehicle.price.replace(/[\D]/g, '')
@@ -282,6 +330,18 @@ export default {
         value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
       }
       this.vehicle.price = `$${value}` // añadir el signo de dolar
+    },
+    formatDoorInput() {
+      let value = this.vehicle.doors.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.doors.trim() === '') {
+        this.vehicle.errorMessage.doors = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.doors = 'Ingrese un número de puertas válido'
+      } else {
+        this.vehicle.errorMessage.doors = ''
+        this.vehicle.doors = value
+      }
     },
     triggerFileUpload() {
       this.$refs.fileInput.click()
@@ -331,6 +391,39 @@ export default {
         console.error('Error al recuperar las marcas:', error)
       }
     },
+    isValidYear() {
+      const value = this.vehicle.year.trim()
+      if (value === '') {
+        return false // El campo está vacío
+      }
+      if (!/^\d{4}$/.test(value)) {
+        return false // No tiene 4 dígitos
+      }
+      const year = parseInt(value, 10)
+      return year >= 1900 && year <= 2024 // Devuelve true si el año está dentro del rango válido
+    },
+    isValidKM() {
+      const value = this.vehicle.mileage.trim()
+      if (value === '') {
+        return false
+      }
+      if (value < 0) {
+        return false
+      }
+      const mileage = parseInt(value, 10)
+      return mileage >= 0
+    },
+    isValidDoor() {
+      const value = this.vehicle.doors.trim()
+      if (value === '') {
+        return false
+      }
+      if (value < 0) {
+        return false
+      }
+      const doors = parseInt(value, 10)
+      return doors >= 0
+    },
 
     async fetchModels() {
       if (!this.vehicle.brand) {
@@ -346,30 +439,14 @@ export default {
     },
 
     async submitVehicle() {
-      if (
-        !this.vehicle.brand ||
-        !this.vehicle.model ||
-        !this.vehicle.year ||
-        !this.vehicle.condition ||
-        !this.vehicle.mileage ||
-        !this.vehicle.fuel ||
-        !this.vehicle.transmission ||
-        !this.vehicle.driveTrain ||
-        !this.vehicle.cylinderCapacity ||
-        !this.vehicle.airbag ||
-        !this.vehicle.price ||
-        !this.vehicle.owners ||
-        !this.vehicle.seguro ||
-        !this.vehicle.doors ||
-        !this.vehicle.interiorColor ||
-        !this.vehicle.exteriorColor
-      ) {
+      if (Object.values(this.vehicle).some((value) => !value)) {
         this.errorMessage = 'Todos los campos son obligatorios'
         setTimeout(() => {
           this.errorMessage = ''
         }, 2000)
         return
       }
+
       try {
         this.isLoading = true
         const user = this.$store.state.user
@@ -420,6 +497,23 @@ export default {
       } finally {
         this.isLoading = false
         this.imagePreviews = []
+      }
+    },
+
+    formatYearInput() {
+      let value = this.vehicle.year.trim() // Eliminar espacios al inicio y al final
+      if (value === '') {
+        this.vehicle.errorMessage.year = '' // Limpiar el mensaje de error si el campo está vacío
+      } else if (!/^\d{4}$/.test(value)) {
+        // Verificar si el valor tiene 4 dígitos
+        this.vehicle.errorMessage.year = 'Ingrese un año válido con 4 números'
+      } else {
+        const year = parseInt(value, 10) // Convertir a número entero
+        if (year < 1900 || year > 2024) {
+          this.vehicle.errorMessage.year = 'Ingrese un año válido entre 1900 y 2024'
+        } else {
+          this.vehicle.errorMessage.year = '' // Limpiar mensaje de error si el valor es válido
+        }
       }
     }
   },
