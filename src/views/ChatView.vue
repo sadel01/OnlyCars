@@ -184,7 +184,7 @@ export default {
 
 <style scoped>
 .search-chat {
-  width: calc(100% - 20px);
+  width: calc(93% - 20px); 
   margin-bottom: 10px;
   padding: 8px;
   border: 1px solid #ccc;
