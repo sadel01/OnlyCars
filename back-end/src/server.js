@@ -228,6 +228,7 @@ app.post('/chat/:id', async (req, res) => {
       { $push: { messages: { text: message, user: user } } }
     )
     res.send(chat)
+
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -249,23 +250,81 @@ app.get('/chat/:id', async (req, res) => {
 
 app.get('/findChat', async (req, res) => {
   try {
-    const user1 = req.params.user1
-    const user2 = req.params.user2
+    const user1 = req.query.user1
+    const user2 = req.query.user2
+    const productID = req.query.productID
     const database = client.db('onlycars')
     const collection = database.collection('chat')
     const chat = await collection.findOne({
       $or: [
-        { buyerID: user1, sellerID: user2 },
-        { buyerID: user2, sellerID: user1 }
+        { buyerID: user1, sellerID: user2, productID: productID },
+        { buyerID: user2, sellerID: user1, productID: productID }
       ]
     })
-    console.log('chat encontrado')
     res.send(chat)
   } catch (error) {
     res.status(500).send(error.message)
     console.log('chat no encontrado')
   }
 })
+
+app.get('/findSellerChats', async (req, res) => {
+  try {
+    const sellerID = req.query.sellerID
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chats = await collection.find({ sellerID }).toArray()
+    const chatIds = chats.map((chat) => chat._id)
+
+    const userCollection = database.collection('users')
+    const productCollection = database.collection('posts')
+    const chatsWithBuyerDetails = await Promise.all(
+      chats.map(async (chat) => {
+        const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+        const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+        return {
+          ...chat,
+          buyerName: buyer ? buyer.nombre : '',
+          buyerLastName: buyer ? buyer.apellido : '',
+          brand: product ? product.brand : '',
+          model: product ? product.model : ''
+        }
+      })
+    )
+
+    res.send(chatsWithBuyerDetails)
+    console.log('chats encontrados')
+    console.log(chatsWithBuyerDetails)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/findSpecificChat', async (req, res) => {
+  try {
+    const user1 = req.query.user1
+    const productID = req.query.productID
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chat = await collection.findOne({ sellerID: user1, productID: productID })
+    res.send(chat)
+  } catch (error) {
+    res.status(500).send(error.message)
+    console.log('chat no encontrado')
+  }
+})
+app.get('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
+    const post = await collection.findOne({ _id: new ObjectId(id) })
+    res.send(post)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

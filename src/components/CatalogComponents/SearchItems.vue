@@ -15,7 +15,7 @@
       <font-awesome-icon :icon="['fas', 'car']" class="icono-marca" />
       <select v-model="brand" @change="inputBrand" class="selects">
         <option value="">Marca</option>
-        <option v-for="brand in brands">{{ brand }}</option>
+        <option v-for="brand in brands" :key="brand">{{ brand }}</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>

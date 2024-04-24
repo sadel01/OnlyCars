@@ -53,7 +53,12 @@
           </div>
         </div>
         <!-- Botón de contacto -->
-        <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
+        <button @click="contactSeller" class="btn-contact-seller">
+          <span>Contactar Vendedor</span>
+        </button>
+        <div v-if="errorMessage" class="error" style="font-size: 16px; color: red">
+          {{ errorMessage }}
+        </div>
       </div>
     </section>
 
@@ -95,8 +100,8 @@
 
     <!-- Sección de descripción del vehículo -->
     <section class="vehicle-description">
-      <h2>Description</h2>
-      <p>vehicleDescription</p>
+      <h2>Descripción</h2>
+      <p class="user-email">{{ product.description }}</p>
     </section>
 
     <!-- Sección de información adicional desplegable -->
@@ -108,30 +113,33 @@
       <div v-show="isDetailsVisible" class="details-content">
         <!-- Primera columna de detalles -->
         <div class="detail-column">
-          <div class="detail-row"><span class="boldd">Trim:</span> {{ product.trim }}</div>
+          <div class="detail-row"><span class="boldd">Año:</span> {{ product.year }}</div>
           <div class="detail-row">
-            <span class="boldd">Number of cylinders:</span> {{ product.numberOfCylinders }}
-          </div>
-          <div class="detail-row"><span class="boldd">VIN:</span> {{ product.vin }}</div>
-          <div class="detail-row">
-            <span class="boldd">Number of doors:</span> {{ product.numberOfDoors }}
+            <span class="boldd">Transmisión:</span> {{ product.transmission }}
           </div>
           <div class="detail-row">
-            <span class="boldd">Title in hand:</span> {{ product.titleInHand ? 'Yes' : 'No' }}
+            <span class="boldd">Tracción:</span> {{ product.driveTrain }}
           </div>
+          <div class="detail-row">
+            <span class="boldd">Cantidad de puertas:</span> {{ product.doors }}
+          </div>
+          <div class="detail-row"><span class="boldd">Seguro:</span> {{ product.seguro }}</div>
         </div>
         <!-- Segunda columna de detalles -->
         <div class="detail-column">
+          <div class="detail-row"><span class="boldd">Dueños:</span> {{ product.owners }}</div>
           <div class="detail-row">
-            <span class="boldd">Body style:</span> {{ product.bodyStyle }}
+            <span class="boldd">Color interior:</span> {{ product.interiorColor }}
           </div>
           <div class="detail-row">
-            <span class="boldd">Exterior color:</span> {{ product.exteriorColor }}
+            <span class="boldd">Color exterior:</span> {{ product.exteriorColor }}
           </div>
-          <div class="detail-row"><span class="boldd">Title type:</span> que pasa perra</div>
           <div class="detail-row">
-            <span class="boldd">Outstanding lien:</span>
-            {{ product.outstandingLien ? 'Yes' : 'No' }}
+            <span class="boldd">Capacidad cilindraje:</span> {{ product.cylinderCapacity }}
+          </div>
+          <div class="detail-row">
+            <span class="boldd">Airbag:</span>
+            {{ product.airbag ? 'Yes' : 'No' }}
           </div>
         </div>
       </div>
@@ -218,10 +226,6 @@ export default {
       }
 
 
-      // BUSCAR LOS CHAT EN LA BASE DE DATOS INDEPENDIENTEMENTE DE QUIEN SEA EL COMPRADOR Y QUIEN SEA LE VENDEDOR
-      // SI SE ENCUENTRA EL CHAT SE REDIRIGE Y SI NO SE ENCUETRA SE CREA Y SE REDIRIGE
-
-      
       const response = await axios
         .post('http://localhost:8080/chat/startChat', {
           buyerID: this.user._id,
@@ -365,7 +369,7 @@ export default {
   background-color: #ecf0f1;
   padding: 20px;
   border-radius: 10px;
-  margin-top: 10px;
+  margin-top: 1%;
   align-items: flex-start;
 }
 
@@ -384,6 +388,7 @@ export default {
 .user-info {
   display: flex;
   flex-direction: column;
+  margin-top: 2%;
 }
 
 .user-name {
@@ -551,13 +556,56 @@ strong {
 }
 
 .btn-contact-seller {
-  padding: 10px 20px;
-  background-color: #fbc40e;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  margin-top: 4%;
+  margin-bottom: 5%;
+  margin-left: 6%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #fbc40e;
+  overflow: hidden;
   cursor: pointer;
-  margin-top: auto;
+  border: none;
+  padding: 3% 3.5%;
+}
+.btn-contact-seller:hover {
+  cursor: pointer;
+}
+
+.btn-contact-seller:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #c19400;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+}
+
+.btn-contact-seller:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+.btn-contact-seller span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-contact-seller:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
+  position: relative;
 }
 
 .user-container,

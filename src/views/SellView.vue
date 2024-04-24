@@ -74,15 +74,15 @@
           <label for="seguro">Seguro</label>
           <select id="seguro" v-model="vehicle.seguro">
             <option value="" disabled selected>Seleccione un seguro</option>
-            <option value="RS">Responsabilidad social</option>
-            <option value="C">Colisión</option>
-            <option value="CRV">Contra robos y vandalismo</option>
-            <option value="MSS/CSI">Motorista sin seguro o con seguro insuficiente</option>
-            <option value="PAP">Protección para accidentes personales</option>
-            <option value="AA">Alquiler de automóviles</option>
-            <option value="AC">Asistencia en carretera</option>
+            <option value="Responsabilidad social">Responsabilidad social</option>
+            <option value="Colisión">Colisión</option>
+            <option value="Contra robos y vandalismo">Contra robos y vandalismo</option>
+            <option value="Motorista sin seguro o con seguro insuficiente">Motorista sin seguro o con seguro insuficiente</option>
+            <option value="Protección para accidentes personales">Protección para accidentes personales</option>
+            <option value="Alquiler de automóviles">Alquiler de automóviles</option>
+            <option value="Asistencia en carretera">Asistencia en carretera</option>
             <option value="GAP">GAP</option>
-            <option value="SS">Sin seguro</option>
+            <option value="Sin seguro">Sin seguro</option>
           </select>
         </div>
 
@@ -121,9 +121,9 @@
           <label for="driveTrain">Tracción</label>
           <select id="driveTrain" v-model="vehicle.driveTrain">
             <option value="" disabled selected>Selecciona una tracción</option>
-            <option value="fwd">FWD - Tracción delantera</option>
-            <option value="rwd">RWD - Tracción trasera</option>
-            <option value="awd">AWD - Tracción total</option>
+            <option value="Tracción delantera">FWD - Tracción delantera</option>
+            <option value="Tracción trasera">RWD - Tracción trasera</option>
+            <option value="Tracción total">AWD - Tracción total</option>
           </select>
         </div>
 
@@ -220,15 +220,8 @@
 import axios from 'axios'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
-
-function imageToBase64(img) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.onloadend = () => resolve(reader.result)
-    reader.onerror = reject
-    reader.readAsDataURL(img)
-  })
-}
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { getStorage } from 'firebase/storage'
 
 export default {
   name: 'SellView',
@@ -257,8 +250,7 @@ export default {
         doors: '', //Numero de puertas
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
-        description: '',
-        location: ''
+        description: ''
       },
       errorMessage: '',
       successMessage: '',
@@ -316,10 +308,19 @@ export default {
     },
 
     async saveImages() {
-      this.imagePaths = []
-      for (let i = 0; i < this.filesToUpload.length; i++) {
-        const base64 = await imageToBase64(this.filesToUpload[i])
-        this.imagePaths.push(base64)
+      const storage = getStorage()
+      const uploadPromises = this.filesToUpload.map((file) => {
+        const fileRef = storageRef(storage, `images/${file.name}-${Date.now()}`)
+        return uploadBytes(fileRef, file).then((snapshot) => {
+          return getDownloadURL(snapshot.ref)
+        })
+      })
+
+      try {
+        this.imagePaths = await Promise.all(uploadPromises)
+      } catch (error) {
+        console.error('Error al subir imágenes:', error)
+        throw error // Asegúrate de manejar este error donde llames a saveImages
       }
     },
     async fetchBrands() {
@@ -408,8 +409,7 @@ export default {
           doors: '',
           interiorColor: '',
           exteriorColor: '',
-          description: '',
-          location: ''
+          description: ''
         }
       } catch (error) {
         this.errorMessage = 'Error al publicar'
