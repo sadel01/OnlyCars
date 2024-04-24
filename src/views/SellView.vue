@@ -92,8 +92,12 @@
             <option value="Responsabilidad social">Responsabilidad social</option>
             <option value="Colisión">Colisión</option>
             <option value="Contra robos y vandalismo">Contra robos y vandalismo</option>
-            <option value="Motorista sin seguro o con seguro insuficiente">Motorista sin seguro o con seguro insuficiente</option>
-            <option value="Protección para accidentes personales">Protección para accidentes personales</option>
+            <option value="Motorista sin seguro o con seguro insuficiente">
+              Motorista sin seguro o con seguro insuficiente
+            </option>
+            <option value="Protección para accidentes personales">
+              Protección para accidentes personales
+            </option>
             <option value="Alquiler de automóviles">Alquiler de automóviles</option>
             <option value="Asistencia en carretera">Asistencia en carretera</option>
             <option value="GAP">GAP</option>
@@ -435,33 +439,14 @@ export default {
     },
 
     async submitVehicle() {
-      if (
-        !this.vehicle.brand ||
-        !this.vehicle.model ||
-        !this.vehicle.year ||
-        !this.vehicle.condition ||
-        !this.vehicle.mileage ||
-        !this.vehicle.fuel ||
-        !this.vehicle.transmission ||
-        !this.vehicle.driveTrain ||
-        !this.vehicle.cylinderCapacity ||
-        !this.vehicle.airbag ||
-        !this.vehicle.price ||
-        !this.vehicle.owners ||
-        !this.vehicle.seguro ||
-        !this.vehicle.doors ||
-        !this.vehicle.interiorColor ||
-        !this.vehicle.exteriorColor ||
-        !this.isValidYear() ||
-        !this.isValidKM() ||
-        !this.isValidDoor()
-      ) {
+      if (Object.values(this.vehicle).some((value) => !value)) {
         this.errorMessage = 'Todos los campos son obligatorios'
         setTimeout(() => {
           this.errorMessage = ''
         }, 2000)
         return
       }
+
       try {
         this.isLoading = true
         const user = this.$store.state.user
@@ -514,6 +499,7 @@ export default {
         this.imagePreviews = []
       }
     },
+
     formatYearInput() {
       let value = this.vehicle.year.trim() // Eliminar espacios al inicio y al final
       if (value === '') {
