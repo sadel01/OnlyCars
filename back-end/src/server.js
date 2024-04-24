@@ -228,6 +228,7 @@ app.post('/chat/:id', async (req, res) => {
       { $push: { messages: { text: message, user: user } } }
     )
     res.send(chat)
+
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -323,6 +324,7 @@ app.get('/users/:id', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
+
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

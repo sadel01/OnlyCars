@@ -148,6 +148,28 @@
         </div>
 
         <div class="form-group">
+          <label for="location">Región</label>
+          <select id="location" v-model="vehicle.location">
+            <option value="">Región</option>
+            <option value="region15">Arica y Parinacota</option>
+            <option value="region1">Tarapacá</option>
+            <option value="region2">Antofagasta</option>
+            <option value="region3">Atacama</option>
+            <option value="region4">Coquimbo</option>
+            <option value="region5">Valparaíso</option>
+            <option value="regionRM">Metropolitana</option>
+            <option value="region6">Bernardo O'Higgins</option>
+            <option value="region7">Maule</option>
+            <option value="region8">Biobío</option>
+            <option value="region9">La Araucanía</option>
+            <option value="region14">Los Ríos</option>
+            <option value="region10">Los Lagos</option>
+            <option value="region11">Aysén</option>
+            <option value="region12">Magallanes</option>
+          </select>
+        </div>
+
+        <div class="form-group">
           <label for="owners">N° propietarios anteriores</label>
           <input type="text" id="owners" v-model="vehicle.owners" placeholder="Ingrese el número" />
         </div>
