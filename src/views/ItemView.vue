@@ -53,9 +53,11 @@
           </div>
         </div>
         <!-- Botón de contacto -->
-        <button @click="contactSeller" class="btn-contact-seller"><span>Contactar Vendedor</span></button>
-        <div v-if="errorMessage" class="error" style="font-size: 16px; color: red;">
-              {{ errorMessage }}
+        <button @click="contactSeller" class="btn-contact-seller">
+          <span>Contactar Vendedor</span>
+        </button>
+        <div v-if="errorMessage" class="error" style="font-size: 16px; color: red">
+          {{ errorMessage }}
         </div>
       </div>
     </section>
@@ -98,8 +100,8 @@
 
     <!-- Sección de descripción del vehículo -->
     <section class="vehicle-description">
-      <h2>Description</h2>
-      <p>vehicleDescription</p>
+      <h2>Descripción</h2>
+      <p class="user-email">{{ product.description }}</p>
     </section>
 
     <!-- Sección de información adicional desplegable -->
@@ -111,30 +113,33 @@
       <div v-show="isDetailsVisible" class="details-content">
         <!-- Primera columna de detalles -->
         <div class="detail-column">
-          <div class="detail-row"><span class="boldd">Trim:</span> {{ product.trim }}</div>
+          <div class="detail-row"><span class="boldd">Año:</span> {{ product.year }}</div>
           <div class="detail-row">
-            <span class="boldd">Number of cylinders:</span> {{ product.numberOfCylinders }}
-          </div>
-          <div class="detail-row"><span class="boldd">VIN:</span> {{ product.vin }}</div>
-          <div class="detail-row">
-            <span class="boldd">Number of doors:</span> {{ product.numberOfDoors }}
+            <span class="boldd">Transmisión:</span> {{ product.transmission }}
           </div>
           <div class="detail-row">
-            <span class="boldd">Title in hand:</span> {{ product.titleInHand ? 'Yes' : 'No' }}
+            <span class="boldd">Tracción:</span> {{ product.driveTrain }}
           </div>
+          <div class="detail-row">
+            <span class="boldd">Cantidad de puertas:</span> {{ product.doors }}
+          </div>
+          <div class="detail-row"><span class="boldd">Seguro:</span> {{ product.seguro }}</div>
         </div>
         <!-- Segunda columna de detalles -->
         <div class="detail-column">
+          <div class="detail-row"><span class="boldd">Dueños:</span> {{ product.owners }}</div>
           <div class="detail-row">
-            <span class="boldd">Body style:</span> {{ product.bodyStyle }}
+            <span class="boldd">Color interior:</span> {{ product.interiorColor }}
           </div>
           <div class="detail-row">
-            <span class="boldd">Exterior color:</span> {{ product.exteriorColor }}
+            <span class="boldd">Color exterior:</span> {{ product.exteriorColor }}
           </div>
-          <div class="detail-row"><span class="boldd">Title type:</span> que pasa perra</div>
           <div class="detail-row">
-            <span class="boldd">Outstanding lien:</span>
-            {{ product.outstandingLien ? 'Yes' : 'No' }}
+            <span class="boldd">Capacidad cilindraje:</span> {{ product.cylinderCapacity }}
+          </div>
+          <div class="detail-row">
+            <span class="boldd">Airbag:</span>
+            {{ product.airbag ? 'Yes' : 'No' }}
           </div>
         </div>
       </div>
@@ -219,39 +224,40 @@ export default {
         this.errorMessage = 'Debe iniciar sesión para contactar al vendedor'
         return
       }
-      
-        const response = await axios.post('http://localhost:8080/chat/startChat', {
-        buyerID: this.user._id,
-        sellerID: this.product.user._id,
-        productID: this.product._id
-      }).then((response) => {
-      //Si se puede refactorizar este codigo, por favor haganlo :D
-      if (response.data._id === undefined) {
-        this.$store.commit('setChat', {
-          _id: response.data.insertedId,
+
+      const response = await axios
+        .post('http://localhost:8080/chat/startChat', {
           buyerID: this.user._id,
           sellerID: this.product.user._id,
           productID: this.product._id
-        });
-      }else{
-        this.$store.commit('setChat', {
-          _id: response.data._id,
-          buyerID: this.user._id,
-          sellerID: this.product.user._id,
-          productID: this.product._id
-        });
-      }   
-       
-        if(response.data.success){
-          this.$router.push(`/seller-chat/${response.data.sellerID}`)
-        }else{
-          this.$router.push(`/chat/${this.$store.state.chat._id}`)
-        }
-        }).catch((error) => {
+        })
+        .then((response) => {
+          //Si se puede refactorizar este codigo, por favor haganlo :D
+          if (response.data._id === undefined) {
+            this.$store.commit('setChat', {
+              _id: response.data.insertedId,
+              buyerID: this.user._id,
+              sellerID: this.product.user._id,
+              productID: this.product._id
+            })
+          } else {
+            this.$store.commit('setChat', {
+              _id: response.data._id,
+              buyerID: this.user._id,
+              sellerID: this.product.user._id,
+              productID: this.product._id
+            })
+          }
+
+          if (response.data.success) {
+            this.$router.push(`/seller-chat/${response.data.sellerID}`)
+          } else {
+            this.$router.push(`/chat/${this.$store.state.chat._id}`)
+          }
+        })
+        .catch((error) => {
           console.log(error)
         })
-    
-      
     }
   },
   async created() {
@@ -266,7 +272,6 @@ export default {
 }
 </script>
 <style scoped>
-
 .additional-info h2 {
   user-select: none;
   cursor: pointer;
@@ -564,7 +569,7 @@ strong {
   border: none;
   padding: 3% 3.5%;
 }
-.btn-contact-seller:hover{
+.btn-contact-seller:hover {
   cursor: pointer;
 }
 
