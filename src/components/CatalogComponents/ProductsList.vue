@@ -232,10 +232,9 @@ export default {
   cursor: pointer;
   border: none;
   margin-left: 75%;
-  height: 15%;
+  height: 3rem; /* Cambia esto a la altura que necesites */
   width: 20%;
   margin-bottom: 30%;
-  top: -25%;
 }
 .verMas2:after {
   content: ' ';

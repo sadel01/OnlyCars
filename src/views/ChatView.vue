@@ -1,62 +1,105 @@
-<template>
-<div class="general-container">
-  <div class="chat-container">
-    <div class="minimized-chats">
-      <input
-        class="search-chat"
-        type="text"
-        placeholder="Buscar.."
-        @input="emitInput"
-      />
-      <p>Aqui van los chats del user
-      </p>
-    </div>
 
-    <div class="chat">
-      <div class="chat-header">
-        <h1>Nombre Vendedor</h1>
+<template>
+  <div class="general-container">
+    <div class="chat-container">
+      <div class="minimized-chats">
+        <input class="search-chat" type="text" placeholder="Buscar.." @input="emitInput" />
+        <p>Aqui van los chats del user</p>
       </div>
-      <div class="messages">
-        <div v-for="(message, index) in messages" :key="index" :class="{ 'sent-message': message.user === user, 'received-message': message.user !== user }">
-          <p>{{message.user}}: {{ message.text }}</p>
+
+      <div class="chat">
+        <div class="chat-header">
+          <h1>{{ receiver.nombre }} {{ receiver.apellido }}</h1>
         </div>
-      </div>
-      <div>
-        <div class="inputContainer">
-      <form class="formMessage" @submit.prevent="sendMessage">  
-        <div class="fileUploadWrapper">
+        <div class="messages" ref="messages">
+          <div
+            v-for="(message, index) in messages"
+            :key="index"
+            :class="{
+              'sent-message': message.user === user,
+              'received-message': message.user !== user
+            }"
+          >
+            <p>{{ message.text }}</p>
+          </div>
+        </div>
+        <div>
+          <div class="inputContainer">
+            <form class="formMessage" @submit.prevent="sendMessage">
+              <div class="fileUploadWrapper">
                 <label for="file">
-                  <svg viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M3 10C3 8.34315 4.34315 7 6 7H14C15.6569 7 17 8.34315 17 10V18C17 19.6569 15.6569 21 14 21H6C4.34315 21 3 19.6569 3 18V10Z" stroke="#000000" stroke-width="1.104" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M10 14V11M10 14V17M10 14H13M10 14H7" stroke="#000000" stroke-width="1.104" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M7 3L18 3C19.6569 3 21 4.34315 21 6L21 17" stroke="#000000" stroke-width="1.104" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
+                  <svg viewBox="0 0 24.00 24.00" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M3 10C3 8.34315 4.34315 7 6 7H14C15.6569 7 17 8.34315 17 10V18C17 19.6569 15.6569 21 14 21H6C4.34315 21 3 19.6569 3 18V10Z"
+                        stroke="#000000"
+                        stroke-width="1.104"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M10 14V11M10 14V17M10 14H13M10 14H7"
+                        stroke="#000000"
+                        stroke-width="1.104"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M7 3L18 3C19.6569 3 21 4.34315 21 6L21 17"
+                        stroke="#000000"
+                        stroke-width="1.104"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                    </g>
+                  </svg>
                   <span class="tooltip">Agregar imagen</span>
                 </label>
                 <input type="file" id="file" name="file" />
+              </div>
+              <input
+                class="chat-input"
+                v-model="newMessage"
+                placeholder="Escribe un mensaje"
+                type="text"
+              />
+              <button
+                :disabled="newMessage.trim() === ''"
+                type="submit"
+                class="sendMessage"
+                id="sendButton"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
+                  <path
+                    fill="none"
+                    d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
+                  ></path>
+                  <path
+                    stroke-linejoin="round"
+                    stroke-linecap="round"
+                    stroke-width="33.67"
+                    stroke="black"
+                    d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
+                  ></path>
+                </svg>
+              </button>
+            </form>
+          </div>
         </div>
-        <input class="chat-input" v-model="newMessage" placeholder="Escribe un mensaje" type="text">
-        <button :disabled="newMessage.trim() === ''" type="submit" class="sendMessage" id="sendButton"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 664 663">
-      <path
-        fill="none"
-        d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
-      ></path>
-      <path
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="33.67"
-        stroke="black"
-        d="M646.293 331.888L17.7538 17.6187L155.245 331.888M646.293 331.888L17.753 646.157L155.245 331.888M646.293 331.888L318.735 330.228L155.245 331.888"
-      ></path>
-    </svg></button>
-      </form>
+      </div>
+      <div class="sell-data">
+        <h2>Año Marca Modelo</h2>
+        <p>Imagenes</p>
+        <p>Descripcion</p>
       </div>
     </div>
-
-    </div>
-    <div class="sell-data">
-      <h2>Año Marca Modelo</h2>
-      <p>Imagenes</p>
-      <p>Descripcion</p>
-    </div>
   </div>
-</div>
 </template>
 
 <script>
@@ -69,22 +112,27 @@ export default {
       messages: [],
       newMessage: '',
       error: null,
-      chatId: null
+      chatId: null,
+      receiver: ''
     }
   },
+  updated() {
+    // Desplaza el contenedor de mensajes hasta el final
+    this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
+  },
   async mounted() {
-    const chatID = this.$route.params.id;
-    const response = await axios.get('http://localhost:8080/chat/' + chatID);
-    this.messages = response.data.messages;
+    const chatID = this.$route.params.id
+    const response = await axios.get('http://localhost:8080/chat/' + chatID)
+    this.messages = response.data.messages
   },
   created() {
     this.chatId = this.$route.params.id
-
-    socket.emit('join', this.$store.state.chat._id, this.$store.state.chat.buyerID , (error) => {
+    this.getReceiver()
+    socket.emit('join', this.$store.state.chat._id, this.$store.state.chat.buyerID, (error) => {
       if (error) {
-        console.error('Error joining chat:', error);
+        console.error('Error joining chat:', error)
       }
-    });
+    })
 
     socket.on('message', (message) => {
       this.messages.push(message)
@@ -106,56 +154,76 @@ export default {
       if (this.newMessage.trim() !== '') {
         console.log('Sending message:', this.newMessage)
         console.log('Chat ID:', this.chatId)
-        socket.emit('message', this.chatId, {text: this.newMessage, user: this.user})
+        socket.emit('message', this.chatId, { text: this.newMessage, user: this.user })
         this.newMessage = ''
       }
     },
     async uploadMessages() {
+      this.newMessage = ''
       const chatID = this.$store.state.chat._id
-      await axios.post('http://localhost:8080/chat/'+chatID, {
-        id : chatID,
-        message: this.messages[this.messages.length - 1],
+      await axios.post('http://localhost:8080/chat/' + chatID, {
+        id: chatID,
+        message: this.messages[this.messages.length - 1]
       })
+    },
+    async getReceiver() {
+      const response = await axios.get(
+        `http://localhost:8080/users/${this.$store.state.chat.sellerID}`,
+        {
+          params: {
+            id: this.$store.state.chat.sellerID
+          }
+        }
+      )
+      console.log(response.data)
+      this.receiver = response.data
     }
   }
 }
-  </script>
+</script>
 
 <style scoped>
 .search-chat {
-  box-sizing: border-box; 
-  width: 90%; 
-  padding: 10px; 
-  font-size: 15px;
-  border: none;
-  border-radius: 4px 4px 2px 2px;
-  background-color: white;
+  width: calc(100% - 20px);
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   outline: none;
-  margin: 0; 
-  border:1px solid #c5c5c5;
 }
+
+.search-chat:focus,
 .search-chat:hover {
-  border-color: #000000;
+  border-color: #000;
 }
-.search-chat:focus {
-  border-color: #000000;
-}
-h2{
+h2 {
   margin-top: 18%;
 }
-.sell-data {
-  flex: 1;
-  margin-left: auto;
-  border-left: 1px solid #ccc;
-  justify-content: center;
-  text-align: center;
-  height: 85vh;
-  background-color: #ececec;
-}
+
 #messageInput:focus ~ #sendButton svg path,
 #messageInput:valid ~ #sendButton svg path {
   fill: #3c3c3c;
   stroke: white;
+}
+
+button,
+input[type='text'],
+input[type='file'] {
+  border: 2px solid #ddd;
+  padding: 8px 16px;
+  border-radius: 4px;
+  outline: none;
+}
+
+button:hover,
+input[type='text']:hover,
+input[type='file']:hover {
+  border-color: #555;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 
 #sendButton {
@@ -181,58 +249,55 @@ h2{
   fill: #3c3c3c;
   stroke: white;
 }
-.sent-message {
-  background-color: #007bff; /* Color de fondo */
-  color: white; /* Color de texto */
-  border-radius: 10px; /* Borde redondeado */
-  padding: 5px 10px; /* Espaciado interno */
-  margin-bottom: 5px; /* Espaciado inferior */
-}
 
-/* Establece estilos para los mensajes recibidos */
 .received-message {
-  background-color: #d1d1d1; /* Color de fondo */
-  color: black; /* Color de texto */
-  border-radius: 20px; /* Borde redondeado */
-  padding: 5px 10px; /* Espaciado interno */
-  margin-top: 0.5%; /* Espaciado inferior */
+  background-color: #d1d1d1;
+  color: black;
+  border-radius: 20px;
+  padding: 5px 10px;
+  margin-top: 0.5%;
   margin-left: 1%;
   margin-right: 1%;
-  text-align: right; /* Alinea el texto a la derecha */
-  display: flex; /* Activa el modelo de caja flexible */
-  align-items: center; /* Alinea verticalmente los elementos */
-  height: 50px; /* Altura deseada para los mensajes */
-  align-self: flex-end; /* Alinea el mensaje a la derecha */
-  display: inline-block; /* Hace que el contenedor se ajuste al tamaño del contenido */
+  text-align: right;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  align-self: flex-end;
+  display: inline-block;
 }
 
 .general-container {
   display: flex;
-  height: 85vh;
+  flex-direction: row;
+  min-height: 85vh;
+  width: 100%;
 }
 
 .minimized-chats {
-  width: 20%;
-  padding: 10px;
+  flex: 0 0 20%;
+  overflow-y: auto;
   border-right: 1px solid #ccc;
-  flex: 0 0 auto; /* Hace que el ancho sea fijo y no flexible */
-  height: 80vh;
-  background-color: #ececec;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.minimized-chat {
   padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #ccc;
-  margin: 10px 0;
 }
 
 .minimized-chat:hover {
+  flex: 0 0 20%;
   background-color: #f0f0f0;
 }
+
+.minimized-chat.active-chat {
+  background-color: #fbc40e;
+  color: white;
+}
+
+.active-chat-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
+}
+
 .unread-messages {
   margin-left: 10px;
   background-color: red;
@@ -240,20 +305,16 @@ h2{
   padding: 2px 5px;
   border-radius: 50%;
 }
-.iconFile{
-  margin-top:10%;
+.iconFile {
+  margin-top: 10%;
 }
 .inputContainer {
-  widows: 80%;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Add this line to center horizontally */
-  
-  margin-top: 1.5%;
+  padding: 10px;
+  background-color: #f0f0f0;
 }
 
 .fileUploadWrapper {
-  margin-right:1%;
+  margin-right: 1%;
   width: fit-content;
   display: flex;
   align-items: center;
@@ -262,7 +323,7 @@ h2{
 }
 
 #file {
-  width:50%; /* Ajusta el ancho según sea necesario */
+  width: 50%;
   display: none;
 }
 .fileUploadWrapper label {
@@ -312,22 +373,9 @@ h2{
   transition: all 0.3s;
 }
 
-
 .chat-container {
   display: flex;
-  flex: 1; /* Hace que ocupe el espacio restante */
-}
-
-.minimized-chats {
-  width: 13%;
-  height: 85vh;
-  border-right: 1px solid #ccc;
-}
-
-.minimized-chat {
-  padding: 10px;
-  cursor: pointer;
-  border-bottom: 1px solid #ccc;
+  flex: 1;
 }
 
 .minimized-chat:hover {
@@ -344,37 +392,86 @@ h2{
 
 .chat {
   padding: 10px;
-  width: calc(68% - 10px); /* El 80% restante del contenedor, restando el padding */
-  overflow-y: auto; /* Añade desplazamiento vertical si es necesario */
-  margin-left: 1.5%;
-  height: 100%; /* Establece la altura al 100% */
-  max-height: 120%; /* Establece la altura máxima al 100% */
-  
-  margin-right: 1.5%;
+  width: calc(68% - 10px);
+  background-color: #f7f7f7;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat:hover {
+  background-color: #ebebeb;
+}
+
+.chat h4 {
+  margin: 4px 0;
+  color: #333;
+  font-size: 1em;
+  font-weight: normal;
 }
 
 .chat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 5%;
-  margin-top: 1.5%;
-  margin-bottom: 3%;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
 }
 
 .messages {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  height: 120%; /* Establece la altura al 100% */
-  max-height: 75%;
-  border-radius: 10px;
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0;
+  align-items: flex-start;
+  max-width: 100%;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  overflow-y: auto;
+  max-height: 70vh;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-.formMessage{
+
+.sent-message,
+.received-message {
+  max-width: 75%;
+  word-wrap: break-word;
+  padding: 5px 10px;
+  border-radius: 10px;
+  margin: 4px 0;
+  display: inline-block;
+}
+
+.received-message {
+  margin: 4px 0;
+  padding: 6px 12px;
+  max-width: 60%;
+  align-self: flex-start;
+  background-color: #e9ecef;
+  color: black;
+  border-radius: 10px;
+  border-top-left-radius: 0;
+}
+
+.message-text {
+  overflow-wrap: break-word;
+}
+
+.sell-data {
+  flex: 0 0 20%;
+  margin-left: auto;
+  border-left: 1px solid #ccc;
+}
+
+.sent-message {
+  margin: 4px 0;
+  padding: 6px 12px;
+  max-width: 60%;
+  align-self: flex-end;
+  background-color: #fbc40e;
+  color: black;
+  border-radius: 10px;
+  border-top-right-radius: 0;
+}
+
+.formMessage {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -390,12 +487,34 @@ h2{
   background-color: #dddddd;
 }
 .chat-input:hover {
-  border-color:black;
+  border-color: black;
 }
 .chat-input:focus {
-  border-color: #474747; /* Cambia el color del borde cuando está enfocado */
-  outline: none; /* Quita el contorno predeterminado del input */
+  border-color: #474747;
+  outline: none;
   background-color: white;
 }
 
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+@media (max-width: 768px) {
+  .sent-message,
+  .received-message {
+    max-width: 80%;
+  }
+}
 </style>

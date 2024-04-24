@@ -171,6 +171,7 @@ export default {
 }
 .verMas:hover{
   cursor: pointer;
+  color: white;
 }
 
 .verMas:after {
