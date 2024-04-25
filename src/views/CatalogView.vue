@@ -12,7 +12,7 @@
         @inputMinPrice="updateSelectedMinPrice"
         @inputMaxPrice="updateSelectedMaxPrice"
         @inputAirbag="updateSelectedAirbag"
-        @inputLocation="updateSelectedLocation"
+        @inputRegion="updateSelectedRegion"
       />
     </div>
     <div class="productsList">
@@ -47,7 +47,7 @@ export default {
       selectedMaxPrice: '',
       selectedMinPrice: '',
       selectedAirbag: '',
-      selectedLocation: '',
+      selectedRegion: '',
       products: [],
       isLoading: false
     }
@@ -63,7 +63,7 @@ export default {
             (!this.selectedYear || product.year === this.selectedYear) &&
             (!this.selectedFuel || product.fuel === this.selectedFuel) &&
             (!this.selectedModel || product.model === this.selectedModel) &&
-            (!this.selectedLocation || product.location === this.selectedLocation) &&
+            (!this.selectedRegion || product.Region === this.selectedRegion) &&
             (!this.selectedMileage ||
               parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
             (!this.selectedMinPrice ||
@@ -102,8 +102,8 @@ export default {
     updateSelectedMileage(mileage) {
       this.selectedMileage = mileage
     },
-    updateSelectedLocation(location) {
-      this.selectedLocation = location
+    updateSelectedRegion(region) {
+      this.selectedRegion = region
     },
     updateSelectedMinPrice(minPrice) {
       if (minPrice.trim() === 'Min.' || minPrice.trim() === '$') {
