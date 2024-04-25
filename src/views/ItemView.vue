@@ -1,5 +1,10 @@
 <template>
-  <main class="vehicle-listing">
+  <div class="main-container">
+    <div class="loading-container" v-if="isLoadingCar"> 
+      <p id="loading-text">Conectando...</p> 
+      <div id="loading-spinner"></div> 
+    </div>
+  <main class="vehicle-listing" v-if="!isLoadingCar">
     <div class="vehicle-header">
       <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
       <p class="vehicle-price">${{ product.price }} CLP</p>
@@ -181,6 +186,7 @@
       </div>
     </section>
   </main>
+  </div>
 </template>
 
 <script>
@@ -193,7 +199,8 @@ export default {
     return {
       product: null,
       errorMessage: '',
-      isDetailsVisible: false
+      isDetailsVisible: false,
+      isLoadingCar: false
     }
   },
   components: {
@@ -258,17 +265,53 @@ export default {
     }
   },
   async created() {
+    this.isLoadingCar = true;
     const id = this.$route.params.id
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
     } catch (error) {
       console.error(error)
+    }finally{
+      this.isLoadingCar = false;
     }
   }
 }
 </script>
+
 <style scoped>
+
+.main-container { 
+  min-height: 100vh; 
+} 
+ 
+.loading-container { 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0, 0, 0, 0.5); /* Opcional: fondo semitransparente */ 
+} 
+ 
+#loading-text { 
+  font-size: 1.5rem; 
+  margin-bottom: 20px; 
+} 
+ 
+#loading-spinner { 
+  border: 16px solid #f3f3f3; 
+  border-top: 16px solid #fbc40e; 
+  border-radius: 50%; 
+  width: 120px; 
+  height: 120px; 
+  animation: spin 2s linear infinite; 
+}
+
 .additional-info h2 {
   user-select: none;
   cursor: pointer;

@@ -6,7 +6,8 @@
         type="file"
         id="image-upload"
         ref="fileInput"
-        multiple accept="image/*"
+        multiple
+        accept="image/*"
         style="display: none"
         @change="handleFileUpload"
       />
@@ -15,7 +16,6 @@
           <img :src="src" alt="Image preview" class="previewImage" />
         </div>
       </div>
-      
     </div>
     <button @click="removeImage(index)">Eliminar</button>
 
@@ -39,7 +39,22 @@
 
         <div class="form-group">
           <label for="year">Año</label>
-          <input type="text" id="year" v-model="vehicle.year" placeholder="Ingrese el año" />
+          <input
+            type="text"
+            id="year"
+            v-model="vehicle.year"
+            placeholder="Ingrese el año"
+            inputmode="numeric"
+            pattern="[0-9]*"
+            @input="formatYearInput"
+          />
+          <p
+            v-if="vehicle.errorMessage.year"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.year }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -74,22 +89,47 @@
           <label for="seguro">Seguro</label>
           <select id="seguro" v-model="vehicle.seguro">
             <option value="" disabled selected>Seleccione un seguro</option>
-            <option value="RS">Responsabilidad social</option>
-            <option value="C">Colisión</option>
-            <option value="CRV">Contra robos y vandalismo</option>
-            <option value="MSS/CSI">Motorista sin seguro o con seguro insuficiente</option>
-            <option value="PAP">Protección para accidentes personales</option>
-            <option value="AA">Alquiler de automóviles</option>
-            <option value="AC">Asistencia en carretera</option>
+            <option value="Responsabilidad social">Responsabilidad social</option>
+            <option value="Colisión">Colisión</option>
+            <option value="Contra robos y vandalismo">Contra robos y vandalismo</option>
+            <option value="Motorista sin seguro o con seguro insuficiente">
+              Motorista sin seguro o con seguro insuficiente
+            </option>
+            <option value="Protección para accidentes personales">
+              Protección para accidentes personales
+            </option>
+            <option value="Alquiler de automóviles">Alquiler de automóviles</option>
+            <option value="Asistencia en carretera">Asistencia en carretera</option>
             <option value="GAP">GAP</option>
-            <option value="SS">Sin seguro</option>
+            <option value="Sin seguro">Sin seguro</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="interiorColor">Color Interior</label>
-          <input type="text" id="interiorColor" v-model="vehicle.interiorColor" placeholder="Ingrese un color"/>
+          <input
+            type="text"
+            id="interiorColor"
+            v-model="vehicle.interiorColor"
+            placeholder="Ingrese un color"
+          />
         </div>
+
+        <div class="form-group"> 
+          <label for="region">Región</label> 
+          <select id="region" v-model="vehicle.region" @change="fetchRegion"> 
+            <option value="" disabled selected>Seleccione una región</option> 
+            <option v-for="region in regions" :key="region" :value="region">{{ region }}</option> 
+          </select> 
+        </div> 
+ 
+        <div class="form-group"> 
+          <label for="comuna">Comuna</label> 
+          <select id="comuna" v-model="vehicle.comuna"> 
+            <option value="" disabled selected>Seleccione una comuna</option> 
+            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option> 
+          </select> 
+        </div> 
       </div>
 
       <div class="details-column">
@@ -116,9 +156,9 @@
           <label for="driveTrain">Tracción</label>
           <select id="driveTrain" v-model="vehicle.driveTrain">
             <option value="" disabled selected>Selecciona una tracción</option>
-            <option value="fwd">FWD - Tracción delantera</option>
-            <option value="rwd">RWD - Tracción trasera</option>
-            <option value="awd">AWD - Tracción total</option>
+            <option value="Tracción delantera">FWD - Tracción delantera</option>
+            <option value="Tracción trasera">RWD - Tracción trasera</option>
+            <option value="Tracción total">AWD - Tracción total</option>
           </select>
         </div>
 
@@ -131,6 +171,13 @@
             placeholder="Ingrese kilometraje"
             @input="formatKMInput"
           />
+          <p
+            v-if="vehicle.errorMessage.mileage"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.mileage }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -149,53 +196,82 @@
 
         <div class="form-group">
           <label for="doors">N° puertas</label>
-          <input type="text" id="doors" v-model="vehicle.doors" placeholder="Ingrese el número" />
+          <input
+            type="text"
+            id="doors"
+            v-model="vehicle.doors"
+            placeholder="Ingrese el número"
+            @input="formatDoorInput"
+          />
+          <p
+            v-if="vehicle.errorMessage.doors"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.doors }}
+          </p>
         </div>
 
         <div class="form-group">
           <label for="exteriorColor">Color Exterior</label>
-          <input type="text" id="exteriorColor" v-model="vehicle.exteriorColor" placeholder="Ingrese el color"/>
+          <input
+            type="text"
+            id="exteriorColor"
+            v-model="vehicle.exteriorColor"
+            placeholder="Ingrese el color"
+          />
         </div>
+
+        <div class="form-group"> 
+          <label for="provincia">Provincia</label> 
+          <select id="provincia" v-model="vehicle.provincia"> 
+            <option value="" disabled selected>Seleccione una provincia</option> 
+            <option v-for="provincia in provincias" :key="provincia" :value="provincia">{{ provincia }}</option> 
+          </select> 
+        </div> 
+
       </div>
     </div>
     <div class="form-group">
       <label for="description">Descripción</label>
-      <textarea type="text" id="description" v-model="vehicle.description" placeholder="Ingrese descripción"/>
+      <textarea
+        type="text"
+        id="description"
+        v-model="vehicle.description"
+        placeholder="Ingrese descripción"
+      />
     </div>
-    <p v-if="errorMessage" class="error" style="font-size: 12px; color:red; margin-left:20px">{{ errorMessage }}</p>
-    <p v-if="successMessage" class="success" style="font-size: 12px; color:green; margin-left:20px">{{ successMessage }}</p>
+    <p v-if="errorMessage" class="error" style="font-size: 12px; color: red; margin-left: 20px">
+      {{ errorMessage }}
+    </p>
+    <p
+      v-if="successMessage"
+      class="success"
+      style="font-size: 12px; color: green; margin-left: 20px"
+    >
+      {{ successMessage }}
+    </p>
     <button type="button" @click="submitVehicle" :disabled="isLoading">
-      <span v-if="isLoading">
-        <i class="fa fa-spinner fa-spin"></i> Cargando...
-      </span>
-      <span v-else>
-        Publicar
-      </span>
+      <span v-if="isLoading"> <i class="fa fa-spinner fa-spin"></i> Cargando... </span>
+      <span v-else> Publicar </span>
     </button>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import { computed } from 'vue';
-import { useStore } from 'vuex';
-
-function imageToBase64(img) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(img);
-  });
-}
+import axios from 'axios'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { getStorage } from 'firebase/storage'
 
 export default {
   name: 'SellView',
   setup() {
-    const store = useStore();
+    const store = useStore()
     return {
-      user: computed(() => store.state.user),
-    };
+      user: computed(() => store.state.user)
+    }
   },
   data() {
     return {
@@ -217,103 +293,217 @@ export default {
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
         description: '',
+        region: '',
+        provincia: '', 
+        comuna: '', 
+        errorMessage: {
+          mileage: '',
+          year: '',
+          doors: ''
+        }
       },
       errorMessage: '',
       successMessage: '',
       brands: [],
       models: [],
+      regions: [], 
+      provincias: [], 
+      comunas: [], 
       filesToUpload: [],
       imagePreviews: [],
       imagePaths: [],
-      isLoading: false,
-    };
+      isLoading: false
+    }
   },
   methods: {
     formatKMInput() {
-      let value = this.vehicle.mileage.replace(/[\D]/g, ''); 
-      value = parseInt(value, 10);
-      if (isNaN(value)) {
-        value = '';
+      let value = this.vehicle.mileage.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.mileage.trim() === '') {
+        this.vehicle.errorMessage.mileage = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.mileage = 'Ingrese un kilometraje válido'
       } else {
-        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Para colocar puntos chavales
+        this.vehicle.errorMessage.mileage = ''
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
+        this.vehicle.mileage = value
       }
-      this.vehicle.mileage = value
     },
     formatPriceInput() {
-      let value = this.vehicle.price.replace(/[\D]/g, ''); 
-      value = parseInt(value, 10);
+      let value = this.vehicle.price.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
       if (isNaN(value)) {
-        value = '';
+        value = ''
       } else {
-        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // Para colocar puntos chavales
+        value = value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Para colocar puntos chavales
       }
-      this.vehicle.price = `$${value}`; // añadir el signo de dolar
+      this.vehicle.price = `$${value}` // añadir el signo de dolar
+    },
+    formatDoorInput() {
+      let value = this.vehicle.doors.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.doors.trim() === '') {
+        this.vehicle.errorMessage.doors = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.doors = 'Ingrese un número de puertas válido'
+      } else {
+        this.vehicle.errorMessage.doors = ''
+        this.vehicle.doors = value
+      }
     },
     triggerFileUpload() {
-      this.$refs.fileInput.click();
+      this.$refs.fileInput.click()
     },
 
     handleFileUpload(event) {
-      const files = event.target.files;
+      const files = event.target.files
       for (let i = 0; i < files.length; i++) {
         if (!files[i].type.startsWith('image/')) {
-          alert('Solo se pueden subir imágenes.');
-          continue;
+          alert('Solo se pueden subir imágenes.')
+          continue
         }
-        this.filesToUpload.push(files[i]);
-        const reader = new FileReader();
-        reader.onload = e => this.imagePreviews.push(e.target.result);
-        reader.readAsDataURL(files[i]);
+        this.filesToUpload.push(files[i])
+        const reader = new FileReader()
+        reader.onload = (e) => this.imagePreviews.push(e.target.result)
+        reader.readAsDataURL(files[i])
       }
-      event.target.value = '';
+      event.target.value = ''
     },
 
     removeImage(index) {
-      this.imagePreviews.splice(index, 1);
-      this.filesToUpload.splice(index, 1);
+      this.imagePreviews.splice(index, 1)
+      this.filesToUpload.splice(index, 1)
     },
 
     async saveImages() {
-      this.imagePaths = [];
-      for (let i = 0; i < this.filesToUpload.length; i++) {
-        const base64 = await imageToBase64(this.filesToUpload[i]);
-        this.imagePaths.push(base64);
+      const storage = getStorage()
+      const uploadPromises = this.filesToUpload.map((file) => {
+        const fileRef = storageRef(storage, `images/${file.name}-${Date.now()}`)
+        return uploadBytes(fileRef, file).then((snapshot) => {
+          return getDownloadURL(snapshot.ref)
+        })
+      })
+
+      try {
+        this.imagePaths = await Promise.all(uploadPromises)
+      } catch (error) {
+        console.error('Error al subir imágenes:', error)
+        throw error // Asegúrate de manejar este error donde llames a saveImages
       }
     },
     async fetchBrands() {
       try {
-        const response = await fetch('http://localhost:8080/brands');
-        if (response.ok) this.brands = await response.json();
+        const response = await fetch('http://localhost:8080/brands')
+        if (response.ok) this.brands = await response.json()
       } catch (error) {
-        console.error('Error al recuperar las marcas:', error);
+        console.error('Error al recuperar las marcas:', error)
       }
+    },
+    isValidYear() {
+      const value = this.vehicle.year.trim()
+      if (value === '') {
+        return false // El campo está vacío
+      }
+      if (!/^\d{4}$/.test(value)) {
+        return false // No tiene 4 dígitos
+      }
+      const year = parseInt(value, 10)
+      return year >= 1900 && year <= 2024 // Devuelve true si el año está dentro del rango válido
+    },
+    isValidKM() {
+      const value = this.vehicle.mileage.trim()
+      if (value === '') {
+        return false
+      }
+      if (value < 0) {
+        return false
+      }
+      const mileage = parseInt(value, 10)
+      return mileage >= 0
+    },
+    isValidDoor() {
+      const value = this.vehicle.doors.trim()
+      if (value === '') {
+        return false
+      }
+      if (value < 0) {
+        return false
+      }
+      const doors = parseInt(value, 10)
+      return doors >= 0
     },
 
     async fetchModels() {
       if (!this.vehicle.brand) {
-        this.models = [];
-        return;
+        this.models = []
+        return
       }
       try {
-        const response = await fetch(`http://localhost:8080/models/${this.vehicle.brand}`);
-        if (response.ok) this.models = await response.json();
+        const response = await fetch(`http://localhost:8080/models/${this.vehicle.brand}`)
+        if (response.ok) this.models = await response.json()
       } catch (error) {
-        console.error('Error al recuperar los modelos:', error);
+        console.error('Error al recuperar los modelos:', error)
       }
     },
 
+    async fetchRegion() { 
+      try { 
+        const response = await fetch('http://localhost:8080/regions'); 
+        if (response.ok) {
+          this.regions = await response.json(); 
+          this.comunas = [];
+        }
+      } catch (error) { 
+        console.error('Error al recuperar las regiones:', error); 
+      } 
+    }, 
+ 
+    async fetchProvincia() { 
+      if (!this.vehicle.region) { 
+        this.provincias = []; 
+        this.comunas = []; // Resetea las comunas si las usas 
+        return; 
+      } 
+      try { 
+        const response = await fetch(`http://localhost:8080/provincia/${this.vehicle.region}`); 
+        if (response.ok) { 
+          this.provincias = await response.json(); 
+          this.provincia = ''; // Resetea la provincia seleccionada 
+        } 
+      } catch (error) { 
+        console.error('Error al recuperar las provincias:', error); 
+      } 
+    }, 
+ 
+    async fetchComunas() { // Añade este método si gestionas comunas 
+      if (!this.vehicle.provincia) { 
+        this.comunas = []; 
+        return; 
+      } 
+      try { 
+        // Debes tener un endpoint para obtener comunas basado en la provincia 
+        const response = await fetch(`http://localhost:8080/comuna/${this.vehicle.provincia}`); 
+        if (response.ok) { 
+          this.comunas = await response.json(); 
+        } 
+      } catch (error) { 
+        console.error('Error al recuperar las comunas:', error); 
+      } 
+    }, 
+
     async submitVehicle() {
-      if (!this.vehicle.brand || !this.vehicle.model || !this.vehicle.year || !this.vehicle.condition || !this.vehicle.mileage || !this.vehicle.fuel || !this.vehicle.transmission || !this.vehicle.driveTrain || !this.vehicle.cylinderCapacity || !this.vehicle.airbag || !this.vehicle.price || !this.vehicle.owners || !this.vehicle.seguro || !this.vehicle.doors || !this.vehicle.interiorColor || !this.vehicle.exteriorColor) {
-        this.errorMessage = 'Todos los campos son obligatorios';
+      if (Object.values(this.vehicle).some((value) => !value)) {
+        this.errorMessage = 'Todos los campos son obligatorios'
         setTimeout(() => {
-          this.errorMessage = '';
-        }, 2000);
-      return;
-    }
+          this.errorMessage = ''
+        }, 2000)
+        return
+      }
+
       try {
-        this.isLoading = true;
-        const user = this.$store.state.user;
-        await this.saveImages();
+        this.isLoading = true
+        const user = this.$store.state.user
+        await this.saveImages()
         const vehicleData = {
           ...this.vehicle,
           image: this.imagePaths,
@@ -322,15 +512,15 @@ export default {
             name: user.nombre,
             lastName: user.apellido,
             email: user.mail,
-            rut: user.rut,
-          },
-        };
-        this.successMessage = 'Auto publicado con éxito';
+            rut: user.rut
+          }
+        }
+        this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {
-          this.successMessage = '';
-        }, 2000);
-        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData);
-        console.log('Response from the server:', response.data);
+          this.successMessage = ''
+        }, 2000)
+        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData)
+        console.log('Response from the server:', response.data)
         // Reset vehicle data
         this.vehicle = {
           brand: '',
@@ -350,33 +540,58 @@ export default {
           interiorColor: '',
           exteriorColor: '',
           description: '',
-        };
+          region: '', 
+          provincia: '', 
+          comuna: '', 
+        }
       } catch (error) {
-        this.errorMessage = 'Error al publicar';
+        this.errorMessage = 'Error al publicar'
         setTimeout(() => {
-          this.errorMessage = '';
-        }, 1500);
-        console.error('Error al publicar el vehículo:', error);
+          this.errorMessage = ''
+        }, 1500)
+        console.error('Error al publicar el vehículo:', error)
       } finally {
-        this.isLoading = false;
-        this.imagePreviews = [];
+        this.isLoading = false
+        this.imagePreviews = []
+      }
+    },
+
+    formatYearInput() {
+      let value = this.vehicle.year.trim() // Eliminar espacios al inicio y al final
+      if (value === '') {
+        this.vehicle.errorMessage.year = '' // Limpiar el mensaje de error si el campo está vacío
+      } else if (!/^\d{4}$/.test(value)) {
+        // Verificar si el valor tiene 4 dígitos
+        this.vehicle.errorMessage.year = 'Ingrese un año válido con 4 números'
+      } else {
+        const year = parseInt(value, 10) // Convertir a número entero
+        if (year < 1900 || year > 2024) {
+          this.vehicle.errorMessage.year = 'Ingrese un año válido entre 1900 y 2024'
+        } else {
+          this.vehicle.errorMessage.year = '' // Limpiar mensaje de error si el valor es válido
+        }
       }
     }
   },
   watch: {
     'vehicle.brand': function (newBrand) {
-      this.fetchModels();
+      this.fetchModels()
     },
+    'vehicle.region'() { 
+      this.fetchProvincia(); 
+    }, 
+    'vehicle.provincia'() { 
+      this.fetchComunas(); // Añade esto si gestionas comunas 
+    } 
   },
   mounted() {
-    this.fetchBrands();
-  },
-};
+    this.fetchBrands()
+    this.fetchRegion(); 
+  }
+}
 </script>
 
-
 <style scoped>
-
 #description {
   width: 98%;
   height: 150px;

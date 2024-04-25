@@ -36,7 +36,7 @@
             </div>
           </li>
         </ul>
-        <div v-if="!paginatedProducts.length" class="noProducts">
+        <div v-if="!paginatedProducts.length && isLoading" class="noProducts">
           No hay productos disponibles.
         </div>
         <div class="pageButton">
@@ -232,10 +232,9 @@ export default {
   cursor: pointer;
   border: none;
   margin-left: 75%;
-  height: 15%;
+  height: 3rem; /* Cambia esto a la altura que necesites */
   width: 20%;
   margin-bottom: 30%;
-  top: -25%;
 }
 .verMas2:after {
   content: ' ';
