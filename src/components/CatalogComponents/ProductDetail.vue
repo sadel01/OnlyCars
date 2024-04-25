@@ -15,24 +15,37 @@
       </carousel>
 
       <div class="description">
-        <div class="card">
-          <FontAwesomeIcon :icon="faCalendarDays" class="icono" />
-          <p class="productText productTitle">{{ product.year }}</p>
-        </div>
+        <div class="cards-container">
+          <div class="card">
+            <FontAwesomeIcon :icon="faCalendarDays" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Fecha</strong></p>
+              <p class="year-text">{{ product.year }}</p>
+            </div>
+          </div>
 
-        <div class="card">
-          <FontAwesomeIcon :icon="faGasPump" class="icono" />
-          <p class="productText productDescription">{{ product.fuel }}</p>
-        </div>
+          <div class="card">
+            <FontAwesomeIcon :icon="faGasPump" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Combustible</strong></p>
+              <p class="year-text">{{ product.fuel }}</p>
+            </div>
+          </div>
 
-        <div class="card">
-          <FontAwesomeIcon :icon="faLocationDot" class="icono" />
-          <p class="productText productDescription data">UBICACION</p>
-        </div>
+          <div class="card">
+            <FontAwesomeIcon :icon="faLocationDot" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Ubicación</strong></p>
+            </div>
+          </div>
 
-        <div class="card">
-          <FontAwesomeIcon :icon="faWrench" class="icono" />
-          <p class="productText productPriceNumber">{{ product.cylinderCapacity }}</p>
+          <div class="card">
+            <FontAwesomeIcon :icon="faWrench" class="icono" />
+            <div class="text-container">
+              <p class="fecha-text"><strong>Motor</strong></p>
+              <p class="year-text">{{ product.cylinderCapacity }}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -101,6 +114,7 @@ export default {
 </script>
 
 <style scoped>
+
 .productText {
   font-size: 15px;
   color: black;
@@ -111,31 +125,62 @@ export default {
   height: 100%;
 }
 
-.icono {
-  color: #333;
-  font-size: 40px;
-  margin-right: 10px;
-  position: absolute;
-  top: 20px;
-  left: 20px;
-}
-
 .card {
-  position: relative;
-  width: 20%;
-  height: 150px;
-  max-height: 150px;
+  width: calc(25% - 20px);
+  padding: 10px;
   border: 2px solid #1717172c;
   border-radius: 10px;
   background-color: #efefef5f;
   box-shadow: 3px 4px 5px rgb(185, 185, 185);
   margin: 0px 10px 0 10px;
+  margin-top: 3%;
+}
+
+.icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  color: #333;
+  margin-right: 20px;
+  margin-bottom: 8%;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fecha-text,
+.year-text {
+  text-align: left;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.fecha-text {
+  width: 80;
+  margin-bottom: 4px;
+}
+
+.year-text {
+  width: 120px;
+}
+
+.cards-container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin: 0 10px;
+  height: auto;
 }
 
 .description {
-  display: flex;
+  flex-direction: row;
   justify-content: center;
-  align-items: center;
+  gap: 150px;
+  flex-wrap: nowrap;
   font-size: 14px;
   color: #333;
   line-height: 1.5;
@@ -154,9 +199,11 @@ export default {
 }
 
 .verMas {
-  margin-top: 4%;
-  margin-bottom: 5%;
-  margin-left: 6%;
+  font-family: "Poppins", sans-serif;
+  font-optical-sizing: auto;
+  font-size: 16px;
+  margin: auto;
+  margin-top: 3%;
   position: relative;
   display: flex;
   justify-content: center;
@@ -166,12 +213,11 @@ export default {
   overflow: hidden;
   cursor: pointer;
   border: none;
-  padding: 4% 39.3%;
-  width: auto;
+  padding: 1em 2em;
+  width: calc(100% - 63px);
 }
-.verMas:hover{
+.verMas:hover {
   cursor: pointer;
-  color: white;
 }
 
 .verMas:after {
@@ -236,7 +282,6 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
 
 .content-image {
   display: block;

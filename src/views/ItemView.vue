@@ -1,5 +1,10 @@
 <template>
-  <main class="vehicle-listing">
+  <div class="main-container">
+    <div class="loading-container" v-if="isLoadingCar"> 
+      <p id="loading-text">Conectando...</p> 
+      <div id="loading-spinner"></div> 
+    </div>
+  <main class="vehicle-listing" v-if="!isLoadingCar">
     <div class="vehicle-header">
       <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
       <p class="vehicle-price">${{ product.price }} CLP</p>
@@ -53,12 +58,7 @@
           </div>
         </div>
         <!-- Botón de contacto -->
-        <button @click="contactSeller" class="btn-contact-seller">
-          <span>Contactar Vendedor</span>
-        </button>
-        <div v-if="errorMessage" class="error" style="font-size: 16px; color: red">
-          {{ errorMessage }}
-        </div>
+        <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
       </div>
     </section>
 
@@ -100,8 +100,8 @@
 
     <!-- Sección de descripción del vehículo -->
     <section class="vehicle-description">
-      <h2>Descripción</h2>
-      <p class="user-email">{{ product.description }}</p>
+      <h2>Description</h2>
+      <p>vehicleDescription</p>
     </section>
 
     <!-- Sección de información adicional desplegable -->
@@ -113,33 +113,30 @@
       <div v-show="isDetailsVisible" class="details-content">
         <!-- Primera columna de detalles -->
         <div class="detail-column">
-          <div class="detail-row"><span class="boldd">Año:</span> {{ product.year }}</div>
+          <div class="detail-row"><span class="boldd">Trim:</span> {{ product.trim }}</div>
           <div class="detail-row">
-            <span class="boldd">Transmisión:</span> {{ product.transmission }}
+            <span class="boldd">Number of cylinders:</span> {{ product.numberOfCylinders }}
+          </div>
+          <div class="detail-row"><span class="boldd">VIN:</span> {{ product.vin }}</div>
+          <div class="detail-row">
+            <span class="boldd">Number of doors:</span> {{ product.numberOfDoors }}
           </div>
           <div class="detail-row">
-            <span class="boldd">Tracción:</span> {{ product.driveTrain }}
+            <span class="boldd">Title in hand:</span> {{ product.titleInHand ? 'Yes' : 'No' }}
           </div>
-          <div class="detail-row">
-            <span class="boldd">Cantidad de puertas:</span> {{ product.doors }}
-          </div>
-          <div class="detail-row"><span class="boldd">Seguro:</span> {{ product.seguro }}</div>
         </div>
         <!-- Segunda columna de detalles -->
         <div class="detail-column">
-          <div class="detail-row"><span class="boldd">Dueños:</span> {{ product.owners }}</div>
           <div class="detail-row">
-            <span class="boldd">Color interior:</span> {{ product.interiorColor }}
+            <span class="boldd">Body style:</span> {{ product.bodyStyle }}
           </div>
           <div class="detail-row">
-            <span class="boldd">Color exterior:</span> {{ product.exteriorColor }}
+            <span class="boldd">Exterior color:</span> {{ product.exteriorColor }}
           </div>
+          <div class="detail-row"><span class="boldd">Title type:</span> que pasa perra</div>
           <div class="detail-row">
-            <span class="boldd">Capacidad cilindraje:</span> {{ product.cylinderCapacity }}
-          </div>
-          <div class="detail-row">
-            <span class="boldd">Airbag:</span>
-            {{ product.airbag ? 'Yes' : 'No' }}
+            <span class="boldd">Outstanding lien:</span>
+            {{ product.outstandingLien ? 'Yes' : 'No' }}
           </div>
         </div>
       </div>
@@ -189,6 +186,7 @@
       </div>
     </section>
   </main>
+  </div>
 </template>
 
 <script>
@@ -201,7 +199,8 @@ export default {
     return {
       product: null,
       errorMessage: '',
-      isDetailsVisible: false
+      isDetailsVisible: false,
+      isLoadingCar: false
     }
   },
   components: {
@@ -226,6 +225,10 @@ export default {
       }
 
 
+      // BUSCAR LOS CHAT EN LA BASE DE DATOS INDEPENDIENTEMENTE DE QUIEN SEA EL COMPRADOR Y QUIEN SEA LE VENDEDOR
+      // SI SE ENCUENTRA EL CHAT SE REDIRIGE Y SI NO SE ENCUETRA SE CREA Y SE REDIRIGE
+
+      
       const response = await axios
         .post('http://localhost:8080/chat/startChat', {
           buyerID: this.user._id,
@@ -262,17 +265,53 @@ export default {
     }
   },
   async created() {
+    this.isLoadingCar = true;
     const id = this.$route.params.id
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
     } catch (error) {
       console.error(error)
+    }finally{
+      this.isLoadingCar = false;
     }
   }
 }
 </script>
+
 <style scoped>
+
+.main-container { 
+  min-height: 100vh; 
+} 
+ 
+.loading-container { 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: center; 
+  align-items: center; 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  background-color: rgba(0, 0, 0, 0.5); /* Opcional: fondo semitransparente */ 
+} 
+ 
+#loading-text { 
+  font-size: 1.5rem; 
+  margin-bottom: 20px; 
+} 
+ 
+#loading-spinner { 
+  border: 16px solid #f3f3f3; 
+  border-top: 16px solid #fbc40e; 
+  border-radius: 50%; 
+  width: 120px; 
+  height: 120px; 
+  animation: spin 2s linear infinite; 
+}
+
 .additional-info h2 {
   user-select: none;
   cursor: pointer;
@@ -369,7 +408,7 @@ export default {
   background-color: #ecf0f1;
   padding: 20px;
   border-radius: 10px;
-  margin-top: 1%;
+  margin-top: 10px;
   align-items: flex-start;
 }
 
@@ -388,7 +427,6 @@ export default {
 .user-info {
   display: flex;
   flex-direction: column;
-  margin-top: 2%;
 }
 
 .user-name {
@@ -556,56 +594,13 @@ strong {
 }
 
 .btn-contact-seller {
-  margin-top: 4%;
-  margin-bottom: 5%;
-  margin-left: 6%;
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 5px;
-  background: #fbc40e;
-  overflow: hidden;
-  cursor: pointer;
-  border: none;
-  padding: 3% 3.5%;
-}
-.btn-contact-seller:hover {
-  cursor: pointer;
-}
-
-.btn-contact-seller:after {
-  content: ' ';
-  width: 0%;
-  height: 100%;
-  background: #c19400;
-  position: absolute;
-  transition: all 0.4s ease-in-out;
-  right: 0;
-}
-
-.btn-contact-seller:hover::after {
-  right: auto;
-  left: 0;
-  width: 100%;
-}
-
-.btn-contact-seller span {
-  text-align: center;
-  text-decoration: none;
-  width: 100%;
-  color: black;
-  font-size: 1.125em;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  z-index: 20;
-  transition: all 0.3s ease-in-out;
-}
-
-.btn-contact-seller:hover span {
+  padding: 10px 20px;
+  background-color: #fbc40e;
   color: white;
-  animation: scaleUp 0.3s ease-in-out;
-  position: relative;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: auto;
 }
 
 .user-container,
