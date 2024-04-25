@@ -64,7 +64,6 @@ import { faFacebookF, faTwitter, faInstagram, faLinkedinIn } from '@fortawesome/
 .footer {
   background-color: #1f1f1f;
   color: #fff;
-  font-family: Arial, sans-serif;
   padding: 4rem;
   display: flex;
   flex-direction: column;

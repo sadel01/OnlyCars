@@ -3,24 +3,26 @@
     <div class="wrapper">
       <nav>
         <RouterLink to="/" class="logo-container">
-          <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image">
+          <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
         <button class="hamburger" @click="toggleNav">&#9776;</button>
-        <div class="nav-links" :class="{ 'active': navActive }">
+        <div class="nav-links" :class="{ active: navActive }">
           <RouterLink to="/" class="nav-link" @click="closeNav">Inicio</RouterLink>
           <RouterLink to="/catalog" class="nav-link" @click="closeNav">Catálogo</RouterLink>
-          <RouterLink to="/contact" class="nav-link" @click="closeNav">Contactos</RouterLink>
+          <RouterLink to="/contact" class="nav-link" @click="closeNav">Contacto</RouterLink>
           <RouterLink to="/about" class="nav-link" @click="closeNav">Nosotros</RouterLink>
           <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
         </div>
-        <div class="nav-buttons" :class="{ 'active': navActive }">
+        <div class="nav-buttons" :class="{ active: navActive }">
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" /> {{ user.nombre + ' ' + user.apellido}}
+            <FontAwesomeIcon :icon="faUser" /> {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
           </RouterLink>
-          <RouterLink v-if="!user" to="/register" class="nav-button" @click="closeNav">Registrarse</RouterLink>
+          <RouterLink v-if="!user" to="/register" class="nav-button" @click="closeNav"
+            >Registrarse</RouterLink
+          >
         </div>
       </nav>
     </div>
@@ -28,24 +30,24 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useStore } from 'vuex';
-import { RouterLink } from 'vue-router';
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faRightToBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+import { RouterLink } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faRightToBracket, faUser } from '@fortawesome/free-solid-svg-icons'
 
-const store = useStore();
-const navActive = ref(false);
+const store = useStore()
+const navActive = ref(false)
 
 const toggleNav = () => {
-  navActive.value = !navActive.value;
-};
+  navActive.value = !navActive.value
+}
 
 const closeNav = () => {
-  navActive.value = false;
-};
+  navActive.value = false
+}
 
-const user = computed(() => store.state.user);
+const user = computed(() => store.state.user)
 </script>
 
 <style scoped>
@@ -55,7 +57,6 @@ const user = computed(() => store.state.user);
   align-items: center;
   padding: 0 20px;
   background-color: #1f1f1f;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   height: 60px;
 }
 
@@ -69,6 +70,8 @@ nav {
 .logo-container {
   display: flex;
   align-items: center;
+  justify-content: flex-start;
+  margin-right: 40px;
 }
 
 .logo-image {
@@ -86,21 +89,37 @@ nav {
   cursor: pointer;
 }
 
-.nav-links, .nav-buttons {
+.nav-links {
   display: flex;
-  align-items: center;
+  justify-content: flex-start;
+  flex-grow: 1;
+}
+.nav-link:hover{
+  color: #FBC40E;
+
 }
 
-.nav-link, .nav-button {
-  margin: 0 1rem;
+.nav-link,
+.nav-button {
   padding: 5px 10px;
   text-decoration: none;
-  color: white;
   font-size: 1rem;
+  margin: 0 1rem;
 }
 
-.nav-button {
-  color: #FBC40E;
+.nav-link:hover,
+.nav-button:hover {
+  color: #fbc40e;
+}
+
+.nav-buttons {
+  display: flex;
+  justify-content: flex-end;
+  flex-grow: 1;
+  color: #fbc40e;
+}
+.nav-button:hover{
+  color: #c19400;
 }
 
 @media (max-width: 768px) {
@@ -111,7 +130,7 @@ nav {
   .nav-links,
   .nav-buttons {
     position: fixed;
-    top: 60px; 
+    top: 60px;
     left: 0;
     right: 0;
     flex-direction: column;
@@ -133,14 +152,14 @@ nav {
   .nav-button {
     width: 100%;
     text-align: left;
-    padding: 10px 20px; 
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
-    color: white; 
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
     background-color: transparent;
   }
 
   .nav-button {
-    color: #FBC40E; 
+    color: #fbc40e;
   }
 }
 </style>

@@ -8,10 +8,19 @@
         @inputTransmission="updateSelectedTransmission"
         @inputYear="updateSelectedYear"
         @inputFuel="updateSelectedFuel"
+        @inputKM="updateSelectedMileage"
+        @inputMinPrice="updateSelectedMinPrice"
+        @inputMaxPrice="updateSelectedMaxPrice"
+        @inputAirbag="updateSelectedAirbag"
+        @inputRegion="updateSelectedRegion"
       />
     </div>
     <div class="productsList">
       <ProductsList :products="filteredProducts" />
+      <div class="loading-container" v-if="isLoading">
+        <p id="loading-text">Conectando...</p>
+        <div id="loading-spinner"></div>
+      </div>
     </div>
   </main>
 </template>
@@ -33,7 +42,14 @@ export default {
       selectedTransmission: '',
       selectedYear: '',
       selectedFuel: '',
-      products: []
+      selectedModel: '',
+      selectedMileage: '',
+      selectedMaxPrice: '',
+      selectedMinPrice: '',
+      selectedAirbag: '',
+      selectedRegion: '',
+      products: [],
+      isLoading: false
     }
   },
   computed: {
@@ -46,7 +62,17 @@ export default {
             (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
             (!this.selectedYear || product.year === this.selectedYear) &&
             (!this.selectedFuel || product.fuel === this.selectedFuel) &&
-            (!this.selectedModel || product.model === this.selectedModel)
+            (!this.selectedModel || product.model === this.selectedModel) &&
+            (!this.selectedRegion || product.region === this.selectedRegion) &&
+            (!this.selectedMileage ||
+              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
+            (!this.selectedMinPrice ||
+              !this.selectedMaxPrice || // Modificación aquí
+              (parseInt(product.price.replace(/\D/g, '')) >=
+                parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
+                parseInt(product.price.replace(/\D/g, '')) <=
+                  parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
+            (!this.selectedAirbag || product.airbag === this.selectedAirbag)
         )
       } catch (error) {
         console.error(error)
@@ -73,14 +99,41 @@ export default {
     updateSelectedModel(model) {
       this.selectedModel = model
     },
+    updateSelectedMileage(mileage) {
+      this.selectedMileage = mileage
+    },
+    updateSelectedRegion(region) {
+      this.selectedRegion = region
+    },
+    updateSelectedMinPrice(minPrice) {
+      if (minPrice.trim() === 'Min.' || minPrice.trim() === '$') {
+        this.selectedMinPrice = ''
+      } else {
+        this.selectedMinPrice = minPrice
+      }
+    },
+
+    updateSelectedMaxPrice(maxPrice) {
+      if (maxPrice.trim() === 'Max.' || maxPrice.trim() === '$') {
+        this.selectedMaxPrice = ''
+      } else {
+        this.selectedMaxPrice = maxPrice
+      }
+    },
+
+    updateSelectedAirbag(airbag) {
+      this.selectedAirbag = airbag
+    },
 
     async fetchProducts() {
+      this.isLoading = true
       try {
         const response = await axios.get('http://localhost:8080/posts')
         this.products = response.data
-        console.log(this.products)
       } catch (error) {
         console.error(error)
+      } finally {
+        this.isLoading = false
       }
     }
   },
@@ -94,6 +147,7 @@ export default {
 .catalog-section {
   display: flex;
   background-color: aliceblue;
+  min-height: 100vh;
 }
 
 .searchBar {
@@ -101,6 +155,7 @@ export default {
   background-color: #fbc40e;
   display: flex;
   justify-content: center;
+  height: auto;
   border-top-right-radius: 16px;
 }
 
@@ -108,5 +163,41 @@ export default {
   flex: 1;
   height: auto;
   margin-left: 20px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Opcional: fondo semitransparente */
+}
+
+#loading-text {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#loading-spinner {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #fbc40e;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
