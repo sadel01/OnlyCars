@@ -97,6 +97,41 @@ app.get('/catalog/:id', async (req, res) => {
   }
 })
 
+app.get('/regions', async (req, res) => { 
+  try { 
+    const database = client.db('onlycars') 
+    const collection = database.collection('location') 
+    const regions = await collection.distinct('region') 
+    res.send(regions) 
+  } catch (error) { 
+    res.status(500).send(error.message) 
+  } 
+}) 
+ 
+app.get('/provincia/:region', async (req, res) => { 
+  const region = req.params.region; 
+  try { 
+    const database = client.db('onlycars'); 
+    const collection = database.collection('location'); 
+    const provincias1 = await collection.distinct('provincia', { region: region }); 
+    res.send(provincias1); // Asegúrate de que este mapeo es correcto 
+  } catch (error) { 
+    res.status(500).send(error.message); 
+  } 
+}); 
+ 
+app.get('/comuna/:provincia', async (req, res) => { 
+  const provincia = req.params.provincia; 
+  try { 
+    const database = client.db('onlycars'); 
+    const collection = database.collection('location'); 
+    const comuna = await collection.find({ provincia: provincia }).toArray(); 
+    res.send(comuna.map(comuna => comuna.comuna)); // Asegúrate de que este mapeo es correcto 
+  } catch (error) { 
+    res.status(500).send(error.message); 
+  } 
+}); 
+
 app.post('/register', async (req, res) => {
   try {
     const database = client.db('onlycars')
