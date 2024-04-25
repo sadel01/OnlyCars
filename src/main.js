@@ -12,7 +12,8 @@ import {
   faCalendarDays,
   faGasPump,
   faScrewdriverWrench,
-  faLocationDot
+  faLocationDot,
+  faShield
 } from '@fortawesome/free-solid-svg-icons'
 import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -46,7 +47,8 @@ library.add(
   faCalendarDays,
   faGasPump,
   faScrewdriverWrench,
-  faLocationDot
+  faLocationDot,
+  faShield
 )
 library.add(faFacebookF)
 

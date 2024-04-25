@@ -71,7 +71,7 @@
     </div>
     <div class="grupo">
       <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
-      <select v-model="location" @change="inputLocation" class="selects">
+      <select v-model="region" @change="inputRegion" class="selects">
         <option value="">Región</option>
         <option value="region15">Arica y Parinacota</option>
         <option value="region1">Tarapacá</option>
@@ -123,7 +123,7 @@
       <div class="km-filter-container">
         <div class="price-label">Kilometraje</div>
         <div class="price-inputs-container">
-          <input type="text" class="price-input" placeholder="Km." v-model="mileage" />
+          <input type="text" class="price-input" placeholder="Max." v-model="mileage" />
           <button class="btnAplicar" @click="emitInput">Aplicar</button>
         </div>
       </div>
@@ -150,7 +150,7 @@ export default {
       fuel: '',
       price: '',
       transmission: '',
-      location: '',
+      region: '',
       minPrice: '',
       maxPrice: '',
       mileage: '',
@@ -194,8 +194,8 @@ export default {
     inputFuel() {
       this.$emit('inputFuel', this.fuel)
     },
-    inputLocation() {
-      this.$emit('inputLocation', this.location)
+    inputRegion() {
+      this.$emit('inputRegion', this.Region)
     },
     inputKM() {
       this.$emit('inputKM', this.mileage)
