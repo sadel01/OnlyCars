@@ -36,7 +36,6 @@
             <FontAwesomeIcon :icon="faLocationDot" class="icono" />
             <div class="text-container">
               <p class="fecha-text"><strong>Ubicación</strong></p>
-              <p class="year-text">{{ product.fuel }}</p>
             </div>
           </div>
 
