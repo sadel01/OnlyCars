@@ -73,21 +73,22 @@
       <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
       <select v-model="region" @change="inputRegion" class="selects">
         <option value="">Región</option>
-        <option value="region15">Arica y Parinacota</option>
-        <option value="region1">Tarapacá</option>
-        <option value="region2">Antofagasta</option>
-        <option value="region3">Atacama</option>
-        <option value="region4">Coquimbo</option>
-        <option value="region5">Valparaíso</option>
-        <option value="regionRM">Metropolitana</option>
-        <option value="region6">Bernardo O'Higgins</option>
-        <option value="region7">Maule</option>
-        <option value="region8">Biobío</option>
-        <option value="region9">La Araucanía</option>
-        <option value="region14">Los Ríos</option>
-        <option value="region10">Los Lagos</option>
-        <option value="region11">Aysén</option>
-        <option value="region12">Magallanes</option>
+        <option value="Antofagasta">Antofagasta</option>
+        <option value="Araucanía">Araucanía</option>
+        <option value="Arica y Parinacota">Arica y Parinacota</option>
+        <option value="Atacama">Atacama</option>
+        <option value="Aysén del General Carlos Ibáñez del Campo">Aysén</option>
+        <option value="Biobío">Biobío</option>
+        <option value="Coquimbo">Coquimbo</option>
+        <option value="Libertador General Bernardo O'Higgins">Bernardo O'Higgins</option>
+        <option value="Los Lagos">Los Lagos</option>
+        <option value="Los Ríos">Los Ríos</option>
+        <option value="Magallanes y de la Antártica Chilena">Magallanes</option>
+        <option value="Maule">Maule</option>
+        <option value="Metropolitana de Santiago">Metropolitana</option>
+        <option value="Tarapacá">Tarapacá</option>
+        <option value="Valparaíso">Valparaíso</option>
+        <option value="Ñuble">Ñuble</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
@@ -195,7 +196,7 @@ export default {
       this.$emit('inputFuel', this.fuel)
     },
     inputRegion() {
-      this.$emit('inputRegion', this.Region)
+      this.$emit('inputRegion', this.region)
     },
     inputKM() {
       this.$emit('inputKM', this.mileage)

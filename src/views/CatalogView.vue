@@ -63,7 +63,7 @@ export default {
             (!this.selectedYear || product.year === this.selectedYear) &&
             (!this.selectedFuel || product.fuel === this.selectedFuel) &&
             (!this.selectedModel || product.model === this.selectedModel) &&
-            (!this.selectedRegion || product.Region === this.selectedRegion) &&
+            (!this.selectedRegion || product.region === this.selectedRegion) &&
             (!this.selectedMileage ||
               parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
             (!this.selectedMinPrice ||
