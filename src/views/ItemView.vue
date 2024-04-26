@@ -1,186 +1,195 @@
 <template>
-  <main class="vehicle-listing">
-    <div class="vehicle-header">
-      <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
-      <p class="vehicle-price">${{ product.price }} CLP</p>
+  <div class="main-container">
+    <div class="loading-container" v-if="isLoadingCar">
+      <p id="loading-text">Conectando...</p>
+      <div id="loading-spinner"></div>
     </div>
-
-    <!-- Sección principal del vehículo -->
-    <section class="vehicle-section">
-      <!-- Carrusel de imágenes del vehículo -->
-      <div class="vehicle-carousel-container">
-        <carousel :items-to-show="1" v-if="product && product.image">
-          <slide v-for="(image, index) in product.image" :key="index">
-            <img :src="image" alt="Vehicle Image" class="vehicle-image" />
-          </slide>
-        </carousel>
-        <div v-else class="no-images">Cargando imágenes o no hay imágenes disponibles.</div>
+    <main class="vehicle-listing" v-if="!isLoadingCar">
+      <div class="vehicle-header">
+        <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
+        <p class="vehicle-price">${{ product.price }} CLP</p>
       </div>
 
-      <!-- Detalles del vehículo con íconos -->
-      <div class="vehicle-details-container">
-        <h2 class="details-title">Detalles</h2>
-        <div class="vehicle-specs-container">
-          <!-- Columna izquierda -->
-          <div class="specs-left">
-            <p>
-              <img src="@/assets/icons/mileage.svg" class="icon" alt="Kilometraje" />
-              <strong>Kilometraje: </strong> {{ ' ' + product.mileage }}
-            </p>
-            <p>
-              <img src="@/assets/icons/paint-roller-solid.svg" class="icon" alt="Color" />
-              <strong>Color: </strong> {{ product.exteriorColor }}
-            </p>
-            <p>
-              <img src="@/assets/icons/engine.svg" class="icon" alt="Motor" />
-              <strong>Motor: </strong> {{ product.engine }}
-            </p>
-          </div>
-          <!-- Columna derecha -->
-          <div class="specs-right">
-            <p>
-              <img src="@/assets/icons/gas-pump-solid.svg" class="icon" alt="Combustible" />
-              <strong>Combustible: </strong> {{ product.fuel }}
-            </p>
-            <p>
-              <img src="@/assets/icons/gearbox.svg" class="icon" alt="Transmisión" />
-              <strong>Transmisión:</strong> {{ ' ' + product.transmission }}
-            </p>
-            <p>
-              <img src="@/assets/icons/camera-solid.svg" class="icon" alt="Cámara trasera" />
-              <strong>Cámara trasera: </strong> {{ product.hasBackupCamera ? 'Sí' : 'No' }}
-            </p>
-          </div>
+      <!-- Sección principal del vehículo -->
+      <section class="vehicle-section">
+        <!-- Carrusel de imágenes del vehículo -->
+        <div class="vehicle-carousel-container">
+          <carousel :items-to-show="1" v-if="product && product.image">
+            <slide v-for="(image, index) in product.image" :key="index">
+              <img :src="image" alt="Vehicle Image" class="vehicle-image" />
+            </slide>
+          </carousel>
+          <div v-else class="no-images">Cargando imágenes o no hay imágenes disponibles.</div>
         </div>
-        <!-- Botón de contacto -->
-        <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
-      </div>
-    </section>
 
-    <!-- Sección del perfil del usuario ajustada -->
-    <section class="user-profile">
-      <div class="user-avatar-name">
-        <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
-        <div class="user-info">
-          <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
-          <p class="user-email">{{ product.user.email }}</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección de verificación del vendedor -->
-    <section class="seller-verification">
-      <div class="verification-header">
-        <h2>Verificaciones del vendedor</h2>
-      </div>
-      <div class="verification-items">
-        <div class="verification-item">
-          <img src="@/assets/icons/verified.svg" alt="Email Verified" class="icon" />
-          Email
-        </div>
-        <div class="verification-item">
-          <img src="@/assets/icons/verified.svg" alt="Mobile Verified" class="icon" />
-          Mobile
-        </div>
-        <div class="verification-item">
-          <img src="@/assets/icons/verified.svg" alt="Driver's License Verified" class="icon" />
-          Driver's License
-        </div>
-        <div class="verification-item">
-          <img src="@/assets/icons/verified.svg" alt="Payment Verified" class="icon" />
-          Payment Verified
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección de descripción del vehículo -->
-    <section class="vehicle-description">
-      <h2>Description</h2>
-      <p>vehicleDescription</p>
-    </section>
-
-    <!-- Sección de información adicional desplegable -->
-    <section class="additional-info">
-      <h2 @click="toggleDetails">
-        Additional Info
-        <span class="toggle-icon">{{ isDetailsVisible ? '−' : '+' }}</span>
-      </h2>
-      <div v-show="isDetailsVisible" class="details-content">
-        <!-- Primera columna de detalles -->
-        <div class="detail-column">
-          <div class="detail-row"><span class="boldd">Trim:</span> {{ product.trim }}</div>
-          <div class="detail-row">
-            <span class="boldd">Number of cylinders:</span> {{ product.numberOfCylinders }}
-          </div>
-          <div class="detail-row"><span class="boldd">VIN:</span> {{ product.vin }}</div>
-          <div class="detail-row">
-            <span class="boldd">Number of doors:</span> {{ product.numberOfDoors }}
-          </div>
-          <div class="detail-row">
-            <span class="boldd">Title in hand:</span> {{ product.titleInHand ? 'Yes' : 'No' }}
-          </div>
-        </div>
-        <!-- Segunda columna de detalles -->
-        <div class="detail-column">
-          <div class="detail-row">
-            <span class="boldd">Body style:</span> {{ product.bodyStyle }}
-          </div>
-          <div class="detail-row">
-            <span class="boldd">Exterior color:</span> {{ product.exteriorColor }}
-          </div>
-          <div class="detail-row"><span class="boldd">Title type:</span> que pasa perra</div>
-          <div class="detail-row">
-            <span class="boldd">Outstanding lien:</span>
-            {{ product.outstandingLien ? 'Yes' : 'No' }}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Sección de servicios adicionales -->
-    <section class="addon-services">
-      <!-- Contenedor de servicios adicionales aquí -->
-    </section>
-
-    <section class="onlycars-section">
-      <div class="onlycars-info">
-        <h3>¿Por qué usar OnlyCars?</h3>
-        <div class="onlycars-benefits">
-          <div class="benefit">
-            <img src="@/assets/icons/moneyTransfer.png" alt="Transferencia segura" />
-            <div>
-              <h4>Transferencia segura de dinero</h4>
+        <!-- Detalles del vehículo con íconos -->
+        <div class="vehicle-details-container">
+          <h2 class="details-title">Detalles</h2>
+          <div class="vehicle-specs-container">
+            <!-- Columna izquierda -->
+            <div class="specs-left">
               <p>
-                Transfiere dinero de manera instantánea entre las partes con OnlyCars Pay. Sin
-                tarifas de transacción.
+                <img src="@/assets/icons/mileage.svg" class="icon" alt="Kilometraje" />
+                <strong>Kilometraje: </strong> {{ ' ' + product.mileage }}
+              </p>
+              <p>
+                <img src="@/assets/icons/paint-roller-solid.svg" class="icon" alt="Color" />
+                <strong>Color: </strong> {{ product.exteriorColor }}
+              </p>
+              <p>
+                <img src="@/assets/icons/engine.svg" class="icon" alt="Motor" />
+                <strong>Motor: </strong> {{ product.engine }}
+              </p>
+            </div>
+            <!-- Columna derecha -->
+            <div class="specs-right">
+              <p>
+                <img src="@/assets/icons/gas-pump-solid.svg" class="icon" alt="Combustible" />
+                <strong>Combustible: </strong> {{ product.fuel }}
+              </p>
+              <p>
+                <img src="@/assets/icons/gearbox.svg" class="icon" alt="Transmisión" />
+                <strong>Transmisión:</strong> {{ ' ' + product.transmission }}
+              </p>
+              <p>
+                <img src="@/assets/icons/camera-solid.svg" class="icon" alt="Cámara trasera" />
+                <strong>Cámara trasera: </strong> {{ product.hasBackupCamera ? 'Sí' : 'No' }}
               </p>
             </div>
           </div>
+          <!-- Botón de contacto -->
+          <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
+        </div>
+      </section>
 
-          <div class="benefit">
-            <img src="@/assets/icons/easyBuy.png" alt="Compra fácil" />
-            <div>
-              <h4>Compra fácil</h4>
-              <p>
-                Programa fácilmente pruebas de manejo, haz ofertas y firma el contrato de venta
-                electrónicamente en una sola app.
-              </p>
-            </div>
+      <!-- Sección del perfil del usuario ajustada -->
+      <section class="user-profile">
+        <div class="user-avatar-name">
+          <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
+          <div class="user-info">
+            <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
+            <p class="user-email">{{ product.user.email }}</p>
           </div>
+        </div>
+      </section>
 
-          <div class="benefit">
-            <img src="@/assets/icons/scammer.png" alt="Evita estafadores" />
-            <div>
-              <h4>Evita estafadores</h4>
-              <p>
-                Conéctate con usuarios verificados y chatea sin compartir tu información personal.
-              </p>
+      <!-- Sección de verificación del vendedor -->
+      <section class="seller-verification">
+        <div class="verification-header">
+          <h2>Verificaciones del vendedor</h2>
+        </div>
+        <div class="verification-items">
+          <div class="verification-item">
+            <img src="@/assets/icons/verified.svg" alt="Email Verified" class="icon" />
+            Email
+          </div>
+          <div class="verification-item">
+            <img src="@/assets/icons/verified.svg" alt="Mobile Verified" class="icon" />
+            Mobile
+          </div>
+          <div class="verification-item">
+            <img src="@/assets/icons/verified.svg" alt="Driver's License Verified" class="icon" />
+            Driver's License
+          </div>
+          <div class="verification-item">
+            <img src="@/assets/icons/verified.svg" alt="Payment Verified" class="icon" />
+            Payment Verified
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección de descripción del vehículo -->
+      <section class="vehicle-description">
+        <h2>Descripción</h2>
+        <p class="user-email">{{ product.description }}</p>
+      </section>
+
+      <!-- Sección de información adicional desplegable -->
+      <section class="additional-info">
+        <h2 @click="toggleDetails">
+          Información Adicional
+          <span class="toggle-icon">{{ isDetailsVisible ? '−' : '+' }}</span>
+        </h2>
+        <div v-show="isDetailsVisible" class="details-content">
+          <!-- Primera columna de detalles -->
+          <!-- Primera columna de detalles -->
+          <div class="detail-column">
+            <div class="detail-row"><span class="boldd">Año:</span> {{ product.year }}</div>
+            <div class="detail-row">
+              <span class="boldd">Transmisión:</span> {{ product.transmission }}
+            </div>
+            <div class="detail-row">
+              <span class="boldd">Tracción:</span> {{ product.driveTrain }}
+            </div>
+            <div class="detail-row">
+              <span class="boldd">Cantidad de puertas:</span> {{ product.doors }}
+            </div>
+            <div class="detail-row"><span class="boldd">Seguro:</span> {{ product.seguro }}</div>
+          </div>
+          <div class="detail-column">
+            <div class="detail-row"><span class="boldd">Dueños:</span> {{ product.owners }}</div>
+            <div class="detail-row">
+              <span class="boldd">Color interior:</span> {{ product.interiorColor }}
+            </div>
+            <div class="detail-row">
+              <span class="boldd">Color exterior:</span> {{ product.exteriorColor }}
+            </div>
+            <div class="detail-row">
+              <span class="boldd">Capacidad cilindraje:</span> {{ product.cylinderCapacity }}
+            </div>
+            <div class="detail-row">
+              <span class="boldd">Airbag:</span>
+              {{ product.airbag ? 'Yes' : 'No' }}
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+
+      <!-- Sección de servicios adicionales -->
+      <section class="addon-services">
+        <!-- Contenedor de servicios adicionales aquí -->
+      </section>
+
+      <section class="onlycars-section">
+        <div class="onlycars-info">
+          <h3>¿Por qué usar OnlyCars?</h3>
+          <div class="onlycars-benefits">
+            <div class="benefit">
+              <img src="@/assets/icons/moneyTransfer.png" alt="Transferencia segura" />
+              <div>
+                <h4>Transferencia segura de dinero</h4>
+                <p>
+                  Transfiere dinero de manera instantánea entre las partes con OnlyCars Pay. Sin
+                  tarifas de transacción.
+                </p>
+              </div>
+            </div>
+
+            <div class="benefit">
+              <img src="@/assets/icons/easyBuy.png" alt="Compra fácil" />
+              <div>
+                <h4>Compra fácil</h4>
+                <p>
+                  Programa fácilmente pruebas de manejo, haz ofertas y firma el contrato de venta
+                  electrónicamente en una sola app.
+                </p>
+              </div>
+            </div>
+
+            <div class="benefit">
+              <img src="@/assets/icons/scammer.png" alt="Evita estafadores" />
+              <div>
+                <h4>Evita estafadores</h4>
+                <p>
+                  Conéctate con usuarios verificados y chatea sin compartir tu información personal.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 </template>
 
 <script>
@@ -193,7 +202,8 @@ export default {
     return {
       product: null,
       errorMessage: '',
-      isDetailsVisible: false
+      isDetailsVisible: false,
+      isLoadingCar: false
     }
   },
   components: {
@@ -217,11 +227,9 @@ export default {
         return
       }
 
-
       // BUSCAR LOS CHAT EN LA BASE DE DATOS INDEPENDIENTEMENTE DE QUIEN SEA EL COMPRADOR Y QUIEN SEA LE VENDEDOR
       // SI SE ENCUENTRA EL CHAT SE REDIRIGE Y SI NO SE ENCUETRA SE CREA Y SE REDIRIGE
 
-      
       const response = await axios
         .post('http://localhost:8080/chat/startChat', {
           buyerID: this.user._id,
@@ -258,17 +266,52 @@ export default {
     }
   },
   async created() {
+    this.isLoadingCar = true
     const id = this.$route.params.id
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
     } catch (error) {
       console.error(error)
+    } finally {
+      this.isLoadingCar = false
     }
   }
 }
 </script>
+
 <style scoped>
+.main-container {
+  min-height: 100vh;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Opcional: fondo semitransparente */
+}
+
+#loading-text {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+#loading-spinner {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #fbc40e;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
 .additional-info h2 {
   user-select: none;
   cursor: pointer;

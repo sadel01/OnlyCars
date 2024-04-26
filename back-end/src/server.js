@@ -4,29 +4,28 @@ import cors from 'cors'
 import { MongoClient, ObjectId } from 'mongodb'
 import { Server } from 'socket.io'
 import http from 'http'
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
 
 const app = express()
 const url = `mongodb://admin:12345adminADMIN@ac-sjjuxyv-shard-00-00.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-01.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-02.2sd1gmw.mongodb.net:27017/?ssl=true&replicaSet=atlas-a9gjt5-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`
 const client = new MongoClient(url)
 
 // Configuración de Multer
-const uploadDirectory = path.join(__dirname, '../../src/assets/uploads');
-fs.mkdirSync(uploadDirectory, { recursive: true });
+const uploadDirectory = path.join(__dirname, '../../src/assets/uploads')
+fs.mkdirSync(uploadDirectory, { recursive: true })
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDirectory);
+    cb(null, uploadDirectory)
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`);
+    cb(null, `${Date.now()}-${file.originalname}`)
   }
-});
+})
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage })
 
 // Configuracion de CORS para permitir la conexion entre el cliente y el servidor
 const corsOptions = {
@@ -55,39 +54,36 @@ client
     console.error('Failed to connect to database', error)
   })
 
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ limit: '50mb', extended: true }));  
+app.use(express.json({ limit: '50mb' }))
+app.use(express.urlencoded({ limit: '50mb', extended: true }))
 
 // Configuracion de eventos para el chat
-
-
 
 io.on('connection', (socket) => {
   // Cuando un cliente se conecta, se une a una sala específica
   socket.on('join', (room) => {
-    socket.join(room);
+    socket.join(room)
     console.log('joined room: ' + room)
-  });
+  })
 
   // Cuando se recibe un mensaje, se emite solo a la sala específica
   socket.on('message', (room, message) => {
     console.log('message1: ' + message)
-    io.to(room).emit('message', message);
-  });
+    io.to(room).emit('message', message)
+  })
 
   socket.on('disconnect', () => {
     // Cuando un cliente se desconecta, se puede manejar aquí
-  });
-});
+  })
+})
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
-      minimumFractionDigits: 0
-  }).format(value);
+    style: 'currency',
+    currency: 'CLP',
+    minimumFractionDigits: 0
+  }).format(value)
 }
-
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -100,6 +96,41 @@ app.get('/catalog/:id', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
+
+app.get('/regions', async (req, res) => { 
+  try { 
+    const database = client.db('onlycars') 
+    const collection = database.collection('location') 
+    const regions = await collection.distinct('region') 
+    res.send(regions) 
+  } catch (error) { 
+    res.status(500).send(error.message) 
+  } 
+}) 
+ 
+app.get('/provincia/:region', async (req, res) => { 
+  const region = req.params.region; 
+  try { 
+    const database = client.db('onlycars'); 
+    const collection = database.collection('location'); 
+    const provincias1 = await collection.distinct('provincia', { region: region }); 
+    res.send(provincias1); // Asegúrate de que este mapeo es correcto 
+  } catch (error) { 
+    res.status(500).send(error.message); 
+  } 
+}); 
+ 
+app.get('/comuna/:provincia', async (req, res) => { 
+  const provincia = req.params.provincia; 
+  try { 
+    const database = client.db('onlycars'); 
+    const collection = database.collection('location'); 
+    const comuna = await collection.find({ provincia: provincia }).toArray(); 
+    res.send(comuna.map(comuna => comuna.comuna)); // Asegúrate de que este mapeo es correcto 
+  } catch (error) { 
+    res.status(500).send(error.message); 
+  } 
+}); 
 
 app.post('/register', async (req, res) => {
   try {
@@ -116,8 +147,8 @@ app.post('/register', async (req, res) => {
 app.post('/postsPrueba', async (req, res) => {
   try {
     const database = client.db('onlycars')
-    const collection = database.collection('postsPrueba') // SE DEBE CAMBIAR postsPrueba POR posts
-    req.body.price = req.body.price.replace('$', '');
+    const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
+    req.body.price = req.body.price.replace('$', '')
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
@@ -192,81 +223,142 @@ app.get('/posts', async (req, res) => {
   }
 })
 
-
-
-
 // iniciar un chat
 app.post('/chat/startChat', async (req, res) => {
   try {
-    const {buyerID, sellerID, productID} = req.body;
+    const { buyerID, sellerID, productID } = req.body
     const database = client.db('onlycars')
     const collection = database.collection('chat')
-    let chat = await collection.findOne({buyerID, sellerID, productID});
+    let chat = await collection.findOne({ buyerID, sellerID, productID })
 
     if (!chat) {
       if (buyerID === sellerID) {
-        const chats = await collection.find({sellerID}).toArray();
-        res.send({success : true, message: 'No puedes iniciar un chat contigo mismo',sellerID });
-        return;
+        const chats = await collection.find({ sellerID }).toArray()
+        res.send({ success: true, message: 'No puedes iniciar un chat contigo mismo', sellerID })
+        return
       }
-      chat = await collection.insertOne({buyerID, sellerID, productID, messages: []});
-    }else{
-      res.send(chat);
+      chat = await collection.insertOne({ buyerID, sellerID, productID, messages: [] })
+    } else {
+      res.send(chat)
     }
-    
   } catch (error) {
     res.status(500).send(error.message)
   }
-});
+})
 
 app.post('/chat/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    const message = req.body.message.text;
-    const user = req.body.message.user;
-    const database = client.db('onlycars');
-    const collection = database.collection('chat');
-    const chat = await collection.findOne({ _id: new ObjectId(id) });
+    const id = req.params.id
+    const message = req.body.message.text
+    const user = req.body.message.user
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chat = await collection.findOne({ _id: new ObjectId(id) })
 
-    console.log('message: '+message);
-    console.log('user: '+user);
+    console.log('message: ' + message)
+    console.log('user: ' + user)
 
-    await collection.updateOne({ _id: new ObjectId(id) }, { $push: { messages: {text: message, user: user}} });
-    res.send(chat);
+    await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $push: { messages: { text: message, user: user } } }
+    )
+    res.send(chat)
+
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
 app.get('/chat/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    const database = client.db('onlycars');
-    const collection = database.collection('chat');
-    const chat = await collection.findOne({ _id: new ObjectId(id) });
-    res.send(chat);
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chat = await collection.findOne({ _id: new ObjectId(id) })
+    res.send(chat)
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
 // Buscar un chat en la base de datos entre dos usuarios, user1 y user2, independiente de quien es el comprador y quien es el vendedor
 
 app.get('/findChat', async (req, res) => {
   try {
-    const user1 = req.params.user1;
-    const user2 = req.params.user2;
-    const database = client.db('onlycars');
-    const collection = database.collection('chat');
-    const chat = await collection.findOne({ $or: [{buyerID: user1, sellerID: user2}, {buyerID: user2, sellerID: user1}] });
-    console.log('chat encontrado');
-    res.send(chat);
+    const user1 = req.query.user1
+    const user2 = req.query.user2
+    const productID = req.query.productID
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chat = await collection.findOne({
+      $or: [
+        { buyerID: user1, sellerID: user2, productID: productID },
+        { buyerID: user2, sellerID: user1, productID: productID }
+      ]
+    })
+    res.send(chat)
   } catch (error) {
-    res.status(500).send(error.message);
-    console.log('chat no encontrado');
+    res.status(500).send(error.message)
+    console.log('chat no encontrado')
   }
-}
-);
+})
+
+app.get('/findSellerChats', async (req, res) => {
+  try {
+    const sellerID = req.query.sellerID
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chats = await collection.find({ sellerID }).toArray()
+    const chatIds = chats.map((chat) => chat._id)
+
+    const userCollection = database.collection('users')
+    const productCollection = database.collection('posts')
+    const chatsWithBuyerDetails = await Promise.all(
+      chats.map(async (chat) => {
+        const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+        const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+        return {
+          ...chat,
+          buyerName: buyer ? buyer.nombre : '',
+          buyerLastName: buyer ? buyer.apellido : '',
+          brand: product ? product.brand : '',
+          model: product ? product.model : ''
+        }
+      })
+    )
+
+    res.send(chatsWithBuyerDetails)
+    console.log('chats encontrados')
+    console.log(chatsWithBuyerDetails)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/findSpecificChat', async (req, res) => {
+  try {
+    const user1 = req.query.user1
+    const productID = req.query.productID
+    const database = client.db('onlycars')
+    const collection = database.collection('chat')
+    const chat = await collection.findOne({ sellerID: user1, productID: productID })
+    res.send(chat)
+  } catch (error) {
+    res.status(500).send(error.message)
+    console.log('chat no encontrado')
+  }
+})
+app.get('/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
+    const post = await collection.findOne({ _id: new ObjectId(id) })
+    res.send(post)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
 
 
 const PORT = 8080

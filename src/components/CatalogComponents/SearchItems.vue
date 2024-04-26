@@ -15,7 +15,7 @@
       <font-awesome-icon :icon="['fas', 'car']" class="icono-marca" />
       <select v-model="brand" @change="inputBrand" class="selects">
         <option value="">Marca</option>
-        <option v-for="brand in brands">{{ brand }}</option>
+        <option v-for="brand in brands" :key="brand">{{ brand }}</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
@@ -44,9 +44,9 @@
       <font-awesome-icon :icon="['fas', 'gas-pump']" class="icono-marca" />
       <select v-model="fuel" @change="inputFuel" class="selects">
         <option value="">Combustible</option>
-        <option value="gas">Gasolina</option>
-        <option value="diesel">Diesel</option>
-        <option value="electric">Eléctrico</option>
+        <option value="Gasolina">Gasolina</option>
+        <option value="Diésel">Diesel</option>
+        <option value="Eléctrico">Eléctrico</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
@@ -55,30 +55,40 @@
       <font-awesome-icon :icon="['fas', 'screwdriver-wrench']" class="icono-marca" />
       <select v-model="transmission" @change="inputTransmission" class="selects">
         <option value="">Transmisión</option>
-        <option value="manual">Manual</option>
-        <option value="automatic">Automático</option>
+        <option value="Manual">Manual</option>
+        <option value="Automatico">Automático</option>
+      </select>
+      <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
+    </div>
+    <div class="grupo">
+      <font-awesome-icon :icon="['fas', 'shield']" class="icono-marca" />
+      <select v-model="airbag" @change="inputAirbag" class="selects">
+        <option value="">Airbag</option>
+        <option value="yes">Si</option>
+        <option value="no">No</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
     <div class="grupo">
       <font-awesome-icon :icon="['fas', 'location-dot']" class="icono-marca" />
-      <select v-model="location" @change="inputLocation" class="selects">
+      <select v-model="region" @change="inputRegion" class="selects">
         <option value="">Región</option>
-        <option value="region15">Arica y Parinacota</option>
-        <option value="region1">Tarapacá</option>
-        <option value="region2">Antofagasta</option>
-        <option value="region3">Atacama</option>
-        <option value="region4">Coquimbo</option>
-        <option value="region5">Valparaíso</option>
-        <option value="regionRM">Metropolitana</option>
-        <option value="region6">Bernardo O'Higgins</option>
-        <option value="region7">Maule</option>
-        <option value="region8">Biobío</option>
-        <option value="region9">La Araucanía</option>
-        <option value="region14">Los Ríos</option>
-        <option value="region10">Los Lagos</option>
-        <option value="region11">Aysén</option>
-        <option value="region12">Magallanes</option>
+        <option value="Antofagasta">Antofagasta</option>
+        <option value="Araucanía">Araucanía</option>
+        <option value="Arica y Parinacota">Arica y Parinacota</option>
+        <option value="Atacama">Atacama</option>
+        <option value="Aysén del General Carlos Ibáñez del Campo">Aysén</option>
+        <option value="Biobío">Biobío</option>
+        <option value="Coquimbo">Coquimbo</option>
+        <option value="Libertador General Bernardo O'Higgins">Bernardo O'Higgins</option>
+        <option value="Los Lagos">Los Lagos</option>
+        <option value="Los Ríos">Los Ríos</option>
+        <option value="Magallanes y de la Antártica Chilena">Magallanes</option>
+        <option value="Maule">Maule</option>
+        <option value="Metropolitana de Santiago">Metropolitana</option>
+        <option value="Tarapacá">Tarapacá</option>
+        <option value="Valparaíso">Valparaíso</option>
+        <option value="Ñuble">Ñuble</option>
       </select>
       <font-awesome-icon :icon="['fas', 'chevron-down']" class="icono-chevron" />
     </div>
@@ -93,6 +103,8 @@
             placeholder="Min."
             v-model="minPrice"
             @input="formatPriceInput('minPrice')"
+            @blur="updateSelectedMinPrice(minPrice)"
+            @change="$emit('inputMinPrice', minPrice)"
           />
           <div class="price-separator">a</div>
           <input
@@ -101,6 +113,8 @@
             placeholder="Max."
             v-model="maxPrice"
             @input="formatPriceInput('maxPrice')"
+            @blur="updateSelectedMaxPrice(maxPrice)"
+            @change="$emit('inputMaxPrice', maxPrice)"
           />
         </div>
       </div>
@@ -110,7 +124,7 @@
       <div class="km-filter-container">
         <div class="price-label">Kilometraje</div>
         <div class="price-inputs-container">
-          <input type="text" class="price-input" placeholder="Km." v-model="mileage" />
+          <input type="text" class="price-input" placeholder="Max." v-model="mileage" />
           <button class="btnAplicar" @click="emitInput">Aplicar</button>
         </div>
       </div>
@@ -137,10 +151,11 @@ export default {
       fuel: '',
       price: '',
       transmission: '',
-      location: '',
+      region: '',
       minPrice: '',
       maxPrice: '',
       mileage: '',
+      airbag: '',
       yearOptions: []
     }
   },
@@ -155,6 +170,7 @@ export default {
   methods: {
     emitInput() {
       this.$emit('inputKM', this.mileage)
+      this.$emit('inputItems', this.searchTerm)
     },
     inputBrand() {
       if (this.brand === '') {
@@ -164,6 +180,9 @@ export default {
         this.getModels(this.brand)
       }
       this.$emit('inputBrand', this.brand)
+    },
+    inputAirbag() {
+      this.$emit('inputAirbag', this.airbag)
     },
     inputModel() {
       this.$emit('inputModel', this.model)
@@ -177,8 +196,8 @@ export default {
     inputFuel() {
       this.$emit('inputFuel', this.fuel)
     },
-    inputLocation() {
-      this.$emit('inputLocation', this.location)
+    inputRegion() {
+      this.$emit('inputRegion', this.region)
     },
     inputKM() {
       this.$emit('inputKM', this.mileage)
@@ -222,7 +241,6 @@ export default {
 </script>
 
 <style>
-
 .btnAplicar {
   background-color: #fbc40e;
   color: white;
