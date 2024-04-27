@@ -12,6 +12,7 @@
           <RouterLink to="/contact" class="nav-link" @click="closeNav">Contacto</RouterLink>
           <RouterLink to="/about" class="nav-link" @click="closeNav">Nosotros</RouterLink>
           <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
+          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn">Chat</RouterLink>
         </div>
         <div class="nav-buttons" :class="{ active: navActive }">
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
@@ -46,6 +47,8 @@ const toggleNav = () => {
 const closeNav = () => {
   navActive.value = false
 }
+
+const isLoggedIn = computed(() => store.state.user !== null)
 
 const user = computed(() => store.state.user)
 </script>

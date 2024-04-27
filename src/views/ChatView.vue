@@ -366,8 +366,8 @@ button:disabled {
   border: 1px solid #ccc;
   border-radius: 4px;
   outline: none;
-  padding: 8px 16px;
-  margin: 20px 10px;
+  padding: 10px 16px;
+  margin: 16px 10px;
 }
 
 .search-chat:focus,
@@ -379,7 +379,6 @@ button:disabled {
   padding: 10px;
   width: 90%;
   background-color: #f7f7f7;
-  cursor: pointer;
   transition: background-color 0.2s;
   border-bottom: 1px solid #ccc;
 }
@@ -690,5 +689,12 @@ strong {
   .received-message {
     max-width: 80%;
   }
+}
+
+@media (max-width: 1024px) {
+  .sell-data{
+    display:none;
+  }
+
 }
 </style>
