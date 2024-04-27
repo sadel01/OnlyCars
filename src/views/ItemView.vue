@@ -58,7 +58,7 @@
             </div>
           </div>
           <!-- Botón de contacto -->
-          <button @click="contactSeller" class="btn-contact-seller">Contactar Vendedor</button>
+          <button @click="contactSeller" class="btn-contact-seller">Iniciar chat</button>
         </div>
       </section>
 
@@ -203,7 +203,7 @@ export default {
       product: null,
       errorMessage: '',
       isDetailsVisible: false,
-      isLoadingCar: false
+      chat: null
     }
   },
   components: {
@@ -224,57 +224,63 @@ export default {
     async contactSeller() {
       if (!this.user) {
         this.errorMessage = 'Debe iniciar sesión para contactar al vendedor'
+        this.$router.push('/login');
         return
       }
 
-      // BUSCAR LOS CHAT EN LA BASE DE DATOS INDEPENDIENTEMENTE DE QUIEN SEA EL COMPRADOR Y QUIEN SEA LE VENDEDOR
-      // SI SE ENCUENTRA EL CHAT SE REDIRIGE Y SI NO SE ENCUETRA SE CREA Y SE REDIRIGE
-
-      const response = await axios
-        .post('http://localhost:8080/chat/startChat', {
-          buyerID: this.user._id,
-          sellerID: this.product.user._id,
-          productID: this.product._id
+      try {
+        const response = await axios.get('http://localhost:8080/findChat', {
+          params: {
+            user1: this.user._id,
+            user2: this.product.user._id,
+            productID: this.product._id
+          }
         })
-        .then((response) => {
-          //Si se puede refactorizar este codigo, por favor haganlo :D
-          if (response.data._id === undefined) {
+
+        console.log(response.data)
+
+        if (response.data) {
+          console.log('ENTRA ACA 1')
+          this.$store.commit('setChat', {
+            _id: response.data._id,
+            buyerID: this.user._id,
+            sellerID: this.product.user._id,
+            productID: this.product._id
+          })
+          this.$router.push(`/chats`)
+        } else {
+          console.log('ENTRA ACA 2')
+          const newChat = await axios.post('http://localhost:8080/chat/startChat', {
+            buyerID: this.user._id,
+            sellerID: this.product.user._id,
+            productID: this.product._id
+          })
+
+          if (newChat.data) {
             this.$store.commit('setChat', {
-              _id: response.data.insertedId,
+              _id: newChat.data._id,
               buyerID: this.user._id,
               sellerID: this.product.user._id,
               productID: this.product._id
             })
-          } else {
-            this.$store.commit('setChat', {
-              _id: response.data._id,
-              buyerID: this.user._id,
-              sellerID: this.product.user._id,
-              productID: this.product._id
-            })
-          }
 
-          if (response.data.success) {
-            this.$router.push(`/seller-chat/${response.data.sellerID}`)
-          } else {
-            this.$router.push(`/chat/${this.$store.state.chat._id}`)
+            console.log('Actualizacion de store')
+
+            await this.$router.push(`/chats`)
           }
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
   },
   async created() {
-    this.isLoadingCar = true
     const id = this.$route.params.id
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
     } catch (error) {
       console.error(error)
-    } finally {
-      this.isLoadingCar = false
     }
   }
 }
@@ -594,9 +600,10 @@ strong {
 }
 
 .btn-contact-seller {
-  padding: 10px 20px;
+  padding: 10px 40px;
   background-color: #fbc40e;
-  color: white;
+  color: black;
+  font-weight: bold;
   border: none;
   border-radius: 4px;
   cursor: pointer;

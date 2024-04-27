@@ -17,7 +17,7 @@
               sint incidunt ipsa repudiandae, pariatur totam atque praesentium.
             </p>
             <RouterLink to="/sell" class="boton">
-              <button>Vende tu auto</button>
+              <button class="botonVendeAuto">Vende tu auto</button>
             </RouterLink>
           </div>
         </div>
@@ -67,6 +67,11 @@
   font-size: 2rem;
   margin-bottom: 1rem;
   font-weight: bold;
+}
+
+.botonVendeAuto{
+  font-weight: bold;
+  padding: 10px 30px;
 }
 
 button {
