@@ -10,7 +10,7 @@
           </button>
         </div>
       </div>
-      <button class="compareButton">Comparar</button>
+      <button class="compareButton" v-on:click="goToComparisonView">Comparar</button>
     </div>
     <div class="principalContainer">
       <div class="container listContainer">
@@ -96,7 +96,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCar } from '@fortawesome/free-solid-svg-icons'
 import mileageIcon from '@/assets/icons/mileage.svg'
 import gearboxIcon from '@/assets/icons/gearbox.svg'
-
+import 'sweetalert2/dist/sweetalert2.min.css'
 import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
 import axios from 'axios'
@@ -115,6 +115,11 @@ export default {
     }
   },
   methods: {
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)
+      this.$router.push({ name: 'comparison' })
+    },
+
     isCompared(product) {
       const compared = this.comparisonList.some((p) => p._id === product._id)
       console.log(`Producto ${product._id} comparado:`, compared)
@@ -126,7 +131,11 @@ export default {
       if (productIndex !== -1) {
         this.comparisonList.splice(productIndex, 1)
       } else {
-        this.comparisonList.push(product)
+        if (this.comparisonList.length < 6) {
+          this.comparisonList.push(product)
+        } else {
+          alert('No puedes comparar más de 6 productos') //TOTALMENTE SUJETO A CAMBIOS GRACIAS, NO ME GUSTA EL ALERT
+        }
       }
     },
 

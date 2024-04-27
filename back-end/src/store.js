@@ -1,7 +1,11 @@
-import { createStore } from 'vuex';
-import createPersistedState from 'vuex-persistedstate';
+import { createStore } from 'vuex'
+import createPersistedState from 'vuex-persistedstate'
+import comparison from './comparison'
 
 export default createStore({
+  modules: {
+    comparison
+  },
   state: {
     user: null,
     chat: null
@@ -14,5 +18,5 @@ export default createStore({
       state.chat = chatData
     }
   },
-  plugins: [createPersistedState()],
-});
+  plugins: [createPersistedState()]
+})

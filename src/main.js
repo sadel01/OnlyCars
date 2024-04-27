@@ -6,6 +6,7 @@ import router from './router'
 import '@fortawesome/fontawesome-free/css/all.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faLocation, faUser } from '@fortawesome/free-solid-svg-icons'
+import 'sweetalert2/dist/sweetalert2.min.css'
 import {
   faChevronDown,
   faCar,
@@ -26,6 +27,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
+import VueSweetalert2 from 'vue-sweetalert2'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -62,7 +64,7 @@ library.add(faFacebookF)
 
 const app = createApp(App)
 app.use(store)
-app.component('font-awesome-icon', FontAwesomeIcon)
+app.component('font-awesome-icon', FontAwesomeIcon, VueSweetalert2)
 app.use(router)
 
 app.mount('#app')
