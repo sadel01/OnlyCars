@@ -1,16 +1,22 @@
 <template>
   <main>
     <div v-if="comparisonList.length" class="comparisonBar">
-      <div v-for="item in comparisonList" :key="item.id" class="comparisonItem">
-        {{ item.brand }} {{ item.model }}
-        <button @click="toggleComparison(item)">Quitar</button>
+      <div class="comparisonItemsContainer">
+        <div v-for="item in comparisonList" :key="item.id" class="comparisonItem">
+          <img :src="item.image" alt="Product image" class="smallImage" />
+          {{ item.brand }} {{ item.model }}
+          <button @click="toggleComparison(item)" class="removeButton">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+        </div>
       </div>
+      <button class="compareButton">Comparar</button>
     </div>
     <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
           <li
-            v-for="product in paginatedProducts"
+            v-for="product in productsWithComparisonState"
             :key="product.id"
             @click="showProductDetail(product)"
           >
@@ -38,7 +44,15 @@
                     </p>
                   </div>
                   <div class="detail">
-                    <button @click="toggleComparison(product)">Comparar</button>
+                    <button
+                      @click.stop="toggleComparison(product)"
+                      :class="{ plus: !product.isCompared, minus: product.isCompared }"
+                    >
+                      <font-awesome-icon
+                        :icon="product.isCompared ? 'circle-minus' : 'circle-plus'"
+                      />
+                      {{ product.isCompared ? ' Comparar' : ' Comparar' }}
+                    </button>
                   </div>
                 </div>
                 <div class="productPrice">
@@ -102,23 +116,18 @@ export default {
   },
   methods: {
     isCompared(product) {
-      const compared = this.comparisonList.some((p) => p.id === product.id)
-      console.log(`Producto ${product.id} comparado:`, compared)
+      const compared = this.comparisonList.some((p) => p._id === product._id)
+      console.log(`Producto ${product._id} comparado:`, compared)
       return compared
     },
 
     toggleComparison(product) {
-      const index = this.comparisonList.findIndex((p) => p._id === product._id)
-      if (index !== -1) {
-        // El producto ya está en la lista, así que lo eliminamos.
-        this.comparisonList.splice(index, 1)
-        product.isCompared = false
+      const productIndex = this.comparisonList.findIndex((p) => p._id === product._id)
+      if (productIndex !== -1) {
+        this.comparisonList.splice(productIndex, 1)
       } else {
-        // El producto no está en la lista, así que lo agregamos.
-        product.isCompared = true
         this.comparisonList.push(product)
       }
-      console.log(this.comparisonList)
     },
 
     nextPage() {
@@ -162,12 +171,11 @@ export default {
     handleResize() {
       this.isLargeScreen = window.innerWidth > 1280 || window.innerHeight > 1024
       if (!this.isLargeScreen && this.selectedProduct) {
-        this.selectedProduct = null // Cierra el detalle del producto si la pantalla no es lo suficientemente grande
+        this.selectedProduct = null
       }
     }
   },
   mounted() {
-    // Llama al método handleResize cuando se monta el componente
     this.handleResize()
     window.addEventListener('resize', () => {
       this.handleResize()
@@ -183,6 +191,12 @@ export default {
     ProductDetail
   },
   computed: {
+    productsWithComparisonState() {
+      return this.products.map((product) => ({
+        ...product,
+        isCompared: this.comparisonList.some((compProduct) => compProduct._id === product._id)
+      }))
+    },
     maxPage() {
       return Math.ceil(this.products.length / this.perPage)
     },
@@ -201,29 +215,166 @@ export default {
 </script>
 
 <style scoped>
-.compared {
-  background-color: red; /* El color que deseas para el botón cuando esté seleccionado */
+.detail button {
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
-.not-compared {
-  /* Estilos para el botón cuando no está seleccionado */
+
+.detail button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.detail button:focus {
+  outline: none;
+}
+
+.detail button.plus {
+  background-color: #fbc40e;
+  color: black;
+}
+
+.detail button.minus {
+  background-color: #1a1a1a;
+}
+
+.font-awesome-icon {
+  margin-right: 5px;
 }
 
 .comparisonBar {
-  width: 100%;
-  background-color: #f8f9fa;
-  color: black;
-  padding: 10px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: start;
+  padding: 10px;
+  background-color: #f0f8ff;
+  position: relative;
+  color: #f0f8ff;
+}
+
+.comparisonItemsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-right: 30px;
+  min-height: 50px;
+  flex-grow: 1;
+}
+
+.compareButton {
+  appearance: none;
+  background-color: #fbc40e;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0;
+  box-sizing: border-box;
+  color: #24292e;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  padding: 5px 15px;
+  position: absolute;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+  margin-left: auto;
+  height: 50px;
+  right: 10px;
+  margin-top: 10px;
+  top: center;
+  user-select: none;
+}
+
+.compareButton:hover {
+  background-color: #fad55c;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+
+.compareButton:disabled {
+  background-color: #fbc40e;
+  border-color: rgba(27, 31, 35, 0.15);
+  color: #e0af0e;
+  cursor: default;
+}
+
+.compareButton:active {
+  background-color: #f8e39d;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+.compareButton:focus {
+  outline: 1px transparent;
+}
+
+.compareButton:before {
+  display: none;
+}
+
+.compareButton:-webkit-details-marker {
+  display: none;
 }
 
 .comparisonItem {
-  display: inline-block;
-  margin: 0 10px;
+  display: flex;
+  align-items: center;
   padding: 5px 10px;
-  background-color: #e9ecef;
+  margin-right: 10px;
+  background-color: #cccccc5f;
+  border: 2px solid #0707072c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  color: #000;
+  margin-top: 10px;
+  width: 210px;
+  height: 50px;
+  user-select: none;
+}
+.smallImage {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 5px;
+  user-select: none;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  margin-left: auto;
+  font-size: 20px;
+}
+
+.fas.fa-trash {
+  font-size: 18px;
+}
+
+.removeButton:hover {
+  color: #a3202a;
 }
 
 .productDetailOpen {
@@ -297,7 +448,7 @@ export default {
   cursor: pointer;
   border: none;
   margin-left: 75%;
-  height: 3rem; /* Cambia esto a la altura que necesites */
+  height: 3rem;
   width: 20%;
   margin-bottom: 30%;
 }

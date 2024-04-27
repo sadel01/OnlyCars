@@ -14,7 +14,10 @@ import {
   faScrewdriverWrench,
   faLocationDot,
   faShield,
-  faScaleUnbalancedFlip
+  faScaleUnbalancedFlip,
+  faTrashCan,
+  faCircleMinus,
+  faCirclePlus
 } from '@fortawesome/free-solid-svg-icons'
 import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -50,7 +53,10 @@ library.add(
   faScrewdriverWrench,
   faLocationDot,
   faShield,
-  faScaleUnbalancedFlip
+  faScaleUnbalancedFlip,
+  faTrashCan,
+  faCircleMinus,
+  faCirclePlus
 )
 library.add(faFacebookF)
 
