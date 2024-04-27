@@ -11,6 +11,7 @@ import UserView from '../views/UserView.vue'
 import ProfileView from '../views/Profile.vue'
 import store from '../../back-end/src/store';
 import ChatView from '../views/ChatView.vue'
+import FavoritesView from '../views/FavoritesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -71,6 +72,12 @@ const router = createRouter({
       path: '/chats',
       name: 'chats',
       component: ChatView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: FavoritesView,
       meta: { requiresAuth: true },
     }
   ],
