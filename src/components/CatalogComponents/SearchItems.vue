@@ -170,6 +170,7 @@ export default {
   methods: {
     emitInput() {
       this.$emit('inputKM', this.mileage)
+      this.$emit('inputItems', this.searchTerm)
     },
     inputBrand() {
       if (this.brand === '') {
