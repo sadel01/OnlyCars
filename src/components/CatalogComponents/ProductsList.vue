@@ -1,12 +1,18 @@
 <template>
   <main>
+    <div v-if="comparisonList.length" class="comparisonBar">
+      <div v-for="item in comparisonList" :key="item.id" class="comparisonItem">
+        {{ item.brand }} {{ item.model }}
+        <button @click="toggleComparison(item)">Quitar</button>
+      </div>
+    </div>
     <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
           <li
             v-for="product in paginatedProducts"
             :key="product.id"
-            @click="showProductDetail(product)" 
+            @click="showProductDetail(product)"
           >
             <div class="productCard">
               <div class="imageContainer">
@@ -22,10 +28,17 @@
                     <p class="productText productDescription">{{ product.mileage }} KM</p>
                   </div>
                   <div class="detail">
-                    <img src="@/assets/icons/gearbox.svg" alt="Transmission Icon" class="icon-svg" />
+                    <img
+                      src="@/assets/icons/gearbox.svg"
+                      alt="Transmission Icon"
+                      class="icon-svg"
+                    />
                     <p class="productText productDescription data">
                       {{ product.transmission }}
                     </p>
+                  </div>
+                  <div class="detail">
+                    <button @click="toggleComparison(product)">Comparar</button>
                   </div>
                 </div>
                 <div class="productPrice">
@@ -41,7 +54,12 @@
         </div>
         <div class="pageButton">
           <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
-          <button v-for="n in maxPage" :key="n" @click="goToPage(n)" :class="{ buttonPage: true, buttonPageActive: n === page }">
+          <button
+            v-for="n in maxPage"
+            :key="n"
+            @click="goToPage(n)"
+            :class="{ buttonPage: true, buttonPageActive: n === page }"
+          >
             {{ n }}
           </button>
           <button v-if="page < maxPage" @click="nextPage" class="buttonPage">Siguiente</button>
@@ -59,13 +77,11 @@
   </main>
 </template>
 
-
-
 <script>
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCar } from '@fortawesome/free-solid-svg-icons'
-import mileageIcon from '@/assets/icons/mileage.svg';
-import gearboxIcon from '@/assets/icons/gearbox.svg';
+import mileageIcon from '@/assets/icons/mileage.svg'
+import gearboxIcon from '@/assets/icons/gearbox.svg'
 
 import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
@@ -75,6 +91,7 @@ export default {
   props: ['products'],
   data() {
     return {
+      comparisonList: [],
       productsFiltered: [],
       productClicked: false,
       selectedProduct: null,
@@ -84,6 +101,26 @@ export default {
     }
   },
   methods: {
+    isCompared(product) {
+      const compared = this.comparisonList.some((p) => p.id === product.id)
+      console.log(`Producto ${product.id} comparado:`, compared)
+      return compared
+    },
+
+    toggleComparison(product) {
+      const index = this.comparisonList.findIndex((p) => p._id === product._id)
+      if (index !== -1) {
+        // El producto ya está en la lista, así que lo eliminamos.
+        this.comparisonList.splice(index, 1)
+        product.isCompared = false
+      } else {
+        // El producto no está en la lista, así que lo agregamos.
+        product.isCompared = true
+        this.comparisonList.push(product)
+      }
+      console.log(this.comparisonList)
+    },
+
     nextPage() {
       this.page++
       window.scrollTo(0, 0)
@@ -103,6 +140,7 @@ export default {
       if (id) {
         const response = await axios.get(`http://localhost:8080/catalog/${id}`)
         const post = response.data
+        post.isCompared = false
         this.post = post
       } else {
         console.error('Product id is not defined')
@@ -117,28 +155,28 @@ export default {
         top: 0
       })
     },
-    viewMore(id){
+    viewMore(id) {
       this.fetchProductDetails(id)
       window.open(`/catalog/${id}`, '_blank')
     },
     handleResize() {
-      this.isLargeScreen = window.innerWidth > 1280 || window.innerHeight > 1024;
+      this.isLargeScreen = window.innerWidth > 1280 || window.innerHeight > 1024
       if (!this.isLargeScreen && this.selectedProduct) {
-        this.selectedProduct = null; // Cierra el detalle del producto si la pantalla no es lo suficientemente grande
+        this.selectedProduct = null // Cierra el detalle del producto si la pantalla no es lo suficientemente grande
       }
     }
   },
   mounted() {
     // Llama al método handleResize cuando se monta el componente
-    this.handleResize();
+    this.handleResize()
     window.addEventListener('resize', () => {
-      this.handleResize();
-    });
+      this.handleResize()
+    })
   },
   beforeDestroy() {
     window.removeEventListener('resize', () => {
-      this.handleResize();
-    });
+      this.handleResize()
+    })
   },
   components: {
     SearchItems,
@@ -151,15 +189,42 @@ export default {
     paginatedProducts() {
       const start = (this.page - 1) * this.perPage
       const end = start + this.perPage
-      return this.products.slice(start, end)
+      return this.products.slice(start, end).map((product) => {
+        return {
+          ...product,
+          isCompared: this.comparisonList.some((compProduct) => compProduct.id === product.id)
+        }
+      })
     }
   }
 }
 </script>
 
 <style scoped>
+.compared {
+  background-color: red; /* El color que deseas para el botón cuando esté seleccionado */
+}
+.not-compared {
+  /* Estilos para el botón cuando no está seleccionado */
+}
 
+.comparisonBar {
+  width: 100%;
+  background-color: #f8f9fa;
+  color: black;
+  padding: 10px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
 
+.comparisonItem {
+  display: inline-block;
+  margin: 0 10px;
+  padding: 5px 10px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 
 .productDetailOpen {
   animation: 1s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-left both;
@@ -175,15 +240,15 @@ export default {
 }
 
 .icon-svg {
-  height: 1.4em; 
-  width: auto; 
+  height: 1.4em;
+  width: auto;
   vertical-align: middle;
-  margin-right: 8px; 
+  margin-right: 8px;
 }
 
 .detail {
   display: flex;
-  align-items: center; 
+  align-items: center;
   margin-bottom: 4px;
 }
 
@@ -273,19 +338,19 @@ export default {
 
 .imageContainer {
   flex: 0 0 300px;
-  height: 200px; 
+  height: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
-  object-fit: cover; 
+  object-fit: cover;
   margin: 20px;
 }
 
 .productCard .imagenes {
-  max-width: 100%;     
-  max-height: 100%;    
-  object-fit: cover; 
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
 }
 
 .principalContainer {
@@ -309,9 +374,9 @@ export default {
 }
 
 .imagenes {
-  width: 100%; 
-  height: 100%; 
-  object-fit: cover; 
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   border-radius: 10px;
 }
 
@@ -347,8 +412,8 @@ export default {
   align-items: center;
   border-radius: 10px;
   margin: 20px 10px 0px 0px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  overflow: hidden; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
 }
 
 .productCard:hover {

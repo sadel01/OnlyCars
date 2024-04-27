@@ -13,7 +13,8 @@ import {
   faGasPump,
   faScrewdriverWrench,
   faLocationDot,
-  faShield
+  faShield,
+  faScaleUnbalancedFlip
 } from '@fortawesome/free-solid-svg-icons'
 import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -48,7 +49,8 @@ library.add(
   faGasPump,
   faScrewdriverWrench,
   faLocationDot,
-  faShield
+  faShield,
+  faScaleUnbalancedFlip
 )
 library.add(faFacebookF)
 
