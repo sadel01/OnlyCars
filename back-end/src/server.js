@@ -380,5 +380,44 @@ app.get('/users/:id', async (req, res) => {
   }
 })
 
+// Manejo de solicitudes para agregar y obtener de favoritos
+
+app.post("/favorites", async (req, res) => {
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("favorites");
+    const { userId, postId } = req.body;
+
+    const result = await collection.updateOne(
+      { userId: userId },
+      { $addToSet: { favorites: postId } },
+      { upsert: true }
+    );
+
+    if (result.modifiedCount === 0) {
+      res.send({ message: "Item ya estaba en favoritos" });
+    } else {
+      res.send({ message: "Item agregado a favoritos" });
+    }
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.get("/favorites", async (req, res) => {
+  console.log("Obteniendo favoritos");
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("favorites");
+    const userId = req.query.userId;
+    console.log(userId);
+    const favorites = await collection.findOne({ userId: userId });
+    console.log(favorites.postIds)
+    res.send(favorites);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

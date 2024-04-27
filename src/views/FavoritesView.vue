@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
@@ -99,7 +100,7 @@ export default {
         // Agrega más autos aquí
       ],
       page: 1,
-      perPage: 9,
+      perPage: 9
     }
   },
   methods: {
@@ -111,6 +112,16 @@ export default {
     },
     goToPage(page) {
       this.page = page
+    },
+    async fetchFavorites() {
+      const userId = this.$store.state.user._id
+      const response = await axios.get('http://localhost:8080/favorites', {
+        params: {
+          userId: userId,
+        }
+      })
+      const data = response.data
+      console.log(data)
     }
   },
   computed: {
@@ -122,6 +133,9 @@ export default {
       const end = start + this.perPage
       return this.cars.slice(start, end)
     }
+  },
+  created() {
+    this.fetchFavorites()
   }
 }
 </script>
@@ -145,7 +159,7 @@ export default {
   width: 80%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
+  gap: 40px;
 }
 
 .favorite-card {
@@ -206,6 +220,4 @@ export default {
   color: white;
   font-weight: bold;
 }
-
-
 </style>
