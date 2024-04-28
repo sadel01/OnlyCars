@@ -23,17 +23,17 @@ const limpiarMensaje = () => {
     <div class="transparent-box">
       <div class="datos">
         <div class="container1">
-          <FontAwesomeIcon :icon="faPhone" class="iconosC" />
+          <FontAwesomeIcon :icon="faPhone" class="iconosContacto" />
           <p class="textoDatos">Teléfono</p>
         </div>
         <p class="textoDatos2">+56 9 7358 8879</p>
         <div class="container1">
-          <FontAwesomeIcon :icon="faLocationDot" class="iconosC" />
+          <FontAwesomeIcon :icon="faLocationDot" class="iconosContacto" />
           <p class="textoDatos">Ubicación</p>
         </div>
         <p class="textoDatos2">Donde no llegan las pelaitas.</p>
         <div class="container1">
-          <FontAwesomeIcon :icon="faClock" class="iconosC" />
+          <FontAwesomeIcon :icon="faClock" class="iconosContacto" />
           <p class="textoDatos">Horario</p>
         </div>
         <p class="textoDatos2">No disponible. Somos universitarios.</p>
@@ -134,18 +134,22 @@ const limpiarMensaje = () => {
   height: 100vh;
 }
 
-.iconosC {
-  font-size: 20%;
+
+.iconosContacto {
+  font-size: 30px
 }
 
 .textoDatos {
   font-size: 40px;
   font-weight: bold;
   color: white;
+  margin-bottom: 5px;
+  margin-top: 5px;
 }
 
 .textoDatos2 {
-  font-size: 35px;
+  margin: 0;
+  font-size: 24px;
   color: white;
 }
 
@@ -153,7 +157,7 @@ const limpiarMensaje = () => {
   display: flex;
   gap: 20px;
   align-items: center;
-  margin-top: 5%;
+  margin-top: 3%;
 }
 
 .in {
@@ -207,6 +211,7 @@ const limpiarMensaje = () => {
   left: 50%;
   width: 1px;
   background-color: #fbc40e;
+  margin-left: 40px;
 }
 
 .enviarCorreo {

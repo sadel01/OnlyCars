@@ -1,26 +1,42 @@
-
 <template>
   <div class="general-container">
     <div class="chat-container">
       <div class="minimized-chats">
-        <input class="search-chat" type="text" placeholder="Buscar.." @input="emitInput" />
-        <p>Aqui van los chats del user</p>
+        <input
+          class="search-chat"
+          v-model="searchTerm"
+          type="text"
+          placeholder="Buscar.."
+          @input="emitInput"
+        />
+        <div
+          v-for="chat in filteredChats"
+          :key="chat.id"
+          class="chat"
+          @click="loadChat(chat._id, chat)"
+        >
+          <h4>{{ chat.otherUserName }} {{ chat.otherUserLastName }}</h4>
+          <h4>{{ chat.brand }} {{ chat.model }}</h4>
+        </div>
       </div>
 
       <div class="chat">
         <div class="chat-header">
-          <h1>{{ receiver.nombre }} {{ receiver.apellido }}</h1>
+          <h1>{{ selectedChat.otherUserName }} {{ selectedChat.otherUserLastName }}</h1>
         </div>
-        <div class="messages" ref="messages">
-          <div
-            v-for="(message, index) in messages"
-            :key="index"
-            :class="{
-              'sent-message': message.user === user,
-              'received-message': message.user !== user
-            }"
-          >
-            <p>{{ message.text }}</p>
+        <div class="chatContainer" ref="chatContainer">
+          <div class="messages" ref="messages">
+            <div
+              v-for="(message, index) in messages"
+              :key="index"
+              :class="{
+                'sent-message': message.user === user,
+                'received-message': message.user !== user
+              }"
+              ref="messages"
+            >
+              <p>{{ message.text }}</p>
+            </div>
           </div>
         </div>
         <div>
@@ -93,10 +109,55 @@
           </div>
         </div>
       </div>
-      <div class="sell-data">
-        <h2>Año Marca Modelo</h2>
-        <p>Imagenes</p>
-        <p>Descripcion</p>
+      <div class="sell-data" v-if="selectedChat">
+        <h2>
+          {{ selectedChat.product.brand }} {{ selectedChat.product.model }}
+          {{ selectedChat.product.year }}
+        </h2>
+
+        <div class="vehicle-carousel-container">
+          <carousel :items-to-show="1" v-if="selectedChat.product && selectedChat.product.image">
+            <slide v-for="(image, index) in selectedChat.product.image" :key="index">
+              <img :src="image" alt="Vehicle Image" class="carousel__item" />
+            </slide>
+            <template #addons>
+              <navigation class="navigation" />
+              <pagination class="pagination" />
+            </template>
+          </carousel>
+          <div v-else class="no-images">Cargando imágenes o no hay imágenes disponibles.</div>
+        </div>
+
+        <div class="specs">
+          <p>
+            <img src="@/assets/icons/mileage.svg" class="icon" alt="Kilometraje" />
+            <strong>Kilometraje: </strong> {{ ' ' + selectedChat.product.mileage }}
+          </p>
+          <p>
+            <img src="@/assets/icons/paint-roller-solid.svg" class="icon" alt="Color" />
+            <strong>Color: </strong> {{ selectedChat.product.exteriorColor }}
+          </p>
+          <p>
+            <img src="@/assets/icons/engine.svg" class="icon" alt="Motor" />
+            <strong>Motor: </strong> {{ selectedChat.product.engine }}
+          </p>
+
+          <p>
+            <img src="@/assets/icons/gas-pump-solid.svg" class="icon" alt="Combustible" />
+            <strong>Combustible: </strong> {{ selectedChat.product.fuel }}
+          </p>
+          <p>
+            <img src="@/assets/icons/gearbox.svg" class="icon" alt="Transmisión" />
+            <strong>Transmisión:</strong> {{ ' ' + selectedChat.product.transmission }}
+          </p>
+          <p>
+            <img src="@/assets/icons/camera-solid.svg" class="icon" alt="Cámara trasera" />
+            <strong>Cámara trasera: </strong>
+            {{ selectedChat.product.hasBackupCamera ? 'Sí' : 'No' }}
+          </p>
+
+          <p class="description">{{ selectedChat.product.description }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -105,6 +166,8 @@
 <script>
 import axios from 'axios'
 import io from 'socket.io-client'
+import 'vue3-carousel/dist/carousel.css'
+import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 const socket = io('http://localhost:8080')
 export default {
   data() {
@@ -113,30 +176,40 @@ export default {
       newMessage: '',
       error: null,
       chatId: null,
-      receiver: ''
+      receiver: '',
+      userChats: [],
+      selectedChat: '',
+      product: {},
+      searchTerm: '',
+      filteredChats: []
     }
   },
-  updated() {
-    // Desplaza el contenedor de mensajes hasta el final
-    this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight;
+  components: {
+    Carousel,
+    Slide,
+    Pagination,
+    Navigation
   },
-  async mounted() {
-    const chatID = this.$route.params.id
-    const response = await axios.get('http://localhost:8080/chat/' + chatID)
-    this.messages = response.data.messages
-  },
-  created() {
-    this.chatId = this.$route.params.id
-    this.getReceiver()
-    socket.emit('join', this.$store.state.chat._id, this.$store.state.chat.buyerID, (error) => {
-      if (error) {
-        console.error('Error joining chat:', error)
+  async created() {
+    const response = await axios.get('http://localhost:8080/findUserChats', {
+      params: {
+        userID: this.$store.state.user._id
       }
     })
+    this.userChats = response.data
+    this.filteredChats = this.userChats
+
+    if (this.userChats.length > 0) {
+      const firstChat = this.userChats[0]
+      this.loadChat(firstChat._id, firstChat)
+    }
 
     socket.on('message', (message) => {
       this.messages.push(message)
-      this.uploadMessages()
+      this.$nextTick(() => {
+        const chatElement = document.getElementsByClassName('messages')
+        chatElement.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      })
     })
 
     socket.on('connectError', (error) => {
@@ -148,34 +221,54 @@ export default {
       return this.$store.state.user.nombre
     }
   },
+  updated() {
+    const container = this.$el.querySelector('.messages')
+    container.scrollTop = container.scrollHeight
+  },
   methods: {
+    emitInput() {
+      this.filteredChats = this.userChats.filter((chat) => {
+        return (
+          chat.otherUserName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          chat.otherUserLastName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          chat.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          chat.model.toLowerCase().includes(this.searchTerm.toLowerCase())
+        )
+      })
+    },
+
     // método para enviar el mensaje
-    sendMessage() {
+    async sendMessage() {
       if (this.newMessage.trim() !== '') {
-        console.log('Sending message:', this.newMessage)
-        console.log('Chat ID:', this.chatId)
         socket.emit('message', this.chatId, { text: this.newMessage, user: this.user })
+        await axios.post('http://localhost:8080/chat/' + this.chatId, {
+          user: this.user,
+          message: this.newMessage
+        })
         this.newMessage = ''
       }
     },
-    async uploadMessages() {
-      this.newMessage = ''
-      const chatID = this.$store.state.chat._id
-      await axios.post('http://localhost:8080/chat/' + chatID, {
-        id: chatID,
-        message: this.messages[this.messages.length - 1]
+
+    async loadChat(chatID, chat) {
+      this.chatId = chatID
+      this.selectedChat = chat
+      const response = await axios.get('http://localhost:8080/chat/' + chatID)
+      this.messages = response.data.messages
+      this.getReceiver(response.data.buyerID)
+      socket.emit('join', chatID, this.$store.state.user._id, (error) => {
+        if (error) {
+          console.error('Error joining chat:', error)
+        }
       })
     },
-    async getReceiver() {
-      const response = await axios.get(
-        `http://localhost:8080/users/${this.$store.state.chat.sellerID}`,
-        {
-          params: {
-            id: this.$store.state.chat.sellerID
-          }
-        }
-      )
-      console.log(response.data)
+    beforeUnmount() {
+      socket.disconnect()
+      socket.off('message')
+      socket.off('connectError')
+      socket.off('join')
+    },
+    async getReceiver(id) {
+      const response = await axios.get(`http://localhost:8080/users/${id}`)
       this.receiver = response.data
     }
   }
@@ -183,23 +276,6 @@ export default {
 </script>
 
 <style scoped>
-.search-chat {
-  width: calc(100% - 20px);
-  margin-bottom: 10px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
-}
-
-.search-chat:focus,
-.search-chat:hover {
-  border-color: #000;
-}
-h2 {
-  margin-top: 18%;
-}
-
 #messageInput:focus ~ #sendButton svg path,
 #messageInput:valid ~ #sendButton svg path {
   fill: #3c3c3c;
@@ -207,7 +283,6 @@ h2 {
 }
 
 button,
-input[type='text'],
 input[type='file'] {
   border: 2px solid #ddd;
   padding: 8px 16px;
@@ -276,8 +351,40 @@ button:disabled {
 .minimized-chats {
   flex: 0 0 20%;
   overflow-y: auto;
+  justify-content: flex-start;
+  align-items: center;
   border-right: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  padding: 0px 12px;
+  overflow: hidden;
+}
+
+.search-chat {
+  display: flex;
+  width: 85%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+  padding: 10px 16px;
+  margin: 16px 10px;
+}
+
+.search-chat:focus,
+.search-chat:hover {
+  border-color: #000;
+}
+
+.chat {
   padding: 10px;
+  width: 90%;
+  background-color: #f7f7f7;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #ccc;
+}
+
+.minimized-chat:hover {
+  background-color: #f0f0f0;
 }
 
 .minimized-chat:hover {
@@ -311,6 +418,7 @@ button:disabled {
 .inputContainer {
   padding: 10px;
   background-color: #f0f0f0;
+  border-radius: 10px;
 }
 
 .fileUploadWrapper {
@@ -378,10 +486,6 @@ button:disabled {
   flex: 1;
 }
 
-.minimized-chat:hover {
-  background-color: #f0f0f0;
-}
-
 .unread-messages {
   margin-left: 10px;
   background-color: red;
@@ -390,12 +494,9 @@ button:disabled {
   border-radius: 50%;
 }
 
-.chat {
-  padding: 10px;
-  width: calc(68% - 10px);
-  background-color: #f7f7f7;
-  cursor: pointer;
-  transition: background-color 0.2s;
+h1 {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .chat:hover {
@@ -415,6 +516,16 @@ button:disabled {
   margin-bottom: 10px;
 }
 
+.chatContainer {
+  max-height: 70vh;
+  min-height: 70vh;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  cursor: default;
+}
+
 .messages {
   display: flex;
   flex-direction: column;
@@ -422,11 +533,9 @@ button:disabled {
   max-width: 100%;
   padding: 10px;
   background-color: #ffffff;
-  border-radius: 10px;
-  margin-bottom: 10px;
   overflow-y: auto;
-  max-height: 70vh;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-height: 68vh;
+  border-radius: 10px;
 }
 
 .sent-message,
@@ -458,6 +567,70 @@ button:disabled {
   flex: 0 0 20%;
   margin-left: auto;
   border-left: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  justify-content: flex-start;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.vehicle-carousel-container {
+  margin-bottom: 20px;
+  max-width: 100%;
+}
+
+.vehicle-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.specs {
+  width: 100%;
+}
+
+.carousel__item {
+  min-height: 200px;
+  width: 100%;
+  max-height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+}
+
+.carousel__pagination {
+  margin: 0;
+}
+
+.carousel__slide {
+  padding: 10px;
+}
+
+.carousel__prev,
+.carousel__next {
+  box-sizing: content-box;
+  border: 5px solid white;
+}
+
+.icon {
+  margin-right: 0.5rem;
+  width: 18px;
+  height: auto;
+}
+
+p {
+  display: flex;
+  align-items: center;
+}
+
+strong {
+  margin-right: 0.5rem;
+}
+
+.description {
+  margin-top: 2rem;
 }
 
 .sent-message {
@@ -516,5 +689,12 @@ button:disabled {
   .received-message {
     max-width: 80%;
   }
+}
+
+@media (max-width: 1024px) {
+  .sell-data{
+    display:none;
+  }
+
 }
 </style>

@@ -14,8 +14,11 @@
           <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
         </div>
         <div class="nav-buttons" :class="{ active: navActive }">
+          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"><font-awesome-icon :icon="['fas', 'message']" class="iconNavbar"/></RouterLink>
+          <RouterLink to="/favorites" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"><font-awesome-icon :icon="['fas', 'heart']" class="iconNavbar"/></RouterLink>
+
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" /> {{ user.nombre + ' ' + user.apellido }}
+            <FontAwesomeIcon :icon="faUser" class="iconUser" /> {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
@@ -47,6 +50,8 @@ const closeNav = () => {
   navActive.value = false
 }
 
+const isLoggedIn = computed(() => store.state.user !== null)
+
 const user = computed(() => store.state.user)
 </script>
 
@@ -58,6 +63,14 @@ const user = computed(() => store.state.user)
   padding: 0 20px;
   background-color: #1f1f1f;
   height: 60px;
+}
+
+.iconUser{
+  margin-right: 5px;
+}
+
+.iconNavbar{
+  font-size: 18px;
 }
 
 nav {
@@ -122,7 +135,9 @@ nav {
   color: #c19400;
 }
 
-@media (max-width: 768px) {
+
+
+@media (max-width: 1024px) {
   .hamburger {
     display: block;
   }
