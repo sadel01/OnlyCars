@@ -11,7 +11,6 @@ import UserView from '../views/UserView.vue'
 import ProfileView from '../views/Profile.vue'
 import store from '../../back-end/src/store'
 import ChatView from '../views/ChatView.vue'
-import SellerChatView from '../views/SellerChatView.vue'
 import ComparisonView from '../views/ComparisonView.vue'
 import FavoritesView from '../views/FavoritesView.vue'
 
@@ -69,11 +68,6 @@ const router = createRouter({
       path: '/comparison',
       name: 'comparison',
       component: ComparisonView
-    },
-    {
-      path: '/seller-chat/:id',
-      name: 'seler-chat-view',
-      component: SellerChatView
     },
     {
       path: '/user/:id',
