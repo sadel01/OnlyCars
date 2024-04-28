@@ -114,6 +114,22 @@
             placeholder="Ingrese un color"
           />
         </div>
+
+        <div class="form-group"> 
+          <label for="region">Región</label> 
+          <select id="region" v-model="vehicle.region" @change="fetchRegion"> 
+            <option value="" disabled selected>Seleccione una región</option> 
+            <option v-for="region in regions" :key="region" :value="region">{{ region }}</option> 
+          </select> 
+        </div> 
+ 
+        <div class="form-group"> 
+          <label for="comuna">Comuna</label> 
+          <select id="comuna" v-model="vehicle.comuna"> 
+            <option value="" disabled selected>Seleccione una comuna</option> 
+            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option> 
+          </select> 
+        </div> 
       </div>
 
       <div class="details-column">
@@ -174,28 +190,6 @@
         </div>
 
         <div class="form-group">
-          <label for="location">Región</label>
-          <select id="location" v-model="vehicle.location">
-            <option value="">Región</option>
-            <option value="region15">Arica y Parinacota</option>
-            <option value="region1">Tarapacá</option>
-            <option value="region2">Antofagasta</option>
-            <option value="region3">Atacama</option>
-            <option value="region4">Coquimbo</option>
-            <option value="region5">Valparaíso</option>
-            <option value="regionRM">Metropolitana</option>
-            <option value="region6">Bernardo O'Higgins</option>
-            <option value="region7">Maule</option>
-            <option value="region8">Biobío</option>
-            <option value="region9">La Araucanía</option>
-            <option value="region14">Los Ríos</option>
-            <option value="region10">Los Lagos</option>
-            <option value="region11">Aysén</option>
-            <option value="region12">Magallanes</option>
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="owners">N° propietarios anteriores</label>
           <input type="text" id="owners" v-model="vehicle.owners" placeholder="Ingrese el número" />
         </div>
@@ -227,6 +221,15 @@
             placeholder="Ingrese el color"
           />
         </div>
+
+        <div class="form-group"> 
+          <label for="provincia">Provincia</label> 
+          <select id="provincia" v-model="vehicle.provincia"> 
+            <option value="" disabled selected>Seleccione una provincia</option> 
+            <option v-for="provincia in provincias" :key="provincia" :value="provincia">{{ provincia }}</option> 
+          </select> 
+        </div> 
+
       </div>
     </div>
     <div class="form-group">
@@ -290,7 +293,9 @@ export default {
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
         description: '',
-        location: '',
+        region: '',
+        provincia: '', 
+        comuna: '', 
         errorMessage: {
           mileage: '',
           year: '',
@@ -301,6 +306,9 @@ export default {
       successMessage: '',
       brands: [],
       models: [],
+      regions: [], 
+      provincias: [], 
+      comunas: [], 
       filesToUpload: [],
       imagePreviews: [],
       imagePaths: [],
@@ -438,6 +446,51 @@ export default {
       }
     },
 
+    async fetchRegion() { 
+      try { 
+        const response = await fetch('http://localhost:8080/regions'); 
+        if (response.ok) {
+          this.regions = await response.json(); 
+          this.comunas = [];
+        }
+      } catch (error) { 
+        console.error('Error al recuperar las regiones:', error); 
+      } 
+    }, 
+ 
+    async fetchProvincia() { 
+      if (!this.vehicle.region) { 
+        this.provincias = []; 
+        this.comunas = []; // Resetea las comunas si las usas 
+        return; 
+      } 
+      try { 
+        const response = await fetch(`http://localhost:8080/provincia/${this.vehicle.region}`); 
+        if (response.ok) { 
+          this.provincias = await response.json(); 
+          this.provincia = ''; // Resetea la provincia seleccionada 
+        } 
+      } catch (error) { 
+        console.error('Error al recuperar las provincias:', error); 
+      } 
+    }, 
+ 
+    async fetchComunas() { // Añade este método si gestionas comunas 
+      if (!this.vehicle.provincia) { 
+        this.comunas = []; 
+        return; 
+      } 
+      try { 
+        // Debes tener un endpoint para obtener comunas basado en la provincia 
+        const response = await fetch(`http://localhost:8080/comuna/${this.vehicle.provincia}`); 
+        if (response.ok) { 
+          this.comunas = await response.json(); 
+        } 
+      } catch (error) { 
+        console.error('Error al recuperar las comunas:', error); 
+      } 
+    }, 
+
     async submitVehicle() {
       if (Object.values(this.vehicle).some((value) => !value)) {
         this.errorMessage = 'Todos los campos son obligatorios'
@@ -486,7 +539,10 @@ export default {
           doors: '',
           interiorColor: '',
           exteriorColor: '',
-          description: ''
+          description: '',
+          region: '', 
+          provincia: '', 
+          comuna: '', 
         }
       } catch (error) {
         this.errorMessage = 'Error al publicar'
@@ -520,10 +576,17 @@ export default {
   watch: {
     'vehicle.brand': function (newBrand) {
       this.fetchModels()
-    }
+    },
+    'vehicle.region'() { 
+      this.fetchProvincia(); 
+    }, 
+    'vehicle.provincia'() { 
+      this.fetchComunas(); // Añade esto si gestionas comunas 
+    } 
   },
   mounted() {
     this.fetchBrands()
+    this.fetchRegion(); 
   }
 }
 </script>
