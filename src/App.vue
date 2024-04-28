@@ -22,6 +22,7 @@ import Footer from './components/Footer.vue'
 
 .main-content {
   flex: 1 0 auto;
+  min-height: 90vh;
 }
 
 footer {
@@ -32,4 +33,5 @@ header {
   line-height: 1.5;
   height: auto;
 }
+
 </style>
