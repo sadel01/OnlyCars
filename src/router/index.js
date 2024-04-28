@@ -9,9 +9,10 @@ import RegisterView from '../views/RegisterView.vue'
 import ItemView from '../views/ItemView.vue'
 import UserView from '../views/UserView.vue'
 import ProfileView from '../views/Profile.vue'
-import store from '../../back-end/src/store';
+import store from '../../back-end/src/store'
 import ChatView from '../views/ChatView.vue'
-import SellerChatView from '../views/SellerChatView.vue'
+import ComparisonView from '../views/ComparisonView.vue'
+import FavoritesView from '../views/FavoritesView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,13 +41,13 @@ const router = createRouter({
       path: '/profile',
       name: 'profile',
       component: ProfileView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/sell',
       name: 'sell',
       component: SellView,
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true }
     },
     {
       path: '/login',
@@ -64,35 +65,41 @@ const router = createRouter({
       component: ItemView
     },
     {
-      path: '/seller-chat/:id',
-      name: 'seler-chat-view',
-      component: SellerChatView
-    }
-    ,
+      path: '/comparison',
+      name: 'comparison',
+      component: ComparisonView
+    },
     {
       path: '/user/:id',
       name: 'user',
       component: UserView
     },
     {
-      path: '/chat/:id',
-      name: 'chat',
-      component: ChatView
+      path: '/chats',
+      name: 'chats',
+      component: ChatView,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/favorites',
+      name: 'favorites',
+      component: FavoritesView,
+      meta: { requiresAuth: true },
     }
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0 }
   }
-});
+})
 
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth);
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
 
   if (requiresAuth && !store.state.user) {
-    next('/login'); // Si la ruta requiere autenticación y no hay usuario, redirige a login
+    next('/login') // Si la ruta requiere autenticación y no hay usuario, redirige a login
   } else {
-    next(); // De lo contrario, permite que la navegación continúe
+    next() // De lo contrario, permite que la navegación continúe
   }
-});
+})
 
-export default router;
+export default router
