@@ -18,7 +18,9 @@ import {
   faScaleUnbalancedFlip,
   faTrashCan,
   faCircleMinus,
-  faCirclePlus
+  faCirclePlus,
+  faMessage,
+  faHeart
 } from '@fortawesome/free-solid-svg-icons'
 import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -58,7 +60,9 @@ library.add(
   faScaleUnbalancedFlip,
   faTrashCan,
   faCircleMinus,
-  faCirclePlus
+  faCirclePlus,
+  faMessage,
+  faHeart
 )
 library.add(faFacebookF)
 
