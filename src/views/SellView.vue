@@ -86,26 +86,6 @@
         </div>
 
         <div class="form-group">
-          <label for="seguro">Seguro</label>
-          <select id="seguro" v-model="vehicle.seguro">
-            <option value="" disabled selected>Seleccione un seguro</option>
-            <option value="Responsabilidad social">Responsabilidad social</option>
-            <option value="Colisión">Colisión</option>
-            <option value="Contra robos y vandalismo">Contra robos y vandalismo</option>
-            <option value="Motorista sin seguro o con seguro insuficiente">
-              Motorista sin seguro o con seguro insuficiente
-            </option>
-            <option value="Protección para accidentes personales">
-              Protección para accidentes personales
-            </option>
-            <option value="Alquiler de automóviles">Alquiler de automóviles</option>
-            <option value="Asistencia en carretera">Asistencia en carretera</option>
-            <option value="GAP">GAP</option>
-            <option value="Sin seguro">Sin seguro</option>
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="interiorColor">Color Interior</label>
           <input
             type="text"
@@ -122,12 +102,12 @@
             <option v-for="region in regions" :key="region" :value="region">{{ region }}</option> 
           </select> 
         </div> 
- 
+
         <div class="form-group"> 
-          <label for="comuna">Comuna</label> 
-          <select id="comuna" v-model="vehicle.comuna"> 
-            <option value="" disabled selected>Seleccione una comuna</option> 
-            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option> 
+          <label for="provincia">Provincia</label> 
+          <select id="provincia" v-model="vehicle.provincia"> 
+            <option value="" disabled selected>Seleccione una provincia</option> 
+            <option v-for="provincia in provincias" :key="provincia" :value="provincia">{{ provincia }}</option> 
           </select> 
         </div> 
       </div>
@@ -223,15 +203,99 @@
         </div>
 
         <div class="form-group"> 
-          <label for="provincia">Provincia</label> 
-          <select id="provincia" v-model="vehicle.provincia"> 
-            <option value="" disabled selected>Seleccione una provincia</option> 
-            <option v-for="provincia in provincias" :key="provincia" :value="provincia">{{ provincia }}</option> 
+          <label for="comuna">Comuna</label> 
+          <select id="comuna" v-model="vehicle.comuna"> 
+            <option value="" disabled selected>Seleccione una comuna</option> 
+            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option> 
           </select> 
         </div> 
+        
 
       </div>
     </div>
+
+    <div class="form-group">
+      <label>Seguro</label>
+      <div class="insurance-options-container">
+        <div
+          v-for="(insuranceOption, index) in insuranceOptions"
+          :key="index"
+          class="checkbox-container"
+        >
+          <input
+            type="checkbox"
+            :id="'insurance-' + insuranceOption"
+            :value="insuranceOption"
+            v-model="vehicle.insuranceOptions"
+          />
+          <label :for="'insurance-' + insuranceOption">{{ insuranceOption }}</label>
+        </div>
+      </div>
+    </div>    
+
+    <div class="additional-data-section">
+      <h3>Datos Adicionales</h3>
+      <div class="form-group">
+        <label for="power">Potencia del Motor (HP o kW)</label>
+        <input
+          type="text"
+          id="power"
+          v-model="vehicle.power"
+          placeholder="Ingrese la potencia del motor en HP o kW"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="suspensionType">Tipo de Suspensión</label>
+        <select id="suspensionType" v-model="vehicle.suspensionType">
+          <option value="" disabled selected>Seleccione el tipo de suspensión</option>
+          <option value="standard">Estándar</option>
+          <option value="sport">Deportiva</option>
+          <option value="adjustable">Ajustable</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="tireType">Tipo de Neumáticos</label>
+        <select id="tireType" v-model="vehicle.tireType">
+          <option value="" disabled selected>Seleccione el tipo de neumáticos</option>
+          <option value="road">De Carretera</option>
+          <option value="mixed">Mixtos</option>
+          <option value="offRoad">Todo Terreno</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="groundClearance">Altura del Vehículo al Suelo (cm)</label>
+        <input
+          type="text"
+          id="groundClearance"
+          v-model="vehicle.groundClearance"
+          placeholder="Ingrese la altura del vehículo al suelo en cm"
+        />
+      </div>
+    </div>
+
+    <!-- Sistemas de Confort Principales -->
+    <div class="form-group">
+      <label>Sistemas de Confort Principales</label>
+      <div class="comfort-features-container">
+        <div
+          v-for="(comfortFeature, index) in comfortFeatures"
+          :key="index"
+          class="checkbox-container"
+        >
+          <input
+            type="checkbox"
+            :id="'comfort-' + comfortFeature"
+            :value="comfortFeature"
+            v-model="vehicle.comfortFeatures"
+          />
+          <label :for="'comfort-' + comfortFeature">{{ comfortFeature }}</label>
+        </div>
+      </div>
+    </div>
+
     <div class="form-group">
       <label for="description">Descripción</label>
       <textarea
@@ -275,6 +339,34 @@ export default {
   },
   data() {
     return {
+      selectedComfortFeatures: [], // las características de confort seleccionadas
+      selectedInsuranceOptions: [], // las características de confort seleccionadas
+      insuranceOptions: [
+        'Responsabilidad social',
+        'Colisión',
+        'Contra robos y vandalismo',
+        'Motorista sin seguro o con seguro insuficiente',
+        'Protección para accidentes personales',
+        'Alquiler de automóviles',
+        'Asistencia en carretera',
+        'GAP',
+        'Sin seguro'
+        // ... añadir más según se desee ...
+      ],
+      comfortFeatures: [
+        // Lista de sistemas de confort para elegir
+        'Control de clima automático',
+        'Asientos calefactables',
+        'Sistema de infoentretenimiento avanzado',
+        'Sensores de estacionamiento',
+        'Cámara de visión trasera',
+        'Control de crucero',
+        'Asistente de mantenimiento de carril',
+        'Cierre centralizado',
+        'Ventanas eléctricas',
+        'Sistema de navegación GPS'
+        // ... añadir más según se desee ...
+      ],
       vehicle: {
         brand: '',
         model: '',
@@ -288,7 +380,6 @@ export default {
         airbag: '',
         price: '', //Precio del vehiculo
         owners: '', //Numero de propietarios anteriores
-        seguro: '', //Tipo de seguro
         doors: '', //Numero de puertas
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
@@ -296,6 +387,13 @@ export default {
         region: '',
         provincia: '', 
         comuna: '', 
+        comfortFeatures: '',
+        power: '', //Potencia del motor
+        suspensionType: '', //Tipo de suspensión
+        tireType: '', //Tipo de neumáticos
+        groundClearance: '', //Altura del vehículo al suelo
+        comfortFeatures: [], // Sistemas de confort seleccionados
+        insuranceOptions: [], // las opciones de seguro seleccionadas
         errorMessage: {
           mileage: '',
           year: '',
@@ -582,7 +680,13 @@ export default {
     }, 
     'vehicle.provincia'() { 
       this.fetchComunas(); // Añade esto si gestionas comunas 
-    } 
+    },
+    selectedComfortFeatures(newVal) {
+      this.vehicle.comfortFeatures = newVal;
+    },
+    selectedInsuranceOptions(newVal) {
+      this.vehicle.insuranceOptions = newVal;
+    },
   },
   mounted() {
     this.fetchBrands()
@@ -680,5 +784,71 @@ button {
 
 button:hover {
   background-color: #fbc40e;
+}
+
+.comfort-features-container {
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-container input[type='checkbox'] {
+  margin: 0;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.checkbox-container label {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-group label {
+  display: block;
+}
+
+.insurance-options-container {
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-container input[type='checkbox'] {
+  margin: 0;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.checkbox-container label {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-group label {
+  display: block;
 }
 </style>
