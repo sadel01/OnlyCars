@@ -136,6 +136,7 @@ export default {
   align-items: center;
   padding-top: 12%;
   padding-bottom: 15%;
+  height: 50vh;
 }
 .login-box {
   display: flex;

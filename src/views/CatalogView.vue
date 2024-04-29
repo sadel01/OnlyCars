@@ -9,6 +9,10 @@
         @inputYear="updateSelectedYear"
         @inputFuel="updateSelectedFuel"
         @inputKM="updateSelectedMileage"
+        @inputMinPrice="updateSelectedMinPrice"
+        @inputMaxPrice="updateSelectedMaxPrice"
+        @inputAirbag="updateSelectedAirbag"
+        @inputRegion="updateSelectedRegion"
       />
     </div>
     <div class="productsList">
@@ -40,6 +44,10 @@ export default {
       selectedFuel: '',
       selectedModel: '',
       selectedMileage: '',
+      selectedMaxPrice: '',
+      selectedMinPrice: '',
+      selectedAirbag: '',
+      selectedRegion: '',
       products: [],
       isLoading: false
     }
@@ -55,8 +63,16 @@ export default {
             (!this.selectedYear || product.year === this.selectedYear) &&
             (!this.selectedFuel || product.fuel === this.selectedFuel) &&
             (!this.selectedModel || product.model === this.selectedModel) &&
+            (!this.selectedRegion || product.region === this.selectedRegion) &&
             (!this.selectedMileage ||
-              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage))
+              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
+            (!this.selectedMinPrice ||
+              !this.selectedMaxPrice || // Modificación aquí
+              (parseInt(product.price.replace(/\D/g, '')) >=
+                parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
+                parseInt(product.price.replace(/\D/g, '')) <=
+                  parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
+            (!this.selectedAirbag || product.airbag === this.selectedAirbag)
         )
       } catch (error) {
         console.error(error)
@@ -85,6 +101,28 @@ export default {
     },
     updateSelectedMileage(mileage) {
       this.selectedMileage = mileage
+    },
+    updateSelectedRegion(region) {
+      this.selectedRegion = region
+    },
+    updateSelectedMinPrice(minPrice) {
+      if (minPrice.trim() === 'Min.' || minPrice.trim() === '$') {
+        this.selectedMinPrice = ''
+      } else {
+        this.selectedMinPrice = minPrice
+      }
+    },
+
+    updateSelectedMaxPrice(maxPrice) {
+      if (maxPrice.trim() === 'Max.' || maxPrice.trim() === '$') {
+        this.selectedMaxPrice = ''
+      } else {
+        this.selectedMaxPrice = maxPrice
+      }
+    },
+
+    updateSelectedAirbag(airbag) {
+      this.selectedAirbag = airbag
     },
 
     async fetchProducts() {
