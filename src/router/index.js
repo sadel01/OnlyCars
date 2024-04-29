@@ -85,6 +85,12 @@ const router = createRouter({
       name: 'favorites',
       component: FavoritesView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/AdminView',
+      name: 'AdminView',
+      component: AdminView,
+      meta: { requiresAuth: true },
     }
   ],
   scrollBehavior(to, from, savedPosition) {
