@@ -313,6 +313,7 @@ export default {
   align-items: center;
   padding-top: 5%;
   padding-bottom: 6%;
+  height: 75vh;
 }
 .login-box {
   display: flex;
