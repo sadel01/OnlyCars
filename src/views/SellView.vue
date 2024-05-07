@@ -72,7 +72,15 @@
             id="cylinderCapacity"
             v-model="vehicle.cylinderCapacity"
             placeholder="Ingrese cilindraje"
+            @input="formatCylinderInput"
           />
+          <p
+            v-if="vehicle.errorMessage.cylinderCapacity"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.cylinderCapacity }}
+          </p>
         </div>
         <div class="form-group">
           <label for="price">Precio</label>
@@ -86,26 +94,6 @@
         </div>
 
         <div class="form-group">
-          <label for="seguro">Seguro</label>
-          <select id="seguro" v-model="vehicle.seguro">
-            <option value="" disabled selected>Seleccione un seguro</option>
-            <option value="Responsabilidad social">Responsabilidad social</option>
-            <option value="Colisión">Colisión</option>
-            <option value="Contra robos y vandalismo">Contra robos y vandalismo</option>
-            <option value="Motorista sin seguro o con seguro insuficiente">
-              Motorista sin seguro o con seguro insuficiente
-            </option>
-            <option value="Protección para accidentes personales">
-              Protección para accidentes personales
-            </option>
-            <option value="Alquiler de automóviles">Alquiler de automóviles</option>
-            <option value="Asistencia en carretera">Asistencia en carretera</option>
-            <option value="GAP">GAP</option>
-            <option value="Sin seguro">Sin seguro</option>
-          </select>
-        </div>
-
-        <div class="form-group">
           <label for="interiorColor">Color Interior</label>
           <input
             type="text"
@@ -115,21 +103,23 @@
           />
         </div>
 
-        <div class="form-group"> 
-          <label for="region">Región</label> 
-          <select id="region" v-model="vehicle.region" @change="fetchRegion"> 
-            <option value="" disabled selected>Seleccione una región</option> 
-            <option v-for="region in regions" :key="region" :value="region">{{ region }}</option> 
-          </select> 
-        </div> 
- 
-        <div class="form-group"> 
-          <label for="comuna">Comuna</label> 
-          <select id="comuna" v-model="vehicle.comuna"> 
-            <option value="" disabled selected>Seleccione una comuna</option> 
-            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option> 
-          </select> 
-        </div> 
+        <div class="form-group">
+          <label for="region">Región</label>
+          <select id="region" v-model="vehicle.region" @change="fetchRegion">
+            <option value="" disabled selected>Seleccione una región</option>
+            <option v-for="region in regions" :key="region" :value="region">{{ region }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="provincia">Provincia</label>
+          <select id="provincia" v-model="vehicle.provincia">
+            <option value="" disabled selected>Seleccione una provincia</option>
+            <option v-for="provincia in provincias" :key="provincia" :value="provincia">
+              {{ provincia }}
+            </option>
+          </select>
+        </div>
       </div>
 
       <div class="details-column">
@@ -191,7 +181,20 @@
 
         <div class="form-group">
           <label for="owners">N° propietarios anteriores</label>
-          <input type="text" id="owners" v-model="vehicle.owners" placeholder="Ingrese el número" />
+          <input
+            type="text"
+            id="owners"
+            v-model="vehicle.owners"
+            placeholder="Ingrese el número"
+            @input="formatOwnerInput"
+          />
+          <p
+            v-if="vehicle.errorMessage.owners"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.owners }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -222,16 +225,98 @@
           />
         </div>
 
-        <div class="form-group"> 
-          <label for="provincia">Provincia</label> 
-          <select id="provincia" v-model="vehicle.provincia"> 
-            <option value="" disabled selected>Seleccione una provincia</option> 
-            <option v-for="provincia in provincias" :key="provincia" :value="provincia">{{ provincia }}</option> 
-          </select> 
-        </div> 
-
+        <div class="form-group">
+          <label for="comuna">Comuna</label>
+          <select id="comuna" v-model="vehicle.comuna">
+            <option value="" disabled selected>Seleccione una comuna</option>
+            <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option>
+          </select>
+        </div>
       </div>
     </div>
+
+    <div class="form-group">
+      <label>Seguro</label>
+      <div class="insurance-options-container">
+        <div
+          v-for="(insuranceOption, index) in insuranceOptions"
+          :key="index"
+          class="checkbox-container"
+        >
+          <input
+            type="checkbox"
+            :id="'insurance-' + insuranceOption"
+            :value="insuranceOption"
+            v-model="vehicle.insuranceOptions"
+          />
+          <label :for="'insurance-' + insuranceOption">{{ insuranceOption }}</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="additional-data-section">
+      <h3>Datos Adicionales</h3>
+      <div class="form-group">
+        <label for="power">Potencia del Motor (HP o kW)</label>
+        <input
+          type="text"
+          id="power"
+          v-model="vehicle.power"
+          placeholder="Ingrese la potencia del motor en HP o kW"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="suspensionType">Tipo de Suspensión</label>
+        <select id="suspensionType" v-model="vehicle.suspensionType">
+          <option value="" disabled selected>Seleccione el tipo de suspensión</option>
+          <option value="standard">Estándar</option>
+          <option value="sport">Deportiva</option>
+          <option value="adjustable">Ajustable</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="tireType">Tipo de Neumáticos</label>
+        <select id="tireType" v-model="vehicle.tireType">
+          <option value="" disabled selected>Seleccione el tipo de neumáticos</option>
+          <option value="road">De Carretera</option>
+          <option value="mixed">Mixtos</option>
+          <option value="offRoad">Todo Terreno</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="groundClearance">Altura del Vehículo al Suelo (cm)</label>
+        <input
+          type="text"
+          id="groundClearance"
+          v-model="vehicle.groundClearance"
+          placeholder="Ingrese la altura del vehículo al suelo en cm"
+        />
+      </div>
+    </div>
+
+    <!-- Sistemas de Confort Principales -->
+    <div class="form-group">
+      <label>Sistemas de Confort Principales</label>
+      <div class="comfort-features-container">
+        <div
+          v-for="(comfortFeature, index) in comfortFeatures"
+          :key="index"
+          class="checkbox-container"
+        >
+          <input
+            type="checkbox"
+            :id="'comfort-' + comfortFeature"
+            :value="comfortFeature"
+            v-model="vehicle.comfortFeatures"
+          />
+          <label :for="'comfort-' + comfortFeature">{{ comfortFeature }}</label>
+        </div>
+      </div>
+    </div>
+
     <div class="form-group">
       <label for="description">Descripción</label>
       <textarea
@@ -275,6 +360,34 @@ export default {
   },
   data() {
     return {
+      selectedComfortFeatures: [], // las características de confort seleccionadas
+      selectedInsuranceOptions: [], // las características de confort seleccionadas
+      insuranceOptions: [
+        'Responsabilidad social',
+        'Colisión',
+        'Contra robos y vandalismo',
+        'Motorista sin seguro o con seguro insuficiente',
+        'Protección para accidentes personales',
+        'Alquiler de automóviles',
+        'Asistencia en carretera',
+        'GAP',
+        'Sin seguro'
+        // ... añadir más según se desee ...
+      ],
+      comfortFeatures: [
+        // Lista de sistemas de confort para elegir
+        'Control de clima automático',
+        'Asientos calefactables',
+        'Sistema de infoentretenimiento avanzado',
+        'Sensores de estacionamiento',
+        'Cámara de visión trasera',
+        'Control de crucero',
+        'Asistente de mantenimiento de carril',
+        'Cierre centralizado',
+        'Ventanas eléctricas',
+        'Sistema de navegación GPS'
+        // ... añadir más según se desee ...
+      ],
       vehicle: {
         brand: '',
         model: '',
@@ -288,27 +401,35 @@ export default {
         airbag: '',
         price: '', //Precio del vehiculo
         owners: '', //Numero de propietarios anteriores
-        seguro: '', //Tipo de seguro
         doors: '', //Numero de puertas
         interiorColor: '', //Color interior
         exteriorColor: '', //Color exterior
         description: '',
         region: '',
-        provincia: '', 
-        comuna: '', 
+        provincia: '',
+        comuna: '',
+        comfortFeatures: '',
+        power: '', //Potencia del motor
+        suspensionType: '', //Tipo de suspensión
+        tireType: '', //Tipo de neumáticos
+        groundClearance: '', //Altura del vehículo al suelo
+        comfortFeatures: [], // Sistemas de confort seleccionados
+        insuranceOptions: [], // las opciones de seguro seleccionadas
         errorMessage: {
           mileage: '',
           year: '',
-          doors: ''
+          doors: '',
+          cylinderCapacity: '',
+          owners: ''
         }
       },
       errorMessage: '',
       successMessage: '',
       brands: [],
       models: [],
-      regions: [], 
-      provincias: [], 
-      comunas: [], 
+      regions: [],
+      provincias: [],
+      comunas: [],
       filesToUpload: [],
       imagePreviews: [],
       imagePaths: [],
@@ -351,6 +472,46 @@ export default {
         this.vehicle.doors = value
       }
     },
+    formatCylinderInput() {
+      const value = this.vehicle.cylinderCapacity.trim()
+
+      if (value === '') {
+        this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
+        return
+      }
+
+      // Validar si el valor contiene caracteres no permitidos
+      if (!/^[\d,.]+$/.test(value)) {
+        this.vehicle.errorMessage.cylinderCapacity =
+          'El cilindraje debe contener solo números, punto (.) o coma (,)'
+        return
+      }
+
+      const sanitizedValue = value.replace(',', '.')
+      const floatValue = parseFloat(sanitizedValue)
+
+      if (isNaN(floatValue) || floatValue <= 0) {
+        this.vehicle.errorMessage.cylinderCapacity = 'Ingrese un cilindraje válido' // Mostrar error si no es un número válido
+      } else if (floatValue > 10) {
+        this.vehicle.errorMessage.cylinderCapacity = 'El cilindraje máximo es de 10 litros' // Mostrar error si excede el límite
+      } else {
+        this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
+        this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+      }
+    },
+    formatOwnerInput() {
+      let value = this.vehicle.owners.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.owners.trim() === '') {
+        this.vehicle.errorMessage.owners = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.owners = 'Ingrese un número de propietarios válido'
+      } else {
+        this.vehicle.errorMessage.owners = ''
+        this.vehicle.owners = value
+      }
+    },
+
     triggerFileUpload() {
       this.$refs.fileInput.click()
     },
@@ -399,39 +560,6 @@ export default {
         console.error('Error al recuperar las marcas:', error)
       }
     },
-    isValidYear() {
-      const value = this.vehicle.year.trim()
-      if (value === '') {
-        return false // El campo está vacío
-      }
-      if (!/^\d{4}$/.test(value)) {
-        return false // No tiene 4 dígitos
-      }
-      const year = parseInt(value, 10)
-      return year >= 1900 && year <= 2024 // Devuelve true si el año está dentro del rango válido
-    },
-    isValidKM() {
-      const value = this.vehicle.mileage.trim()
-      if (value === '') {
-        return false
-      }
-      if (value < 0) {
-        return false
-      }
-      const mileage = parseInt(value, 10)
-      return mileage >= 0
-    },
-    isValidDoor() {
-      const value = this.vehicle.doors.trim()
-      if (value === '') {
-        return false
-      }
-      if (value < 0) {
-        return false
-      }
-      const doors = parseInt(value, 10)
-      return doors >= 0
-    },
 
     async fetchModels() {
       if (!this.vehicle.brand) {
@@ -446,50 +574,51 @@ export default {
       }
     },
 
-    async fetchRegion() { 
-      try { 
-        const response = await fetch('http://localhost:8080/regions'); 
+    async fetchRegion() {
+      try {
+        const response = await fetch('http://localhost:8080/regions')
         if (response.ok) {
-          this.regions = await response.json(); 
-          this.comunas = [];
+          this.regions = await response.json()
+          this.comunas = []
         }
-      } catch (error) { 
-        console.error('Error al recuperar las regiones:', error); 
-      } 
-    }, 
- 
-    async fetchProvincia() { 
-      if (!this.vehicle.region) { 
-        this.provincias = []; 
-        this.comunas = []; // Resetea las comunas si las usas 
-        return; 
-      } 
-      try { 
-        const response = await fetch(`http://localhost:8080/provincia/${this.vehicle.region}`); 
-        if (response.ok) { 
-          this.provincias = await response.json(); 
-          this.provincia = ''; // Resetea la provincia seleccionada 
-        } 
-      } catch (error) { 
-        console.error('Error al recuperar las provincias:', error); 
-      } 
-    }, 
- 
-    async fetchComunas() { // Añade este método si gestionas comunas 
-      if (!this.vehicle.provincia) { 
-        this.comunas = []; 
-        return; 
-      } 
-      try { 
-        // Debes tener un endpoint para obtener comunas basado en la provincia 
-        const response = await fetch(`http://localhost:8080/comuna/${this.vehicle.provincia}`); 
-        if (response.ok) { 
-          this.comunas = await response.json(); 
-        } 
-      } catch (error) { 
-        console.error('Error al recuperar las comunas:', error); 
-      } 
-    }, 
+      } catch (error) {
+        console.error('Error al recuperar las regiones:', error)
+      }
+    },
+
+    async fetchProvincia() {
+      if (!this.vehicle.region) {
+        this.provincias = []
+        this.comunas = [] // Resetea las comunas si las usas
+        return
+      }
+      try {
+        const response = await fetch(`http://localhost:8080/provincia/${this.vehicle.region}`)
+        if (response.ok) {
+          this.provincias = await response.json()
+          this.provincia = '' // Resetea la provincia seleccionada
+        }
+      } catch (error) {
+        console.error('Error al recuperar las provincias:', error)
+      }
+    },
+
+    async fetchComunas() {
+      // Añade este método si gestionas comunas
+      if (!this.vehicle.provincia) {
+        this.comunas = []
+        return
+      }
+      try {
+        // Debes tener un endpoint para obtener comunas basado en la provincia
+        const response = await fetch(`http://localhost:8080/comuna/${this.vehicle.provincia}`)
+        if (response.ok) {
+          this.comunas = await response.json()
+        }
+      } catch (error) {
+        console.error('Error al recuperar las comunas:', error)
+      }
+    },
 
     async submitVehicle() {
       if (Object.values(this.vehicle).some((value) => !value)) {
@@ -540,9 +669,9 @@ export default {
           interiorColor: '',
           exteriorColor: '',
           description: '',
-          region: '', 
-          provincia: '', 
-          comuna: '', 
+          region: '',
+          provincia: '',
+          comuna: ''
         }
       } catch (error) {
         this.errorMessage = 'Error al publicar'
@@ -577,16 +706,22 @@ export default {
     'vehicle.brand': function (newBrand) {
       this.fetchModels()
     },
-    'vehicle.region'() { 
-      this.fetchProvincia(); 
-    }, 
-    'vehicle.provincia'() { 
-      this.fetchComunas(); // Añade esto si gestionas comunas 
-    } 
+    'vehicle.region'() {
+      this.fetchProvincia()
+    },
+    'vehicle.provincia'() {
+      this.fetchComunas() // Añade esto si gestionas comunas
+    },
+    selectedComfortFeatures(newVal) {
+      this.vehicle.comfortFeatures = newVal
+    },
+    selectedInsuranceOptions(newVal) {
+      this.vehicle.insuranceOptions = newVal
+    }
   },
   mounted() {
     this.fetchBrands()
-    this.fetchRegion(); 
+    this.fetchRegion()
   }
 }
 </script>
@@ -680,5 +815,71 @@ button {
 
 button:hover {
   background-color: #fbc40e;
+}
+
+.comfort-features-container {
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-container input[type='checkbox'] {
+  margin: 0;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.checkbox-container label {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-group label {
+  display: block;
+}
+
+.insurance-options-container {
+  height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-top: 5px;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.checkbox-container input[type='checkbox'] {
+  margin: 0;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-right: 10px;
+}
+
+.checkbox-container label {
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.form-group label {
+  display: block;
 }
 </style>
