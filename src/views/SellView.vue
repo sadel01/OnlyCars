@@ -73,6 +73,7 @@
             v-model="vehicle.cylinderCapacity"
             placeholder="Ingrese cilindraje"
             @input="formatCylinderInput"
+            :disabled="!vehicle.fuel"
           />
           <p
             v-if="vehicle.errorMessage.cylinderCapacity"
@@ -473,30 +474,59 @@ export default {
       }
     },
     formatCylinderInput() {
-      const value = this.vehicle.cylinderCapacity.trim()
+      if (this.vehicle.fuel === 'Diésel' || this.vehicle.fuel === 'Gasolina') {
+        const value = this.vehicle.cylinderCapacity.trim()
 
-      if (value === '') {
-        this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
-        return
-      }
+        if (value === '') {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
+          return
+        }
 
-      // Validar si el valor contiene caracteres no permitidos
-      if (!/^[\d,.]+$/.test(value)) {
-        this.vehicle.errorMessage.cylinderCapacity =
-          'El cilindraje debe contener solo números, punto (.) o coma (,)'
-        return
-      }
+        // Validar si el valor contiene caracteres no permitidos
+        if (!/^[\d,.]+$/.test(value)) {
+          this.vehicle.errorMessage.cylinderCapacity =
+            'El cilindraje debe contener solo números, punto (.) o coma (,)'
+          return
+        }
 
-      const sanitizedValue = value.replace(',', '.')
-      const floatValue = parseFloat(sanitizedValue)
+        const sanitizedValue = value.replace(',', '.')
+        const floatValue = parseFloat(sanitizedValue)
 
-      if (isNaN(floatValue) || floatValue <= 0) {
-        this.vehicle.errorMessage.cylinderCapacity = 'Ingrese un cilindraje válido' // Mostrar error si no es un número válido
-      } else if (floatValue > 10) {
-        this.vehicle.errorMessage.cylinderCapacity = 'El cilindraje máximo es de 10 litros' // Mostrar error si excede el límite
-      } else {
-        this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
-        this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+        if (isNaN(floatValue) || floatValue <= 0) {
+          this.vehicle.errorMessage.cylinderCapacity = 'Ingrese un cilindraje válido' // Mostrar error si no es un número válido
+        } else if (floatValue > 10) {
+          this.vehicle.errorMessage.cylinderCapacity = 'El cilindraje máximo es de 10 litros' // Mostrar error si excede el límite
+        } else {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
+          this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+        }
+      } else if (this.vehicle.fuel === 'Eléctrico') {
+        this.vehicle.errorMessage.cylinderCapacity = 'Se medirá en kWh'
+        const value = this.vehicle.cylinderCapacity.trim()
+
+        if (value === '') {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
+          return
+        }
+
+        // Validar si el valor contiene caracteres no permitidos
+        if (!/^[\d,.]+$/.test(value)) {
+          this.vehicle.errorMessage.cylinderCapacity =
+            'La capacidad de la bateria debe contener solo números, punto (.) o coma (,)'
+          return
+        }
+
+        const sanitizedValue = value.replace(',', '.')
+        const floatValue = parseFloat(sanitizedValue)
+
+        if (isNaN(floatValue) || floatValue <= 0) {
+          this.vehicle.errorMessage.cylinderCapacity = 'Ingrese una capacidad de bateria válida' // Mostrar error si no es un número válido
+        } else if (floatValue > 350) {
+          this.vehicle.errorMessage.cylinderCapacity = 'El máximo es de 350 Kwh' // Mostrar error si excede el límite
+        } else {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
+          this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+        }
       }
     },
     formatOwnerInput() {
