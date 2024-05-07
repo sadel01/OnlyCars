@@ -151,7 +151,7 @@ app.post('/register', async (req, res) => {
 app.post('/postsPrueba', async (req, res) => {
   try {
     const database = client.db('onlycars')
-    const collection = database.collection('postsPrueba') // SE DEBE CAMBIAR postsPrueba POR posts
+    const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
     req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel);
     const result = await collection.insertOne(req.body)
