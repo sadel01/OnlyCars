@@ -189,7 +189,9 @@ app.post('/login', async (req, res) => {
             nombre: user.nombre,
             apellido: user.apellido,
             rut: user.rut,
-            mail: user.mail
+            mail: user.mail,
+            rol : user.rol,
+            tipo : user.tipo
           }
         })
         console.log('Inicio de sesion exitoso')
@@ -435,6 +437,32 @@ app.get('/favorites', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const users = await collection.find().toArray();
+    res.send(users);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post("/admin/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: req.body }
+    );
+    res.send({ message: "Usuario actualizado con éxito" });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
