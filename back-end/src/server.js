@@ -172,7 +172,8 @@ app.post('/login', async (req, res) => {
             nombre: user.nombre,
             apellido: user.apellido,
             rut: user.rut,
-            mail: user.mail
+            mail: user.mail,
+            rol : user.rol
           }
         })
         console.log('Inicio de sesion exitoso')

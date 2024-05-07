@@ -95,12 +95,19 @@ export default {
             apellido: userData.apellido,
             rut: userData.rut,
             mail: userData.mail,
+            rol : userData.rol,
           })
+          
           localStorage.setItem('user', JSON.stringify(userData));
           this.successMessage = 'Inicio de sesion exitoso'
           this.errorMessage = ''
           setTimeout(() => {
-            this.$router.push('/')
+            if (userData.rol === 'admin'){
+              this.$router.push('/AdminView')
+            }else{
+              this.$router.push('/')
+            }
+            
           }, 2000)
         } else {
           this.errorMessage = 'Rut o contraseña incorrectos'

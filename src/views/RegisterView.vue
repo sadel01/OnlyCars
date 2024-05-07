@@ -197,7 +197,8 @@ export default {
         rut: this.rut,
         mail: this.mail,
         password: this.password,
-        confirmPassword: this.confirmPassword
+        confirmPassword: this.confirmPassword,
+        rol : 'user'
       })
       if (response.data.success) {
         this.nombre = '';
