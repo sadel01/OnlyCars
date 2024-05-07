@@ -34,7 +34,7 @@
           <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
         <div class="nav-links" :class="{ active: navActive }">
-          <RouterLink to="/catalogAdmin" class="nav-link" @click="closeNav">Catálogo</RouterLink>
+          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav">Catálogo</RouterLink>
           <RouterLink to="/userManagment" class="nav-link" @click="closeNav">Gestionar Usuarios</RouterLink>
         </div>
 

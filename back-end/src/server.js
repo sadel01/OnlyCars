@@ -173,7 +173,8 @@ app.post('/login', async (req, res) => {
             apellido: user.apellido,
             rut: user.rut,
             mail: user.mail,
-            rol : user.rol
+            rol : user.rol,
+            tipo : user.tipo
           }
         })
         console.log('Inicio de sesion exitoso')
@@ -415,6 +416,32 @@ app.get("/favorites", async (req, res) => {
     const favorites = await collection.findOne({ userId: userId });
     console.log(favorites.postIds)
     res.send(favorites);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const users = await collection.find().toArray();
+    res.send(users);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post("/admin/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: req.body }
+    );
+    res.send({ message: "Usuario actualizado con éxito" });
   } catch (error) {
     res.status(500).send(error.message);
   }

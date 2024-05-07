@@ -198,7 +198,8 @@ export default {
         mail: this.mail,
         password: this.password,
         confirmPassword: this.confirmPassword,
-        rol : 'user'
+        rol : 'user',
+        tipo: 'normal'
       })
       if (response.data.success) {
         this.nombre = '';

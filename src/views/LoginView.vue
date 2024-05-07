@@ -96,6 +96,7 @@ export default {
             rut: userData.rut,
             mail: userData.mail,
             rol : userData.rol,
+            tipo : userData.tipo,
           })
           
           localStorage.setItem('user', JSON.stringify(userData));
