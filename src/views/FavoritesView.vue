@@ -3,7 +3,7 @@
     <h1>Favoritos</h1>
     <div class="favorites-container">
       <div class="favorites-list">
-        <div class="favorite-card" v-for="(car, index) in paginatedProducts" :key="index">
+        <div v-for="car in cars" :key="car._id">
           <img :src="car.image" :alt="car.name" />
           <div class="favorite-info">
             <h2>{{ car.name }}</h2>
@@ -36,101 +36,47 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      cars: [
-        {
-          name: 'Auto 1',
-          description: 'Descripción del auto 1',
-          price: 1000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 2',
-          description: 'Descripción del auto 2',
-          price: 2000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        },
-        {
-          name: 'Auto 3',
-          description: 'Descripción del auto 3',
-          price: 3000,
-          image: 'https://via.placeholder.com/150'
-        }
-        // Agrega más autos aquí
-      ],
-      page: 1,
-      perPage: 9
+      cars: [],
+      page: 1, 
+      perPage: 9 
     }
   },
   methods: {
     previousPage() {
-      this.page--
+      if (this.page > 1) {
+        this.page--
+      }
     },
     nextPage() {
-      this.page++
+      if (this.page < this.maxPage) {
+        this.page++
+      }
     },
     goToPage(page) {
       this.page = page
     },
     async fetchFavorites() {
       const userId = this.$store.state.user._id
-      const response = await axios.get('http://localhost:8080/favorites', {
-        params: {
-          userId: userId,
-        }
-      })
-      const data = response.data
-      console.log(data)
+      try {
+        const response = await axios.get('http://localhost:8080/favorites', {
+          params: {
+            userId: userId
+          }
+        })
+        console.log('Autos favoritos:', response.data)
+        this.cars = response.data
+      } catch (error) {
+        console.error('Error al obtener los autos favoritos:', error)
+      }
     }
   },
   computed: {
     maxPage() {
-      return Math.ceil(this.cars.length / 9)
+      return Math.ceil(this.cars.length / this.perPage)
     },
     paginatedProducts() {
       const start = (this.page - 1) * this.perPage
-      const end = start + this.perPage
+      const end = Math.min(start + this.perPage, this.cars.length)
       return this.cars.slice(start, end)
     }
   },
@@ -141,6 +87,11 @@ export default {
 </script>
 
 <style scoped>
+
+img {
+  max-height: 300px;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
