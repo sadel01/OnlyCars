@@ -62,7 +62,7 @@
               </div>
 
               <label class="containerFav" @click.stop="addToFavorites(product)">
-                <input type="checkbox" />
+                <input type="checkbox" :checked="isFavorite(product)" />
                 <div class="checkmark">
                   <svg viewBox="0 0 256 256">
                     <rect fill="none" height="256" width="256"></rect>
@@ -126,18 +126,56 @@ export default {
       selectedProduct: null,
       page: 1,
       perPage: 6,
+      cars: [],
       isLargeScreen: window.innerWidth > 1280 || window.innerHeight > 1024
     }
   },
   methods: {
-    addToFavorites(product) {
-      //Método para agregar los vehiculos a favoritos
+    async addToFavorites(product) {
+      try {
+        this.isLoading = true
+        const user = this.$store.state.user
+        const vehicleData = {
+          userId: user._id,
+          postId: product._id
+        }
+        if (this.isFavorite(product)) {
+          // Si el producto ya está en favoritos, lo eliminamos
+          await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
+        } else {
+          // Si el producto no está en favoritos, lo agregamos
+          await axios.post('http://localhost:8080/favorites', vehicleData)
+        }
+        // Actualizamos la lista de favoritos
+        await this.fetchFavorites()
+      } catch (error) {
+        this.errorMessage = 'Error al actualizar los favoritos'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 1500)
+        console.error('Error al actualizar los favoritos:', error)
+      } finally {
+        this.isLoading = false
+      }
     },
-    goToComparisonView() {
-      this.$store.commit('comparison/setList', this.comparisonList)
-      this.$router.push({ name: 'comparison' })
+    async fetchFavorites() {
+      console.log('Fetching favorites...')
+      const userId = this.$store.state.user._id
+      try {
+        const response = await axios.get('http://localhost:8080/favorites', {
+          params: {
+            userId: userId
+          }
+        })
+        console.log('Autos favoritos:', response.data)
+        this.cars = response.data
+      } catch (error) {
+        console.error('Error al obtener los autos favoritos:', error)
+      }
     },
-
+    isFavorite(product) {
+      return this.cars.some((car) => car._id === product._id)
+    },
     isCompared(product) {
       const compared = this.comparisonList.some((p) => p._id === product._id)
       console.log(`Producto ${product._id} comparado:`, compared)
@@ -202,6 +240,9 @@ export default {
       }
     }
   },
+  created() {
+    this.fetchFavorites()
+  },
   mounted() {
     this.handleResize()
     window.addEventListener('resize', () => {
@@ -242,7 +283,6 @@ export default {
 </script>
 
 <style scoped>
-
 .containerFav input {
   position: absolute;
   opacity: 0;
