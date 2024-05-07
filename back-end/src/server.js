@@ -34,6 +34,18 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 }
 
+function appendFuelUnit(cylinderCapacity, fuelType) {
+  let unit;
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+      unit = ' L';
+  } else if (fuelType === 'Eléctrico') {
+      unit = ' kW';
+  } else {
+      unit = '';
+  }
+  return cylinderCapacity + unit;
+}
+
 app.use(cors(corsOptions))
 
 // Configuracion de socket.io para permitir la conexion entre el cliente y el servidor y poder ver los mensajes en "tiempo real"
@@ -76,14 +88,6 @@ io.on('connection', (socket) => {
     console.log('user disconnected')
   })
 })
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
-}
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -149,6 +153,7 @@ app.post('/postsPrueba', async (req, res) => {
     const database = client.db('onlycars')
     const collection = database.collection('postsPrueba') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
+    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel);
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {

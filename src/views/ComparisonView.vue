@@ -23,6 +23,7 @@
               <p><strong>Kilometraje:</strong> {{ product.mileage }}</p>
               <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
               <p><strong>Combustible:</strong> {{ product.fuel }}</p>
+              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}</p>
             </section>
             <section class="pricing">
               <h3>Precio</h3>
