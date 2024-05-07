@@ -294,7 +294,15 @@
           id="groundClearance"
           v-model="vehicle.groundClearance"
           placeholder="Ingrese la altura del vehículo al suelo en cm"
+          @input="formatGroundClearenceInput"
         />
+        <p
+          v-if="vehicle.errorMessage.groundClearance"
+          class="error"
+          style="font-size: 12px; color: red; margin-left: 20px"
+        >
+          {{ vehicle.errorMessage.groundClearance }}
+        </p>
       </div>
     </div>
 
@@ -527,6 +535,18 @@ export default {
           this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
           this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
         }
+      }
+    },
+    formatGroundClearenceInput(){
+      let value = this.vehicle.groundClearance.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.groundClearance.trim() === '') {
+        this.vehicle.errorMessage.groundClearance = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.groundClearance = 'Ingrese un número de altura válido'
+      } else {
+        this.vehicle.errorMessage.groundClearance = ''
+        this.vehicle.groundClearance = value
       }
     },
     formatOwnerInput() {

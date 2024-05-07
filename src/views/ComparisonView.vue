@@ -94,24 +94,70 @@ export default {
   methods: {
     calculateSportScore(product) {
       let score = 0
-      const maxYearScore = 30 // Máximo puntaje para el año.
+      const maxYearScore = 7 // Máximo puntaje para el año.
       const currentYear = new Date().getFullYear()
-      const yearScore = ((currentYear - product.year) / (currentYear - 1990)) * maxYearScore // Puntos por antiguedad.
+      const yearScore = ((product.year - 1990) / (currentYear - 1990)) * maxYearScore // Puntos por actualidad. mas antiguo mas puntos?
       score += yearScore
 
-      const cylinderScore = parseFloat(product.cylinderCapacity.replace(' cm', '')) / 100 // Puntos adicionales por cilindraje.
-      score += cylinderScore
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
+        score += parseFloat(product.cylinderCapacity.replace(' L', ''))
+      }else{
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        score += cylinderScore
+      }     
 
-      const doorsScore = product.doors === 2 ? 20 : -10 // Puntos adicionales si tiene 2 puertas, resta si tiene más.
-      score += doorsScore
-
-      const transmissionScore = product.transmission.toLowerCase() === 'manual' ? 10 : -5
+      const transmissionScore = product.transmission === 'Manual' ? 10 : -5
       score += transmissionScore
-
-      const seguroScore = product.seguro.toLowerCase().includes('colisión') ? 10 : 0
+      
+      const seguroScore = product.insuranceOptions.length * 5
+      for(let i = 0; i < product.insuranceOptions.length; i++){
+        if(product.insuranceOptions[i] === 'Sin seguro'){
+          seguroScore -= 5
+        }
+      }
       score += seguroScore
 
-      score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.
+      const airbagScore = product.airbag === 'yes' ? 10 : 0
+      score += airbagScore
+
+      const conditionScore = product.condition === 'new' ? 10 : 0
+      score += conditionScore
+
+      if (product.owners > 5) {
+        const ownerAgeScore = -10 // PUEDE CAMBIAR
+        score += ownerAgeScore
+      }else{
+        const ownerAgeScore = product.owners * 2 // PUEDE CAMBIAR
+        score += ownerAgeScore
+      }
+
+      const powerScore = product.power / 100 // PUEDE CAMBIAR
+      score += powerScore
+
+      const suspensionScore = product.suspensionType === 'sport' ? 10 : 0
+      score += suspensionScore
+
+      const tireTypeScore = product.tireType === 'road' ? 10 : 0
+      score += tireTypeScore
+      
+      if(product.groundClearance < 10){
+        const groundClearanceScore = product.groundClearance / 10 // PUEDE CAMBIAR
+        
+        score += groundClearanceScore
+      }else{
+        score += -(product.groundClearance) + 10
+      }
+
+      const driveTrainScore = product.driveTrain === 'Tracción trasera' ? 10 : -5
+      score += driveTrainScore
+
+      if(product.mileage<70000){
+        score += 10
+      }else{
+        score-=5
+      }
+
+      score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
       return score
     },
 
