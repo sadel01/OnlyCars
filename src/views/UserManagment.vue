@@ -30,16 +30,15 @@
                         <td> {{user.rut}} </td>
                         <td> {{user.tipo}}</td>
                         <td>
-                            <select v-model="user.tipo">
+                            <select v-model="user.tipo" @change="mostrarBoton()">
                             <option value="verificado">Verificado</option>
                             <option value="normal">normal</option>
                         </select>
                         </td>
-                        
                     </tr>
-                    
                 </tbody>
             </table>
+            <button v-if="dataChanged" @click="aplicarCambio()">Aplicar</button>
         </div>
     </div>
 
@@ -59,11 +58,12 @@ export default {
             searchEmail: '',
             searchRut: '',
             searchLastName: '',
+            dataChanged: false
         }
     },
     async created() {
         const response = await axios.get('http://localhost:8080/admin/users')
-        this.users = response.data
+        this.users = response.data.map(user => ({ ...user, originalTipo: user.tipo }));
         
     },
     computed: {
@@ -76,6 +76,21 @@ export default {
       );
     }
   },
+  methods: {
+    mostrarBoton(){
+        this.dataChanged = true
+    },
+    async aplicarCambio() {
+    const changedUsers = this.users.filter(user => user.tipo !== user.originalTipo);
+    for (const user of changedUsers) {
+      await axios.post(`http://localhost:8080/admin/users/${user._id}`, { tipo: user.tipo });
+      user.originalTipo = user.tipo;
+    }
+
+    console.log('Se aplicaron cambios a :', changedUsers);
+    },
+
+  }
   
 }
 
