@@ -678,7 +678,7 @@ export default {
         setTimeout(() => {
           this.successMessage = ''
         }, 2000)
-        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData)
+        const response = await axios.post('http://localhost:8080/posts', vehicleData)
         console.log('Response from the server:', response.data)
         // Reset vehicle data
         this.vehicle = {
