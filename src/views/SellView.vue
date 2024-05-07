@@ -181,7 +181,20 @@
 
         <div class="form-group">
           <label for="owners">N° propietarios anteriores</label>
-          <input type="text" id="owners" v-model="vehicle.owners" placeholder="Ingrese el número" />
+          <input
+            type="text"
+            id="owners"
+            v-model="vehicle.owners"
+            placeholder="Ingrese el número"
+            @input="formatOwnerInput"
+          />
+          <p
+            v-if="vehicle.errorMessage.owners"
+            class="error"
+            style="font-size: 12px; color: red; margin-left: 20px"
+          >
+            {{ vehicle.errorMessage.owners }}
+          </p>
         </div>
 
         <div class="form-group">
@@ -406,7 +419,8 @@ export default {
           mileage: '',
           year: '',
           doors: '',
-          cylinderCapacity: ''
+          cylinderCapacity: '',
+          owners: ''
         }
       },
       errorMessage: '',
@@ -483,6 +497,18 @@ export default {
       } else {
         this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
         this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+      }
+    },
+    formatOwnerInput() {
+      let value = this.vehicle.owners.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.owners.trim() === '') {
+        this.vehicle.errorMessage.owners = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.owners = 'Ingrese un número de propietarios válido'
+      } else {
+        this.vehicle.errorMessage.owners = ''
+        this.vehicle.owners = value
       }
     },
 
