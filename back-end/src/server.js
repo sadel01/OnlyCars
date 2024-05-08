@@ -30,8 +30,20 @@ const upload = multer({ storage: storage })
 // Configuracion de CORS para permitir la conexion entre el cliente y el servidor
 const corsOptions = {
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+function appendFuelUnit(cylinderCapacity, fuelType) {
+  let unit;
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+      unit = ' L';
+  } else if (fuelType === 'Eléctrico') {
+      unit = ' kW';
+  } else {
+      unit = '';
+  }
+  return cylinderCapacity + unit;
 }
 
 app.use(cors(corsOptions))
@@ -76,14 +88,6 @@ io.on('connection', (socket) => {
     console.log('user disconnected')
   })
 })
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
-}
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -149,6 +153,7 @@ app.post('/postsPrueba', async (req, res) => {
     const database = client.db('onlycars')
     const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
+    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel);
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
@@ -382,42 +387,64 @@ app.get('/users/:id', async (req, res) => {
 
 // Manejo de solicitudes para agregar y obtener de favoritos
 
-app.post("/favorites", async (req, res) => {
+app.post('/favorites', async (req, res) => {
   try {
-    const database = client.db("onlycars");
-    const collection = database.collection("favorites");
-    const { userId, postId } = req.body;
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
 
     const result = await collection.updateOne(
       { userId: userId },
-      { $addToSet: { favorites: postId } },
+      { $addToSet: { postIds: postId } },
       { upsert: true }
-    );
+    )
 
     if (result.modifiedCount === 0) {
-      res.send({ message: "Item ya estaba en favoritos" });
+      res.send({ message: 'Item ya estaba en favoritos' })
     } else {
-      res.send({ message: "Item agregado a favoritos" });
+      res.send({ message: 'Item agregado a favoritos' })
     }
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
-app.get("/favorites", async (req, res) => {
-  console.log("Obteniendo favoritos");
+app.get('/favorites', async (req, res) => {
+  console.log('Obteniendo favoritos')
   try {
-    const database = client.db("onlycars");
-    const collection = database.collection("favorites");
-    const userId = req.query.userId;
-    console.log(userId);
-    const favorites = await collection.findOne({ userId: userId });
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const userId = req.query.userId
+    console.log(userId)
+    const favorites = await collection.findOne({ userId: userId })
     console.log(favorites.postIds)
-    res.send(favorites);
+    const productCollection = database.collection('posts')
+    const products = await productCollection
+      .find({ _id: { $in: favorites.postIds.map((id) => new ObjectId(id)) } })
+      .toArray()
+    res.send(products)
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
+
+app.delete('/favorites', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
+
+    const result = await collection.updateOne({ userId: userId }, { $pull: { postIds: postId } })
+
+    if (result.modifiedCount === 0) {
+      res.send({ message: 'Item no estaba en favoritos' })
+    } else {
+      res.send({ message: 'Item eliminado de favoritos' })
+    }
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
