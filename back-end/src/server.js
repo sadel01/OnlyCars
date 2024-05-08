@@ -34,6 +34,29 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 }
 
+function appendFuelUnit(cylinderCapacity, fuelType) {
+  let unit
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+    unit = ' L'
+  } else if (fuelType === 'Eléctrico') {
+    unit = ' kW'
+  } else {
+    unit = ''
+  }
+  return cylinderCapacity + unit
+}
+function appendPotencyUnit(power, fuelType) {
+  let unit
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+    unit = ' HP'
+  } else if (fuelType === 'Eléctrico') {
+    unit = ' kWh'
+  } else {
+    unit = ''
+  }
+  return power + unit
+}
+
 app.use(cors(corsOptions))
 
 // Configuracion de socket.io para permitir la conexion entre el cliente y el servidor y poder ver los mensajes en "tiempo real"
@@ -76,14 +99,6 @@ io.on('connection', (socket) => {
     console.log('user disconnected')
   })
 })
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
-}
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -144,11 +159,13 @@ app.post('/register', async (req, res) => {
   }
 })
 
-app.post('/postsPrueba', async (req, res) => {
+app.post('/posts', async (req, res) => {
   try {
     const database = client.db('onlycars')
     const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
+    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel)
+    req.body.power = appendPotencyUnit(req.body.power, req.body.fuel)
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
@@ -172,7 +189,9 @@ app.post('/login', async (req, res) => {
             nombre: user.nombre,
             apellido: user.apellido,
             rut: user.rut,
-            mail: user.mail
+            mail: user.mail,
+            rol : user.rol,
+            tipo : user.tipo
           }
         })
         console.log('Inicio de sesion exitoso')
@@ -440,6 +459,32 @@ app.delete('/favorites', async (req, res) => {
     res.status(500).send(error.message)
   }
 })
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const users = await collection.find().toArray();
+    res.send(users);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post("/admin/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: req.body }
+    );
+    res.send({ message: "Usuario actualizado con éxito" });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
