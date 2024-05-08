@@ -67,7 +67,16 @@
         <div class="user-avatar-name">
           <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
           <div class="user-info">
-            <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
+            <div class="userNameVerificated">
+              <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
+              <div class="verifacion" v-if="isVerificated">
+                <img src="@/assets/icons/verified.svg" alt="User Verified" class="icon" />
+                Vendedor verificado
+              </div>
+            
+            </div>
+
+            
             <p class="user-email">{{ product.user.email }}</p>
           </div>
         </div>
@@ -203,7 +212,8 @@ export default {
       product: null,
       errorMessage: '',
       isDetailsVisible: false,
-      chat: null
+      chat: null,
+      isVerificated: false,
     }
   },
   components: {
@@ -279,14 +289,43 @@ export default {
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
+      
     } catch (error) {
       console.error(error)
     }
+    
+    try {
+      const response = await axios.get(`http://localhost:8080/users/${this.product.user._id}`)
+      if (response.data.tipo === 'verificado') {
+        this.isVerificated = true
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
   }
 }
 </script>
 
 <style scoped>
+/*Si pueden corregir userNameverifacted verifacion para que que queden alineados con el nombre 
+del usuario y el icono de verificado seria genial ;D
+*/
+
+.userNameVerificated {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+.verifacion {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
 .main-container {
   min-height: 100vh;
 }
