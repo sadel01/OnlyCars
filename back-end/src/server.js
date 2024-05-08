@@ -30,20 +30,31 @@ const upload = multer({ storage: storage })
 // Configuracion de CORS para permitir la conexion entre el cliente y el servidor
 const corsOptions = {
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }
 
 function appendFuelUnit(cylinderCapacity, fuelType) {
-  let unit;
+  let unit
   if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
-      unit = ' L';
+    unit = ' L'
   } else if (fuelType === 'Eléctrico') {
-      unit = ' kW';
+    unit = ' kW'
   } else {
-      unit = '';
+    unit = ''
   }
-  return cylinderCapacity + unit;
+  return cylinderCapacity + unit
+}
+function appendPotencyUnit(power, fuelType) {
+  let unit
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+    unit = ' HP'
+  } else if (fuelType === 'Eléctrico') {
+    unit = ' kWh'
+  } else {
+    unit = ''
+  }
+  return power + unit
 }
 
 app.use(cors(corsOptions))
@@ -148,12 +159,13 @@ app.post('/register', async (req, res) => {
   }
 })
 
-app.post('/postsPrueba', async (req, res) => {
+app.post('/posts', async (req, res) => {
   try {
     const database = client.db('onlycars')
     const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
-    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel);
+    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel)
+    req.body.power = appendPotencyUnit(req.body.power, req.body.fuel)
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
@@ -177,7 +189,9 @@ app.post('/login', async (req, res) => {
             nombre: user.nombre,
             apellido: user.apellido,
             rut: user.rut,
-            mail: user.mail
+            mail: user.mail,
+            rol : user.rol,
+            tipo : user.tipo
           }
         })
         console.log('Inicio de sesion exitoso')
@@ -387,38 +401,86 @@ app.get('/users/:id', async (req, res) => {
 
 // Manejo de solicitudes para agregar y obtener de favoritos
 
-app.post("/favorites", async (req, res) => {
+app.post('/favorites', async (req, res) => {
   try {
-    const database = client.db("onlycars");
-    const collection = database.collection("favorites");
-    const { userId, postId } = req.body;
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
 
     const result = await collection.updateOne(
       { userId: userId },
-      { $addToSet: { favorites: postId } },
+      { $addToSet: { postIds: postId } },
       { upsert: true }
-    );
+    )
 
     if (result.modifiedCount === 0) {
-      res.send({ message: "Item ya estaba en favoritos" });
+      res.send({ message: 'Item ya estaba en favoritos' })
     } else {
-      res.send({ message: "Item agregado a favoritos" });
+      res.send({ message: 'Item agregado a favoritos' })
     }
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/favorites', async (req, res) => {
+  console.log('Obteniendo favoritos')
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const userId = req.query.userId
+    console.log(userId)
+    const favorites = await collection.findOne({ userId: userId })
+    console.log(favorites.postIds)
+    const productCollection = database.collection('posts')
+    const products = await productCollection
+      .find({ _id: { $in: favorites.postIds.map((id) => new ObjectId(id)) } })
+      .toArray()
+    res.send(products)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.delete('/favorites', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
+
+    const result = await collection.updateOne({ userId: userId }, { $pull: { postIds: postId } })
+
+    if (result.modifiedCount === 0) {
+      res.send({ message: 'Item no estaba en favoritos' })
+    } else {
+      res.send({ message: 'Item eliminado de favoritos' })
+    }
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const users = await collection.find().toArray();
+    res.send(users);
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
 
-app.get("/favorites", async (req, res) => {
-  console.log("Obteniendo favoritos");
+app.post("/admin/users/:id", async (req, res) => {
   try {
+    const id = req.params.id;
     const database = client.db("onlycars");
-    const collection = database.collection("favorites");
-    const userId = req.query.userId;
-    console.log(userId);
-    const favorites = await collection.findOne({ userId: userId });
-    console.log(favorites.postIds)
-    res.send(favorites);
+    const collection = database.collection("users");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: req.body }
+    );
+    res.send({ message: "Usuario actualizado con éxito" });
   } catch (error) {
     res.status(500).send(error.message);
   }
