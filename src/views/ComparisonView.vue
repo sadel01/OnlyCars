@@ -24,18 +24,43 @@
               <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
               <p><strong>Combustible:</strong> {{ product.fuel }}</p>
               <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}</p>
+              <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
+              <p><strong>Potencia:</strong> {{product.power}} {{ product.fuel === 'Eléctrico' ? ' kW' : 'HP' }}</p>
+              <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
+              <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
             </section>
             <section class="pricing">
               <h3>Precio</h3>
               <p>${{ product.price }} CLP</p>
             </section>
+            <section class="comfort">
+              <h3><strong>Tecnologías de confort</strong></h3>
+              <ul>
+                <li v-for="(technology, index) in product.comfortFeatures" :key="index">{{ technology }}</li>
+              </ul>
+            </section>
             <section class="additional-info">
               <h3><strong>Información Adicional</strong></h3>
               <p><strong>Color Interior:</strong> {{ product.interiorColor }}</p>
               <p><strong>Color Exterior:</strong> {{ product.exteriorColor }}</p>
+              <p><strong>Altura al suelo:</strong> {{ product.groundClearance }} cm</p>
               <p><strong>Puertas:</strong> {{ product.doors }}</p>
-              <p><strong>Seguro:</strong> {{ product.seguro }}</p>
+              <p><strong>Dueños:</strong> {{ product.owners }}</p>
+              <p><strong>Seguridad:</strong> {{ product.airbag === 'yes' ? 'Con airbag' : 'Sin airbag' }}</p>
+              
               <!-- Agregar mas cosas a futuro para mejor comparasao -->
+            </section>
+            <section class="insurances">
+              <h3><strong>Seguros</strong></h3>
+              <ul>
+                <li v-for="(seguro, index) in product.insuranceOptions" :key="index">{{ seguro }}</li>
+              </ul>
+            </section>
+            <section class="ubication">
+              <h3><strong>Ubicación</strong></h3>
+              <p><strong>Región:</strong> {{ product.region }}</p>
+              <p><strong>Ciudad:</strong> {{ product.provincia }}</p>
+              <p><strong>Comuna:</strong> {{ product.comuna }}</p>
             </section>
             <section class="scores">
               <h3><strong>Puntuaciones</strong></h3>
@@ -109,7 +134,7 @@ export default {
       const transmissionScore = product.transmission === 'Manual' ? 10 : -5
       score += transmissionScore
       
-      const seguroScore = product.insuranceOptions.length * 5
+      const seguroScore = product.insuranceOptions.length * 3
       for(let i = 0; i < product.insuranceOptions.length; i++){
         if(product.insuranceOptions[i] === 'Sin seguro'){
           seguroScore -= 5
@@ -117,10 +142,10 @@ export default {
       }
       score += seguroScore
 
-      const airbagScore = product.airbag === 'yes' ? 10 : 0
+      const airbagScore = product.airbag === 'yes' ? 10 : -4
       score += airbagScore
 
-      const conditionScore = product.condition === 'new' ? 10 : 0
+      const conditionScore = product.condition === 'new' ? 10 : -2
       score += conditionScore
 
       if (product.owners > 5) {
@@ -134,10 +159,10 @@ export default {
       const powerScore = product.power / 100 // PUEDE CAMBIAR
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'sport' ? 10 : 0
+      const suspensionScore = product.suspensionType === 'sport' ? 10 : -5
       score += suspensionScore
 
-      const tireTypeScore = product.tireType === 'road' ? 10 : 0
+      const tireTypeScore = product.tireType === 'road' ? 10 : -5
       score += tireTypeScore
       
       if(product.groundClearance < 10){
@@ -284,6 +309,16 @@ progress::-moz-progress-bar {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
+}
+
+.insurances {
+  height: 300px;
+  overflow: auto;
+}
+
+.comfort{
+  height: 430px;
+  overflow: auto;
 }
 
 .product-info > section {

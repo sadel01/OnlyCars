@@ -30,7 +30,7 @@ const upload = multer({ storage: storage })
 // Configuracion de CORS para permitir la conexion entre el cliente y el servidor
 const corsOptions = {
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }
 
@@ -409,7 +409,7 @@ app.post('/favorites', async (req, res) => {
 
     const result = await collection.updateOne(
       { userId: userId },
-      { $addToSet: { favorites: postId } },
+      { $addToSet: { postIds: postId } },
       { upsert: true }
     )
 
@@ -432,37 +432,33 @@ app.get('/favorites', async (req, res) => {
     console.log(userId)
     const favorites = await collection.findOne({ userId: userId })
     console.log(favorites.postIds)
-    res.send(favorites)
+    const productCollection = database.collection('posts')
+    const products = await productCollection
+      .find({ _id: { $in: favorites.postIds.map((id) => new ObjectId(id)) } })
+      .toArray()
+    res.send(products)
   } catch (error) {
     res.status(500).send(error.message)
   }
 })
 
-app.get("/admin/users", async (req, res) => {
+app.delete('/favorites', async (req, res) => {
   try {
-    const database = client.db("onlycars");
-    const collection = database.collection("users");
-    const users = await collection.find().toArray();
-    res.send(users);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
-});
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
 
-app.post("/admin/users/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const database = client.db("onlycars");
-    const collection = database.collection("users");
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: req.body }
-    );
-    res.send({ message: "Usuario actualizado con éxito" });
+    const result = await collection.updateOne({ userId: userId }, { $pull: { postIds: postId } })
+
+    if (result.modifiedCount === 0) {
+      res.send({ message: 'Item no estaba en favoritos' })
+    } else {
+      res.send({ message: 'Item eliminado de favoritos' })
+    }
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

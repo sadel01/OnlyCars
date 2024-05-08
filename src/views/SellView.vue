@@ -279,9 +279,9 @@
         <label for="suspensionType">Tipo de Suspensión</label>
         <select id="suspensionType" v-model="vehicle.suspensionType">
           <option value="" disabled selected>Seleccione el tipo de suspensión</option>
-          <option value="standard">Estándar</option>
-          <option value="sport">Deportiva</option>
-          <option value="adjustable">Ajustable</option>
+          <option value="Estándar">Estándar</option>
+          <option value="Deportiva">Deportiva</option>
+          <option value="Ajustable">Ajustable</option>
         </select>
       </div>
 
@@ -289,9 +289,9 @@
         <label for="tireType">Tipo de Neumáticos</label>
         <select id="tireType" v-model="vehicle.tireType">
           <option value="" disabled selected>Seleccione el tipo de neumáticos</option>
-          <option value="road">De Carretera</option>
-          <option value="mixed">Mixtos</option>
-          <option value="offRoad">Todo Terreno</option>
+          <option value="De Carretera">De Carretera</option>
+          <option value="Mixtos">Mixtos</option>
+          <option value="Todo Terreno">Todo Terreno</option>
         </select>
       </div>
 
