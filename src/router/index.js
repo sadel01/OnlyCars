@@ -13,6 +13,9 @@ import store from '../../back-end/src/store'
 import ChatView from '../views/ChatView.vue'
 import ComparisonView from '../views/ComparisonView.vue'
 import FavoritesView from '../views/FavoritesView.vue'
+import AdminView from '../views/AdminView.vue'
+import CatalogManagment from '../views/CatalogManagment.vue'
+import userManagment from '../views/UserManagment.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -85,6 +88,24 @@ const router = createRouter({
       name: 'favorites',
       component: FavoritesView,
       meta: { requiresAuth: true },
+    },
+    {
+      path: '/AdminView',
+      name: 'AdminView',
+      component: AdminView,
+      meta: { requiresAuth: true , requiresAdmin: true},
+    },
+    {
+      path: '/catalogManagment',
+      name: 'catalogManagment',
+      component: CatalogManagment,
+      meta: { requiresAuth: true , requiresAdmin: true},
+    },
+    {
+      path: '/userManagment',
+      name: 'userManagment',
+      component: userManagment,
+      meta: { requiresAuth: true , requiresAdmin: true},
     }
   ],
   scrollBehavior(to, from, savedPosition) {
@@ -94,10 +115,14 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const requiresAdmin = to.matched.some(record => record.meta.requiresAdmin);
 
   if (requiresAuth && !store.state.user) {
     next('/login') // Si la ruta requiere autenticación y no hay usuario, redirige a login
-  } else {
+  }else if (requiresAdmin && (!store.state.user || store.state.user.rol !== 'admin')){
+    next('/');
+  }
+  else {
     next() // De lo contrario, permite que la navegación continúe
   }
 })
