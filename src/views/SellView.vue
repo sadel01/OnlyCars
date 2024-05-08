@@ -73,6 +73,7 @@
             v-model="vehicle.cylinderCapacity"
             placeholder="Ingrese cilindraje"
             @input="formatCylinderInput"
+            :disabled="!vehicle.fuel"
           />
           <p
             v-if="vehicle.errorMessage.cylinderCapacity"
@@ -113,7 +114,7 @@
 
         <div class="form-group">
           <label for="provincia">Provincia</label>
-          <select id="provincia" v-model="vehicle.provincia">
+          <select id="provincia" v-model="vehicle.provincia" :disabled="!vehicle.region">
             <option value="" disabled selected>Seleccione una provincia</option>
             <option v-for="provincia in provincias" :key="provincia" :value="provincia">
               {{ provincia }}
@@ -227,7 +228,7 @@
 
         <div class="form-group">
           <label for="comuna">Comuna</label>
-          <select id="comuna" v-model="vehicle.comuna">
+          <select id="comuna" v-model="vehicle.comuna" :disabled="!vehicle.provincia">
             <option value="" disabled selected>Seleccione una comuna</option>
             <option v-for="comuna in comunas" :key="comuna" :value="comuna">{{ comuna }}</option>
           </select>
@@ -263,7 +264,15 @@
           id="power"
           v-model="vehicle.power"
           placeholder="Ingrese la potencia del motor en HP o kW"
+          @input="formatPowerInput"
         />
+        <p
+          v-if="vehicle.errorMessage.power"
+          class="error"
+          style="font-size: 12px; color: red; margin-left: 20px"
+        >
+          {{ vehicle.errorMessage.power }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -428,7 +437,9 @@ export default {
           year: '',
           doors: '',
           cylinderCapacity: '',
-          owners: ''
+          owners: '',
+          power: '',
+          groundClearance: ''
         }
       },
       errorMessage: '',
@@ -481,42 +492,78 @@ export default {
       }
     },
     formatCylinderInput() {
-      const value = this.vehicle.cylinderCapacity.trim()
+      if (this.vehicle.fuel === 'Diésel' || this.vehicle.fuel === 'Gasolina') {
+        const value = this.vehicle.cylinderCapacity.trim()
 
-      if (value === '') {
-        this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
-        return
-      }
+        if (value === '') {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
+          return
+        }
 
-      // Validar si el valor contiene caracteres no permitidos
-      if (!/^[\d,.]+$/.test(value)) {
-        this.vehicle.errorMessage.cylinderCapacity =
-          'El cilindraje debe contener solo números, punto (.) o coma (,)'
-        return
-      }
+        // Validar si el valor contiene caracteres no permitidos
+        if (!/^[\d,.]+$/.test(value)) {
+          this.vehicle.errorMessage.cylinderCapacity =
+            'El cilindraje debe contener solo números, punto (.) o coma (,)'
+          return
+        }
 
-      const sanitizedValue = value.replace(',', '.')
-      const floatValue = parseFloat(sanitizedValue)
+        const sanitizedValue = value.replace(',', '.')
+        const floatValue = parseFloat(sanitizedValue)
 
-      if (isNaN(floatValue) || floatValue <= 0) {
-        this.vehicle.errorMessage.cylinderCapacity = 'Ingrese un cilindraje válido' // Mostrar error si no es un número válido
-      } else if (floatValue > 10) {
-        this.vehicle.errorMessage.cylinderCapacity = 'El cilindraje máximo es de 10 litros' // Mostrar error si excede el límite
-      } else {
-        this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
-        this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+        if (isNaN(floatValue) || floatValue <= 0) {
+          this.vehicle.errorMessage.cylinderCapacity = 'Ingrese un cilindraje válido' // Mostrar error si no es un número válido
+        } else if (floatValue > 10) {
+          this.vehicle.errorMessage.cylinderCapacity = 'El cilindraje máximo es de 10 litros' // Mostrar error si excede el límite
+        } else {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
+          this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+        }
+      } else if (this.vehicle.fuel === 'Eléctrico') {
+        this.vehicle.errorMessage.cylinderCapacity = 'Se medirá en kWh'
+        const value = this.vehicle.cylinderCapacity.trim()
+
+        if (value === '') {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si el campo está vacío
+          return
+        }
+
+        // Validar si el valor contiene caracteres no permitidos
+        if (!/^[\d,.]+$/.test(value)) {
+          this.vehicle.errorMessage.cylinderCapacity =
+            'La capacidad de la bateria debe contener solo números, punto (.) o coma (,)'
+          return
+        }
+
+        const sanitizedValue = value.replace(',', '.')
+        const floatValue = parseFloat(sanitizedValue)
+
+        if (isNaN(floatValue) || floatValue <= 0) {
+          this.vehicle.errorMessage.cylinderCapacity = 'Ingrese una capacidad de bateria válida' // Mostrar error si no es un número válido
+        } else if (floatValue > 350) {
+          this.vehicle.errorMessage.cylinderCapacity = 'El máximo es de 350 Kwh' // Mostrar error si excede el límite
+        } else {
+          this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
+          this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+        }
       }
     },
-    formatGroundClearenceInput(){
-      let value = this.vehicle.groundClearance.replace(/[\D]/g, '')
-      value = parseInt(value, 10)
-      if (this.vehicle.groundClearance.trim() === '') {
+    formatGroundClearenceInput() {
+      const value = this.vehicle.groundClearance.trim()
+      if (value === '') {
         this.vehicle.errorMessage.groundClearance = ''
-      } else if (isNaN(value) || value < 0) {
+        return
+      }
+      if (!/^[\d.,]+$/.test(value)) {
+        this.vehicle.errorMessage.groundClearance = 'La altura debe contener solo números'
+        return
+      }
+      const sanitizedValue = value.replace(',', '.')
+      const floatValue = parseFloat(sanitizedValue)
+      if (isNaN(floatValue) || floatValue < 0) {
         this.vehicle.errorMessage.groundClearance = 'Ingrese un número de altura válido'
       } else {
         this.vehicle.errorMessage.groundClearance = ''
-        this.vehicle.groundClearance = value
+        this.vehicle.groundClearance = sanitizedValue
       }
     },
     formatOwnerInput() {
@@ -529,6 +576,26 @@ export default {
       } else {
         this.vehicle.errorMessage.owners = ''
         this.vehicle.owners = value
+      }
+    },
+    formatPowerInput() {
+      const value = this.vehicle.power.trim()
+      if (value === '') {
+        this.vehicle.errorMessage.power = ''
+        return
+      }
+      if (!/^[\d,.]+$/.test(value)) {
+        this.vehicle.errorMessage.power =
+          'La potencia debe contener solo números, punto (.) o coma (,)'
+        return
+      }
+      const sanitizedValue = value.replace(',', '.')
+      const floatValue = parseFloat(sanitizedValue)
+      if (isNaN(floatValue) || floatValue <= 0) {
+        this.vehicle.errorMessage.power = 'Ingrese una potencia válida'
+      } else {
+        this.vehicle.errorMessage.power = ''
+        this.vehicle.power = sanitizedValue
       }
     },
 
@@ -627,7 +694,7 @@ export default {
       // Añade este método si gestionas comunas
       if (!this.vehicle.provincia) {
         this.comunas = []
-        return
+        returnF
       }
       try {
         // Debes tener un endpoint para obtener comunas basado en la provincia
@@ -668,7 +735,7 @@ export default {
         setTimeout(() => {
           this.successMessage = ''
         }, 2000)
-        const response = await axios.post('http://localhost:8080/postsPrueba', vehicleData)
+        const response = await axios.post('http://localhost:8080/posts', vehicleData)
         console.log('Response from the server:', response.data)
         // Reset vehicle data
         this.vehicle = {

@@ -35,15 +35,26 @@ const corsOptions = {
 }
 
 function appendFuelUnit(cylinderCapacity, fuelType) {
-  let unit;
+  let unit
   if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
-      unit = ' L';
+    unit = ' L'
   } else if (fuelType === 'Eléctrico') {
-      unit = ' kW';
+    unit = ' kW'
   } else {
-      unit = '';
+    unit = ''
   }
-  return cylinderCapacity + unit;
+  return cylinderCapacity + unit
+}
+function appendPotencyUnit(power, fuelType) {
+  let unit
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+    unit = ' HP'
+  } else if (fuelType === 'Eléctrico') {
+    unit = ' kWh'
+  } else {
+    unit = ''
+  }
+  return power + unit
 }
 
 app.use(cors(corsOptions))
@@ -148,12 +159,13 @@ app.post('/register', async (req, res) => {
   }
 })
 
-app.post('/postsPrueba', async (req, res) => {
+app.post('/posts', async (req, res) => {
   try {
     const database = client.db('onlycars')
     const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
-    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel);
+    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel)
+    req.body.power = appendPotencyUnit(req.body.power, req.body.fuel)
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
