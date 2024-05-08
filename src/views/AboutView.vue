@@ -1,65 +1,132 @@
 <template>
-  <div class="about">
-    <h1>NOSOTROS</h1>
-    <h2>Benjamín Puebla <br>
-      Nelson Silva <br>
-      José Díaz<br>
-      Adrián Espinoza<br>
-      Martín Flores<br>
-      Agustín Meza<br>
-      Rodrigo Domínguez
-    </h2>
+  <div class="team-section">
+    <div class="title-background">
+      <h1>NOSOTROS</h1>
+    </div>
+    <p class="about-text">
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cum, assumenda enim quo quas nulla
+      fuga. Temporibus cupiditate optio, cum ducimus, ex inventore eos ipsam aspernatur maxime
+      aliquam magnam odit error fuga corrupti? Quisquam, quos. Quisquam, quos. Quisquam, quos.
+    </p>
+    <h1 class="team-title">NUESTRO EQUIPO</h1>
+    <div class="team">
+      <div class="member">
+        <img class="memberImg" src="../assets/team/benja.jpg" />
+        <h2>Benjamin Puebla</h2>
+        <p>CEO OnlyCars</p>
+      </div>
+      <div class="member">
+        <img class="memberImg" src="../assets/team/nelson.jpg" />
+        <h2>Nelson Silva</h2>
+        <p>Desarrollador</p>
+      </div>
+      <div class="member">
+        <img class="memberImg" src="../assets/team/jose.jpg" />
+        <h2>Jose Diaz</h2>
+        <p>Desarrollador</p>
+      </div>
+      <div class="member">
+        <img class="memberImg" src="../assets/team/martin.jpg" />
+        <h2>Martin Flores</h2>
+        <p>Desarrollador</p>
+      </div>
+      <div class="member">
+        <img class="memberImg" src="../assets/team/rodrigo.jpg" />
+        <h2>Rodrigo Dominguez</h2>
+        <p>Desarrollador</p>
+      </div>
+      <div class="member">
+        <img class="memberImg" src="../assets/team/adrian.jpg" />
+        <h2>Adrian Espinoza</h2>
+        <p>Desarrollador</p>
+      </div>
+      <div class="member">
+        <img class="memberImg" src="../assets/team/agustin.jpg" />
+        <h2>Agustin Meza</h2>
+        <p>Desarrollador</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
-
-.about {
-  position: relative;
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
+.team {
+  margin: 4em;
 }
 
-.about::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url(../assets/nosotros.jpg);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  filter: brightness(50%);
-}
-
-
-h1 {
-  font-size: 80px;
-  font-weight: bold;
-  position: absolute;
-  top: -3%;
-  left: 40%;
-  color: white; 
+.memberImg {
+  border-radius: 50%;
 }
 
 h2 {
-  font-size: 25px;
-  font-weight: lighter;
-  position: absolute;
-  top: 37%;
-  right: 2%;
-  transform: translate(-50%, -50%);
-  color: white;
+  font-size: 18px;
+  color: #1f1f1f;
 }
 
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center; 
+.title-background {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url('../assets/contactus.jpg');
+  background-size: cover;
+  background-position: center;
+  padding: 90px 0;
+  color: white;
+  text-align: center;
+}
+
+.team-section {
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+.about-text {
+  margin: 4em auto;
+  color: #6c757d;
+  width: 70%;
+  font-size: 16px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.team-title {
+  font-size: 18px;
+  color: #1f1f1f;
+  margin: 30px 0;
+}
+
+.member {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
+  width: 180px;
+}
+
+.member-img {
+  width: 150px;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 5px solid #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.member img {
+  width: 100%;
+  height: auto;
+}
+
+.member-info h2,
+.member-info p {
+  margin: 5px 0;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .member {
+    width: 220px;
+  }
+  .about-text {
+    width: 60%;
   }
 }
 </style>
