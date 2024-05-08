@@ -26,8 +26,19 @@
   </div>
 </template>
 
+
 <style scoped>
+@keyframes wipe-in-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 .content-wrapper {
+  animation: 5s cubic-bezier(.25, 1, .30, 1) wipe-in-right both;
   display: flex;
   align-items: center; /* Alinea los elementos hijos verticalmente en el centro */
   justify-content: center;
