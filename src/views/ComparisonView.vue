@@ -119,10 +119,6 @@ export default {
   methods: {
     calculateSportScore(product) {
       let score = 0
-      const maxYearScore = 7 // Máximo puntaje para el año.
-      const currentYear = new Date().getFullYear()
-      const yearScore = ((product.year - 1990) / (currentYear - 1990)) * maxYearScore // Puntos por actualidad. mas antiguo mas puntos?
-      score += yearScore
 
       if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
         score += parseFloat(product.cylinderCapacity.replace(' L', ''))
@@ -133,81 +129,112 @@ export default {
 
       const transmissionScore = product.transmission === 'Manual' ? 10 : -5
       score += transmissionScore
-      
-      const seguroScore = product.insuranceOptions.length * 3
-      for(let i = 0; i < product.insuranceOptions.length; i++){
-        if(product.insuranceOptions[i] === 'Sin seguro'){
-          seguroScore -= 5
-        }
-      }
-      score += seguroScore
 
-      const airbagScore = product.airbag === 'yes' ? 10 : -4
-      score += airbagScore
-
-      const conditionScore = product.condition === 'new' ? 10 : -2
-      score += conditionScore
-
-      if (product.owners > 5) {
-        const ownerAgeScore = -10 // PUEDE CAMBIAR
-        score += ownerAgeScore
-      }else{
-        const ownerAgeScore = product.owners * 2 // PUEDE CAMBIAR
-        score += ownerAgeScore
-      }
-
-      const powerScore = product.power / 100 // PUEDE CAMBIAR
+      const powerScore = product.power / 30 // PUEDE CAMBIAR
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'sport' ? 10 : -5
+      const suspensionScore = product.suspensionType === 'Deportiva' ? 10 : -5
       score += suspensionScore
 
-      const tireTypeScore = product.tireType === 'road' ? 10 : -5
+      const tireTypeScore = product.tireType === 'De Carretera' ? 10 : -5
       score += tireTypeScore
       
       if(product.groundClearance < 10){
-        const groundClearanceScore = product.groundClearance / 10 // PUEDE CAMBIAR
+        const groundClearanceScore = product.groundClearance / 5 // PUEDE CAMBIAR
         
         score += groundClearanceScore
       }else{
         score += -(product.groundClearance) + 10
       }
 
+      for (let i = 0; i < product.comfortFeatures.length; i++) {
+        if (product.comfortFeatures[i] === 'Control de crucero') {
+          score += 2
+        }
+      }
+
       const driveTrainScore = product.driveTrain === 'Tracción trasera' ? 10 : -5
       score += driveTrainScore
 
-      if(product.mileage<70000){
-        score += 10
+      score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
+      return score
+    },
+    calculateOffRoadScore(product) {
+      let score = 0
+
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
+        score += parseFloat(product.cylinderCapacity.replace(' L', ''))
       }else{
-        score-=5
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        score += cylinderScore
+      }     
+
+      const transmissionScore = product.transmission === 'Manual' ? 10 : -5
+      score += transmissionScore
+
+      const powerScore = product.power / 70 // PUEDE CAMBIAR
+      score += powerScore
+
+      const suspensionScore = product.suspensionType === 'Ajustable' ? 10 : -5
+      score += suspensionScore
+
+      const tireTypeScore = product.tireType === 'Todo Terreno' ? 10 : -5
+      score += tireTypeScore
+      
+      if(product.groundClearance > 20){
+        const groundClearanceScore = product.groundClearance / 5 // PUEDE CAMBIAR
+        
+        score += groundClearanceScore
+      }else{
+        score += product.groundClearance - 20
+      }
+
+      const driveTrainScore = product.driveTrain === 'Tracción total' ? 10 : -5
+      score += driveTrainScore
+
+      for (let i = 0; i < product.comfortFeatures.length; i++) {
+        if (product.comfortFeatures[i] === 'Control de crucero' || product.comfortFeatures[i] === 'Sensores de estacionamiento' || product.comfortFeatures[i] === 'Cámara de visión trasera' || product.comfortFeatures[i] === 'Asistente de mantenimiento de carril') {
+          score += 2
+        }
       }
 
       score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
       return score
     },
 
-    calculateOffRoadScore(product) {
-      let score = 0
-
-      const driveTrainScore = product.driveTrain.toLowerCase().includes('total') ? 50 : 0 // Puntos si tiene traccion total.
-      score += driveTrainScore
-
-      const cylinderScore = parseFloat(product.cylinderCapacity.replace(' cm', '')) / 200 // Menos impacto de la cilindrada aquí. (copilot invento)
-      score += cylinderScore
-
-      score = Math.min(Math.max(score, 0), 100)
-      return score
-    },
-
     calculateConfortScore(product) {
       let score = 0
-      const currentYear = new Date().getFullYear()
-      score += (currentYear - product.year) * 1 // puntos por ser modelo mas reciente.
-      score += product.doors >= 4 ? 20 : 0 // puntos adicionales si tiene 4 puertas o mas.
-      score += product.airbag.toLowerCase() === 'yes' ? 20 : 0 // puntos por seguridad.
-      score += product.seguro ? 15 : 0 // puntos adicionales por tener cualquier tipo de seguro.
-      score += product.transmission.toLowerCase() === 'automatico' ? 15 : 0 // puntos por comodidad de caja de cambios.
-      score = Math.min(score, 100)
+
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
+        score += parseFloat(product.cylinderCapacity.replace(' L', ''))
+      }else{
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        score += cylinderScore
+      }     
+
+      const transmissionScore = product.transmission === 'Automatico' ? 10 : -5
+      score += transmissionScore
+
+      const airbagScore = product.airbag === 'yes' ? 10 : -5
+      score += airbagScore
+
+      const powerScore = product.power / 150 // PUEDE CAMBIAR
+      score += powerScore
+
+      const suspensionScore = product.suspensionType === 'Estándar' ? 10 : -5
+      score += suspensionScore
+
+      const tireTypeScore = product.tireType === 'Mixtos' ? 10 : -5
+      score += tireTypeScore
+
+      const driveTrainScore = product.driveTrain === 'Tracción total' ? 10 : -5
+      score += driveTrainScore
+
+      for (let i = 0; i < product.comfortFeatures.length; i++) {
+        score += 2       
+      }
+
+      score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
       return score
     }
   }
