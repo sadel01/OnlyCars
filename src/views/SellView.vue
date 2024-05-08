@@ -270,9 +270,9 @@
         <label for="suspensionType">Tipo de Suspensión</label>
         <select id="suspensionType" v-model="vehicle.suspensionType">
           <option value="" disabled selected>Seleccione el tipo de suspensión</option>
-          <option value="standard">Estándar</option>
-          <option value="sport">Deportiva</option>
-          <option value="adjustable">Ajustable</option>
+          <option value="Estándar">Estándar</option>
+          <option value="Deportiva">Deportiva</option>
+          <option value="Ajustable">Ajustable</option>
         </select>
       </div>
 
@@ -280,9 +280,9 @@
         <label for="tireType">Tipo de Neumáticos</label>
         <select id="tireType" v-model="vehicle.tireType">
           <option value="" disabled selected>Seleccione el tipo de neumáticos</option>
-          <option value="road">De Carretera</option>
-          <option value="mixed">Mixtos</option>
-          <option value="offRoad">Todo Terreno</option>
+          <option value="De Carretera">De Carretera</option>
+          <option value="Mixtos">Mixtos</option>
+          <option value="Todo Terreno">Todo Terreno</option>
         </select>
       </div>
 
@@ -293,7 +293,15 @@
           id="groundClearance"
           v-model="vehicle.groundClearance"
           placeholder="Ingrese la altura del vehículo al suelo en cm"
+          @input="formatGroundClearenceInput"
         />
+        <p
+          v-if="vehicle.errorMessage.groundClearance"
+          class="error"
+          style="font-size: 12px; color: red; margin-left: 20px"
+        >
+          {{ vehicle.errorMessage.groundClearance }}
+        </p>
       </div>
     </div>
 
@@ -497,6 +505,18 @@ export default {
       } else {
         this.vehicle.errorMessage.cylinderCapacity = '' // Limpiar mensaje de error si es válido
         this.vehicle.cylinderCapacity = sanitizedValue // Asignar el valor como está (cadena de texto)
+      }
+    },
+    formatGroundClearenceInput(){
+      let value = this.vehicle.groundClearance.replace(/[\D]/g, '')
+      value = parseInt(value, 10)
+      if (this.vehicle.groundClearance.trim() === '') {
+        this.vehicle.errorMessage.groundClearance = ''
+      } else if (isNaN(value) || value < 0) {
+        this.vehicle.errorMessage.groundClearance = 'Ingrese un número de altura válido'
+      } else {
+        this.vehicle.errorMessage.groundClearance = ''
+        this.vehicle.groundClearance = value
       }
     },
     formatOwnerInput() {
