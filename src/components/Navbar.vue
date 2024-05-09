@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="wrapper">
-      <nav>
+      <nav v-if="!user || user.rol !== 'admin'">
         <RouterLink to="/" class="logo-container">
           <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
@@ -28,6 +28,31 @@
           >
         </div>
       </nav>
+
+      <nav v-else>
+        <RouterLink to="/AdminView" class="logo-container">
+          <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
+        </RouterLink>
+        <div class="nav-links" :class="{ active: navActive }">
+          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav">Catálogo</RouterLink>
+          <RouterLink to="/userManagment" class="nav-link" @click="closeNav">Gestionar Usuarios</RouterLink>
+        </div>
+
+        <div class="nav-buttons" :class="{ active: navActive }">
+         
+          <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
+            <FontAwesomeIcon :icon="faUser" class="iconUser" /> {{ user.nombre + ' ' + user.apellido }}
+          </RouterLink>
+          <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
+            <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
+          </RouterLink>
+          <RouterLink v-if="!user" to="/register" class="nav-button" @click="closeNav"
+            >Registrarse</RouterLink
+          >
+        </div>
+      </nav>
+
+
     </div>
   </header>
 </template>

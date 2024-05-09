@@ -133,6 +133,11 @@ export default {
   methods: {
     async addToFavorites(product) {
       try {
+        if (!this.$store.state.user) {
+          this.$router.push('/login')
+          return
+        }
+
         this.isLoading = true
         const user = this.$store.state.user
         const vehicleData = {
@@ -158,6 +163,12 @@ export default {
         this.isLoading = false
       }
     },
+
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)
+      this.$router.push({ name: 'comparison' })
+    },
+
     async fetchFavorites() {
       console.log('Fetching favorites...')
       const userId = this.$store.state.user._id
@@ -296,13 +307,12 @@ export default {
   position: relative;
   right: 2%;
   cursor: pointer;
-  font-size: 20px;
   user-select: none;
   transition: 100ms;
 }
 
 .checkmark {
-  top: 0;
+  top: 7rem;
   left: 0;
   height: 2em;
   width: 2em;
@@ -556,16 +566,19 @@ export default {
   font-size: 15px;
   border: 2px solid #fbc40e;
   transition: all 0.3s ease-in-out;
+  height: 2rem;
+  font-weight: bold;
 }
 
 .buttonPageActive {
-  background-color: #fbc40e;
+  background-color: #e9b302;
   transform: scale(1.13);
   border: 1px solid #fbc40e;
   font-weight: bold;
 }
 
 .buttonPage:hover {
+  cursor: pointer;
   background-color: #fbc40e;
   border: 1px solid #c19400;
   color: white;
@@ -704,6 +717,7 @@ export default {
 }
 
 .productCard:hover {
+  transform: scale(1.005);
   border: 2px solid #0707072c;
   box-shadow: 3px 4px 5px rgb(218, 218, 218);
   background-color: #cccccc5f;
