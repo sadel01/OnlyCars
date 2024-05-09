@@ -26,6 +26,15 @@
   </div>
 </template>
 
+<script>
+import Navbar from '@/components/Navbar.vue'
+
+export default {
+  components: {
+    Navbar
+  }
+}
+</script>
 
 <style scoped>
 @keyframes wipe-in-right {
@@ -38,7 +47,7 @@
 }
 
 .content-wrapper {
-  animation: 5s cubic-bezier(.25, 1, .30, 1) wipe-in-right both;
+  animation: 5s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-right both;
   display: flex;
   align-items: center; /* Alinea los elementos hijos verticalmente en el centro */
   justify-content: center;
@@ -148,13 +157,11 @@
   .title {
     font-size: 1.5rem;
   }
-
 }
 
 @media (max-width: 480px) {
   .title {
     font-size: 1.25rem;
   }
-
 }
 </style>
