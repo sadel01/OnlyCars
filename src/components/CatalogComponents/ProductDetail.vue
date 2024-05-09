@@ -43,7 +43,7 @@
           <div class="card">
             <FontAwesomeIcon :icon="faWrench" class="icono" />
             <div class="text-container">
-              <p class="fecha-text"><strong>Motor</strong></p>
+              <p class="fecha-text"><strong>Cilindraje</strong></p>
               <p class="year-text">{{ product.cylinderCapacity }}</p>
             </div>
           </div>
@@ -93,6 +93,7 @@ export default {
       slide: 0
     }
   },
+
   methods: {
     closePanel() {
       this.$emit('close')

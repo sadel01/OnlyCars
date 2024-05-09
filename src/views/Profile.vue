@@ -8,6 +8,7 @@
         <p><span class="label">Apellido:</span> {{ user.apellido }}</p>
         <p><span class="label">Email:</span> {{ user.mail }}</p>
         <p><span class="label">RUT:</span> {{ user.rut }}</p>
+        <p><span class="label">Rol:</span> {{ user.rol }}</p>
         <div class="button-group">
           <button class="editButton" @click="editProfile">Editar Perfil</button>
           <button class="logoutButton" @click="logout">Cerrar Sesión</button>

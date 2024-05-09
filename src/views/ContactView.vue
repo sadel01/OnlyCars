@@ -125,7 +125,7 @@ const limpiarMensaje = () => {
 }
 
 .principal {
-  background-image: url('@/assets/amogus.jpg');
+  background-image: url('@/assets/contactus.jpg');
   background-size: cover;
   background-position: center;
   display: flex;

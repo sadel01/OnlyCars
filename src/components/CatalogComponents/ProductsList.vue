@@ -137,29 +137,34 @@ export default {
   methods: {
     async addToFavorites(product) {
       try {
-        this.isLoading = true
-        const user = this.$store.state.user
-        const vehicleData = {
-          userId: user._id,
-          postId: product._id
-        }
-        if (this.isFavorite(product)) {
-          // Si el producto ya está en favoritos, lo eliminamos
-          await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
-        } else {
-          // Si el producto no está en favoritos, lo agregamos
-          await axios.post('http://localhost:8080/favorites', vehicleData)
-        }
-        // Actualizamos la lista de favoritos
-        await this.fetchFavorites()
+      if (!this.$store.state.user) {
+        this.$router.push('/login');
+        return;
+      }
+      
+      this.isLoading = true
+      const user = this.$store.state.user
+      const vehicleData = {
+        userId: user._id,
+        postId: product._id
+      }
+      if (this.isFavorite(product)) {
+        // Si el producto ya está en favoritos, lo eliminamos
+        await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
+      } else {
+        // Si el producto no está en favoritos, lo agregamos
+        await axios.post('http://localhost:8080/favorites', vehicleData)
+      }
+      // Actualizamos la lista de favoritos
+      await this.fetchFavorites()
       } catch (error) {
-        this.errorMessage = 'Error al actualizar los favoritos'
-        setTimeout(() => {
-          this.errorMessage = ''
-        }, 1500)
-        console.error('Error al actualizar los favoritos:', error)
+      this.errorMessage = 'Error al actualizar los favoritos'
+      setTimeout(() => {
+        this.errorMessage = ''
+      }, 1500)
+      console.error('Error al actualizar los favoritos:', error)
       } finally {
-        this.isLoading = false
+      this.isLoading = false
       }
     },
     async fetchFavorites() {
@@ -185,7 +190,10 @@ export default {
       console.log(`Producto ${product._id} comparado:`, compared)
       return compared
     },
-
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)   
+      this.$router.push({ name: 'comparison' })  
+    },
     toggleComparison(product) {
       const productIndex = this.comparisonList.findIndex((p) => p._id === product._id)
       if (productIndex !== -1) {
@@ -300,13 +308,12 @@ export default {
   position: relative;
   right: 2%;
   cursor: pointer;
-  font-size: 20px;
   user-select: none;
   transition: 100ms;
 }
 
 .checkmark {
-  top: 0;
+  top: 7rem;
   left: 0;
   height: 1.5em;
   width: 1.5em;
@@ -571,16 +578,20 @@ export default {
   font-size: 15px;
   border: 2px solid #fbc40e;
   transition: all 0.3s ease-in-out;
+  height: 2rem; 
+  font-weight: bold;
 }
 
 .buttonPageActive {
-  background-color: #fbc40e;
+  background-color: #e9b302;
   transform: scale(1.13);
   border: 1px solid #fbc40e;
   font-weight: bold;
 }
 
+
 .buttonPage:hover {
+  cursor: pointer;
   background-color: #fbc40e;
   border: 1px solid #c19400;
   color: white;
@@ -720,6 +731,7 @@ export default {
 }
 
 .productCard:hover {
+  transform: scale(1.005);
   border: 2px solid #0707072c;
   box-shadow: 3px 4px 5px rgb(218, 218, 218);
   background-color: #cccccc5f;
