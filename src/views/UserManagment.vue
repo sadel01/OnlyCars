@@ -22,6 +22,7 @@
         />
         <input class="search-input" type="text" v-model="searchRut" placeholder="Buscar por RUT" />
       </div>
+      <div></div>
       <div class="userList">
         <table class="aligned-table">
           <thead>
@@ -48,6 +49,7 @@
               <td>{{ user.apellido }}</td>
               <td>{{ user.mail }}</td>
               <td>{{ user.rol }}</td>
+
               <td>
                 <select class="select-verified" v-model="user.tipo" @change="mostrarBoton()">
                   <option value="verificado">Verificado</option>
@@ -59,6 +61,7 @@
         </table>
       </div>
     </div>
+    |
     <div class="buttons-container" :class="{ hidden: dataChanged }">
       <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
       <button class="aplicate-button" @click="rehacerCambio()">Rehacer</button>
@@ -107,7 +110,7 @@ export default {
         user.originalTipo = user.tipo
       }
 
-      console.log('Se aplicaron cambios a:', changedUsers)
+      console.log('Se aplicaron cambios a :', changedUsers)
       this.dataChanged = false
       alert('Se aplicaron los cambios')
     },
@@ -128,6 +131,7 @@ export default {
 <style scoped>
 .buttons-container {
   display: flex;
+  position: relative;
   justify-content: flex-end;
   margin-right: 3rem;
   top: -3rem;
@@ -137,24 +141,21 @@ export default {
 .buttons-container.hidden {
   visibility: visible;
 }
-
 .select-verified {
   width: 60%;
   text-align: center;
-  padding: 10px;
+  padding: 10px 10px 10px 10px;
   font-size: 15px;
   color: black;
   background-color: transparent;
-  border: 1px solid black;
-  outline: none;
+  border-color: 1px solid black;
 }
-
 .select-verified:focus {
+  outline: none;
   border-color: #fbc40e;
   box-shadow: 0 0 10px #fbc40e;
   background-color: white;
 }
-
 .search-input {
   max-width: 190px;
   background-color: #f5f5f5;
@@ -167,17 +168,17 @@ export default {
   line-height: 1.15;
   box-shadow: 0px 10px 20px -18px;
   font-size: 16px;
-  margin-right: 10px;
-  margin-bottom: 10px;
 }
 
 .search-input:focus {
   border-bottom: 4px solid #fbc40e;
-  border-radius: 4px;
+  border-radius: 4px 4px 2px 2px;
 }
-
 .aplicate-button {
   transition: all 0.2s ease-in;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
   cursor: pointer;
   font-size: 15px;
   border-radius: 0.3em;
@@ -188,6 +189,8 @@ export default {
   height: 2.5rem;
   font-weight: bold;
   margin-left: 1rem;
+  right: 2rem;
+  margin-top: 1rem;
 }
 
 .aplicate-button:active {
@@ -197,16 +200,33 @@ export default {
     inset -4px -4px 12px #ffffff;
 }
 
-.aplicate-button:before,
-.aplicate-button:after {
+.aplicate-button:before {
   content: '';
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+  top: 100%;
   width: 140%;
   height: 180%;
+  background-color: rgba(0, 0, 0, 0.05);
   border-radius: 50%;
   display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+
+.aplicate-button:after {
+  content: '';
+  position: absolute;
+  left: 55%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+  top: 180%;
+  width: 160%;
+  height: 190%;
+  background-color: #fbc40e;
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
   z-index: -1;
 }
 
@@ -234,16 +254,14 @@ export default {
   text-align: center;
   font-weight: bold;
   position: sticky;
-  top: 0;
+  top: 0px; /* Fijar la fila de encabezados en la parte superior */
   z-index: 2;
 }
-
 .changed {
   background-color: #fbc40e;
   color: black;
   font-weight: bold;
 }
-
 .users-table.changed:hover {
   background-color: #fbc40e;
 }
@@ -252,17 +270,17 @@ export default {
   width: 98%;
   text-align: left;
   border-collapse: collapse;
+  text-align: center;
   border-bottom: 3px solid #1f1f1a;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
-
 .changed:nth-child(even) {
   background-color: #fbc40e !important;
 }
-
 tr:nth-child(even) {
   background-color: #ebebeb;
 }
-
 .users-table:hover {
   background-color: #b3b3b3;
 }
@@ -272,16 +290,52 @@ tr:nth-child(even) {
   padding: 10px;
   border: 1px solid #ddd;
   margin: 0;
+}
+.aligned-table td,
+.aligned-table th {
   border-radius: 5px;
 }
-
 .container {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
   position: relative;
 }
 
+.search {
+  display: flex;
+  justify-content: start;
+  padding: 10px 10px 10px 10px;
+  margin-bottom: 1rem;
+  background-color: #1a1a1a;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+}
+.userList {
+  padding: 0px;
+  margin: 0;
+  overflow: hidden;
+}
+
+.userList table {
+  width: 100%; /* Ocupa todo el ancho disponible */
+}
+input {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 5px;
+  width: 200px;
+}
+.container {
+  overflow-x: auto;
+  height: 90vh;
+  margin-bottom: 1rem;
+}
 .search {
   display: flex;
   justify-content: start;
@@ -291,33 +345,36 @@ tr:nth-child(even) {
   top: -10px;
   z-index: 1;
   width: 100%;
+  margin-bottom: 0;
 }
-
 .userList {
-  padding: 0;
-  overflow: hidden;
+  display: flex;
+  justify-content: start;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 0px;
 }
-
-.userList table {
-  width: 100%;
-}
-
 @media (min-width: 768px) {
+  /* En pantallas grandes, controla el diseño */
   .container {
     overflow-x: auto;
-    height: calc(90vh - 120px);
+    height: calc(90vh - 120px); /* El cálculo para dejar espacio para .search y .userList */
     margin-bottom: 1rem;
   }
 
   .userList {
-    height: calc(90vh - 180px);
-    overflow-y: auto;
-    position: relative;
+    height: calc(90vh - 180px); /* Altura controlada para evitar sobrelapamiento */
+    overflow-y: auto; /* Scroll vertical si es necesario */
+    position: relative; /* Para controlar el posicionamiento */
+    margin-top: 0;
   }
 }
-
 tbody {
   overflow-y: auto;
-  height: 70vh;
+  height: 70vh; /* Altura máxima del cuerpo de la tabla */
 }
 </style>
