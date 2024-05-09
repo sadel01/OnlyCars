@@ -192,7 +192,10 @@ export default {
       console.log(`Producto ${product._id} comparado:`, compared)
       return compared
     },
-
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)   
+      this.$router.push({ name: 'comparison' })  
+    },
     toggleComparison(product) {
       const productIndex = this.comparisonList.findIndex((p) => p._id === product._id)
       if (productIndex !== -1) {
