@@ -1,129 +1,145 @@
 <template>
-    <div>
-    <div class="container" >
+  <div>
+    <div class="container">
+      <div class="search">
+        <input
+          class="search-input"
+          type="text"
+          v-model="searchName"
+          placeholder="Buscar por nombre"
+        />
+        <input
+          class="search-input"
+          type="text"
+          v-model="searchLastName"
+          placeholder="Buscar por apellido"
+        />
+        <input
+          class="search-input"
+          type="text"
+          v-model="searchEmail"
+          placeholder="Buscar por email"
+        />
+        <input class="search-input" type="text" v-model="searchRut" placeholder="Buscar por RUT" />
+      </div>
+      <div></div>
+      <div class="userList">
+        <table class="aligned-table">
+          <thead>
+            <tr class="header-table">
+              <th>ID</th>
+              <th>RUT</th>
+              <th>Nombre</th>
+              <th>Apellido</th>
+              <th>Mail</th>
+              <th>Rol</th>
+              <th>Tipo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="user in filteredUsers"
+              :key="user._id"
+              :class="{ changed: user.tipo !== user.originalTipo }"
+              class="users-table"
+            >
+              <td>{{ user._id }}</td>
+              <td>{{ user.rut }}</td>
+              <td>{{ user.nombre }}</td>
+              <td>{{ user.apellido }}</td>
+              <td>{{ user.mail }}</td>
+              <td>{{ user.rol }}</td>
 
-        <div class="search">
-            <input class="search-input" type="text" v-model="searchName" placeholder="Buscar por nombre">
-            <input class="search-input" type="text" v-model="searchLastName" placeholder="Buscar por apellido">
-            <input class="search-input" type="text" v-model="searchEmail" placeholder="Buscar por email">
-            <input class="search-input" type="text" v-model="searchRut" placeholder="Buscar por RUT">
-
-        </div>
-        <div class="userList">
-            <table class="aligned-table">
-                <thead>
-                    <tr class="header-table">
-                        <th>ID</th>
-                        <th>RUT</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Mail</th>
-                        <th>Rol</th>
-                        <th>Tipo</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="user in filteredUsers" :key="user._id" :class="{ 'changed': user.tipo !== user.originalTipo }" class="users-table">
-                        <td> {{ user._id }} </td>
-                        <td> {{ user.rut }} </td>
-                        <td> {{ user.nombre }} </td>
-                        <td> {{ user.apellido }} </td>
-                        <td> {{ user.mail }} </td>
-                        <td> {{ user.rol }} </td>
-
-                        <td>
-                            <select class="select-verified" v-model="user.tipo" @change="mostrarBoton() ">
-                                <option value="verificado">Verificado</option>
-                                <option value="normal">Normal</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        
+              <td>
+                <select class="select-verified" v-model="user.tipo" @change="mostrarBoton()">
+                  <option value="verificado">Verificado</option>
+                  <option value="normal">Normal</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
-|       <div class="buttons-container" :class="{ 'hidden': dataChanged }">
-        <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
-        <button class="aplicate-button" @click="rehacerCambio()">Rehacer</button>
+    |
+    <div class="buttons-container" :class="{ hidden: dataChanged }">
+      <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
+      <button class="aplicate-button" @click="rehacerCambio()">Rehacer</button>
     </div>
-    </div>
-
+  </div>
 </template>
 
-
 <script>
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
-    data() {
-        return {
-            users: [],
-            searchName: '',
-            searchEmail: '',
-            searchRut: '',
-            searchLastName: '',
-            dataChanged: false
-        }
-    },
-    async created() {
-        const response = await axios.get('http://localhost:8080/admin/users')
-        this.users = response.data.map(user => ({ ...user, originalTipo: user.tipo }));
-        this.users.sort((a, b) => a.nombre.localeCompare(b.nombre));
-    },
-    computed: {
-        filteredUsers() {
-            return this.users.filter(user =>
-                user.nombre.toLowerCase().includes(this.searchName.toLowerCase()) &&
-                user.mail.toLowerCase().includes(this.searchEmail.toLowerCase()) &&
-                user.apellido.toLowerCase().includes(this.searchLastName.toLowerCase()) &&
-                user.rut.includes(this.searchRut)
-            );
-        }
-    },
-    methods: {
-        mostrarBoton() {
-            this.dataChanged = this.users.some(user => user.tipo !== user.originalTipo);
-        },
-        async aplicarCambio() {
-            const changedUsers = this.users.filter(user => user.tipo !== user.originalTipo);
-            for (const user of changedUsers) {
-                await axios.post(`http://localhost:8080/admin/users/${user._id}`, { tipo: user.tipo });
-                user.originalTipo = user.tipo;
-            }
-
-            console.log('Se aplicaron cambios a :', changedUsers);
-            this.dataChanged = false;
-            alert('Se aplicaron los cambios');
-        },
-        async rehacerCambio() {
-            const changedUsers = this.users.filter(user => user.tipo !== user.originalTipo);
-            for (const user of changedUsers) {
-                await axios.post(`http://localhost:8080/admin/users/${user._id}`, { tipo: user.originalTipo });
-                user.tipo = user.originalTipo;
-            }
-            this.dataChanged = false;
-        }
-
+  data() {
+    return {
+      users: [],
+      searchName: '',
+      searchEmail: '',
+      searchRut: '',
+      searchLastName: '',
+      dataChanged: false
     }
+  },
+  async created() {
+    const response = await axios.get('http://localhost:8080/admin/users')
+    this.users = response.data.map((user) => ({ ...user, originalTipo: user.tipo }))
+    this.users.sort((a, b) => a.nombre.localeCompare(b.nombre))
+  },
+  computed: {
+    filteredUsers() {
+      return this.users.filter(
+        (user) =>
+          user.nombre.toLowerCase().includes(this.searchName.toLowerCase()) &&
+          user.mail.toLowerCase().includes(this.searchEmail.toLowerCase()) &&
+          user.apellido.toLowerCase().includes(this.searchLastName.toLowerCase()) &&
+          user.rut.includes(this.searchRut)
+      )
+    }
+  },
+  methods: {
+    mostrarBoton() {
+      this.dataChanged = this.users.some((user) => user.tipo !== user.originalTipo)
+    },
+    async aplicarCambio() {
+      const changedUsers = this.users.filter((user) => user.tipo !== user.originalTipo)
+      for (const user of changedUsers) {
+        await axios.post(`http://localhost:8080/admin/users/${user._id}`, { tipo: user.tipo })
+        user.originalTipo = user.tipo
+      }
 
+      console.log('Se aplicaron cambios a :', changedUsers)
+      this.dataChanged = false
+      alert('Se aplicaron los cambios')
+    },
+    async rehacerCambio() {
+      const changedUsers = this.users.filter((user) => user.tipo !== user.originalTipo)
+      for (const user of changedUsers) {
+        await axios.post(`http://localhost:8080/admin/users/${user._id}`, {
+          tipo: user.originalTipo
+        })
+        user.tipo = user.originalTipo
+      }
+      this.dataChanged = false
+    }
+  }
 }
-
 </script>
 
 <style scoped>
 .buttons-container {
-    display: flex;
-    position: relative;
-    justify-content: flex-end; 
-    margin-right: 3rem;
-    top: -3rem;
-    visibility: hidden; 
+  display: flex;
+  position: relative;
+  justify-content: flex-end;
+  margin-right: 3rem;
+  top: -3rem;
+  visibility: hidden;
 }
 
 .buttons-container.hidden {
-    visibility: visible; 
+  visibility: visible;
 }
 .select-verified {
   width: 60%;
@@ -159,7 +175,7 @@ export default {
   border-radius: 4px 4px 2px 2px;
 }
 .aplicate-button {
-    transition: all 0.2s ease-in;
+  transition: all 0.2s ease-in;
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -168,22 +184,24 @@ export default {
   border-radius: 0.3em;
   border: 2px solid #1a1a1a;
   background: #ffffff;
-  color: #090909;  
+  color: #090909;
   width: 7rem;
   height: 2.5rem;
   font-weight: bold;
-  margin-left: 1rem; 
+  margin-left: 1rem;
   right: 2rem;
   margin-top: 1rem;
 }
 
-.aplicate-button:active{
+.aplicate-button:active {
   color: #666;
-  box-shadow: inset 4px 4px 12px #c5c5c5, inset -4px -4px 12px #ffffff;
+  box-shadow:
+    inset 4px 4px 12px #c5c5c5,
+    inset -4px -4px 12px #ffffff;
 }
 
-.aplicate-button:before{
-  content: "";
+.aplicate-button:before {
+  content: '';
   position: absolute;
   left: 50%;
   transform: translateX(-50%) scaleY(1) scaleX(1.25);
@@ -197,8 +215,8 @@ export default {
   z-index: -1;
 }
 
-.aplicate-button:after{
-  content: "";
+.aplicate-button:after {
+  content: '';
   position: absolute;
   left: 55%;
   transform: translateX(-50%) scaleY(1) scaleX(1.45);
@@ -218,7 +236,7 @@ export default {
   transform: scale(1.05);
 }
 
-.aplicate-button:hover:before{
+.aplicate-button:hover:before {
   top: -35%;
   background-color: #fbc40e;
   transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
@@ -231,81 +249,132 @@ export default {
 }
 
 .header-table {
-    background-color: #1a1a1a;
-    color: white;
-    text-align: center;
-    font-weight: bold;
+  background-color: #1a1a1a;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  position: sticky;
+  top: 0px; /* Fijar la fila de encabezados en la parte superior */
+  z-index: 2;
 }
 .changed {
-    background-color: #fbc40e;
-    color: black;
-    font-weight: bold;
+  background-color: #fbc40e;
+  color: black;
+  font-weight: bold;
 }
 .users-table.changed:hover {
-    background-color: #fbc40e; 
+  background-color: #fbc40e;
 }
-
-
 
 .aligned-table {
-    width: 98%;
-    text-align: left;
-    border-collapse: collapse;
-    text-align: center;
-    border-bottom: 3px solid #1a1a1a;
+  width: 98%;
+  text-align: left;
+  border-collapse: collapse;
+  text-align: center;
+  border-bottom: 3px solid #1f1f1a;
+  margin-top: 0px;
+  margin-bottom: 0px;
 }
 .changed:nth-child(even) {
-    background-color: #fbc40e !important; 
+  background-color: #fbc40e !important;
 }
 tr:nth-child(even) {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 .users-table:hover {
-    background-color: #b3b3b3;
+  background-color: #b3b3b3;
 }
 
 .aligned-table th,
 .aligned-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin: 0;
 }
-.aligned-table td, .aligned-table th {
+.aligned-table td,
+.aligned-table th {
   border-radius: 5px;
 }
 .container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  position: relative;
 }
 
 .search {
-    display: flex;
-    justify-content: start;
-    padding: 10px 10px 10px 10px;
-    margin-bottom: 1rem;
-    background-color: #1a1a1a;
+  display: flex;
+  justify-content: start;
+  padding: 10px 10px 10px 10px;
+  margin-bottom: 1rem;
+  background-color: #1a1a1a;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
 }
-
 .userList {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  padding: 0px;
+  margin: 0;
+  overflow: hidden;
 }
 
-input {
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid rgb(0, 0, 0);
-    border-radius: 5px;
-    width: 200px;
+.userList table {
+  width: 100%; /* Ocupa todo el ancho disponible */
 }
-.container{
-    overflow-x:auto;
-    height: 90vh;
+input {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid rgb(0, 0, 0);
+  border-radius: 5px;
+  width: 200px;
+}
+.container {
+  overflow-x: auto;
+  height: 90vh;
+  margin-bottom: 1rem;
+}
+.search {
+  display: flex;
+  justify-content: start;
+  padding: 10px;
+  background-color: #1a1a1a;
+  position: sticky;
+  top: -10px;
+  z-index: 1;
+  width: 100%;
+  margin-bottom: 0;
+}
+.userList {
+  display: flex;
+  justify-content: start;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 0px;
+}
+@media (min-width: 768px) {
+  /* En pantallas grandes, controla el diseño */
+  .container {
+    overflow-x: auto;
+    height: calc(90vh - 120px); /* El cálculo para dejar espacio para .search y .userList */
     margin-bottom: 1rem;
+  }
+
+  .userList {
+    height: calc(90vh - 180px); /* Altura controlada para evitar sobrelapamiento */
+    overflow-y: auto; /* Scroll vertical si es necesario */
+    position: relative; /* Para controlar el posicionamiento */
+    margin-top: 0;
+  }
+}
+tbody {
+  overflow-y: auto;
+  height: 70vh; /* Altura máxima del cuerpo de la tabla */
 }
 </style>
