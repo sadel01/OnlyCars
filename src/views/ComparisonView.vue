@@ -20,12 +20,19 @@
               <p>
                 <strong>Condición:</strong> {{ product.condition === 'used' ? 'Usado' : 'Nuevo' }}
               </p>
-              <p><strong>Kilometraje:</strong> {{ product.mileage }}</p>
+              <p><strong>Kilometraje:</strong> {{ product.mileage }}
+                <span v-if="index === minMileageIndex">🡇</span>
+              </p>
               <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
               <p><strong>Combustible:</strong> {{ product.fuel }}</p>
-              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}</p>
+              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}
+                <span v-if="index === maxCylinderCapacityIndex">🡅</span>
+              </p>
               <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
-              <p><strong>Potencia:</strong> {{product.power}} {{ product.fuel === 'Eléctrico' ? ' kW' : 'HP' }}</p>
+              <p>
+                <strong>Potencia:</strong> {{product.power}} {{ product.fuel === 'Eléctrico' ? ' kW' : 'HP' }}
+                <span v-if="index === maxPowerIndex">🡅</span>
+              </p>
               <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
               <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
             </section>
@@ -109,6 +116,42 @@ export default {
           confortScore: this.calculateConfortScore(product)
         }
       })
+    },
+    maxPowerIndex() {
+      let maxPower = 0;
+      let index = -1;
+      this.comparisonList.forEach((product, i) => {
+        let power = Number(product.power);
+        if (power > maxPower) {
+          maxPower = power;
+          index = i;
+        }
+      });
+      return index;
+    },
+    minMileageIndex() {
+      let minMileage = Infinity;
+      let index = -1;
+      this.comparisonList.forEach((product, i) => {
+        let mileage = Number(product.mileage);
+        if (mileage < minMileage) {
+          minMileage = mileage;
+          index = i;
+        }
+      });
+      return index;
+    },
+    maxCylinderCapacityIndex() {
+      let maxCapacity = 0;
+      let index = -1;
+      this.comparisonList.forEach((product, i) => {
+        let capacity = Number(product.cylinderCapacity.split(' ')[0]);
+        if (capacity > maxCapacity) {
+          maxCapacity = capacity;
+          index = i;
+        }
+      });
+      return index;
     }
   },
   created() {
