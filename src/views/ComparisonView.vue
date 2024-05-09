@@ -272,7 +272,6 @@ progress::-moz-progress-bar {
 }
 .container {
   width: 100%;
-  max-width: 1200px;
   margin: 20px auto;
   padding: 20px;
   display: flex;
