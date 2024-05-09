@@ -185,7 +185,10 @@ export default {
       this.$emit('inputAirbag', this.airbag)
     },
     inputModel() {
-      this.$emit('inputModel', this.model)
+      if (this.model === null || this.model === '') {
+        this.$emit('showFullCatalog');
+      }
+      this.$emit('inputModel', this.model);
     },
     inputTransmission() {
       this.$emit('inputTransmission', this.transmission)

@@ -797,7 +797,7 @@ export default {
       this.fetchProvincia()
     },
     'vehicle.provincia'() {
-      this.fetchComunas() // Añade esto si gestionas comunas
+      this.fetchComunas()
     },
     selectedComfortFeatures(newVal) {
       this.vehicle.comfortFeatures = newVal
@@ -821,7 +821,7 @@ export default {
   border-radius: 4px;
   padding: 6px 12px;
   box-sizing: border-box;
-  resize: none; /* Esto desactiva la capacidad de cambiar el tamaño del textarea */
+  resize: none;
   margin-left: 9px;
 }
 
