@@ -163,7 +163,8 @@ export default {
     width: 35px;
     height: 35px;
     border: none;
-    left: 5px;
+    left: 85%;
+    margin-bottom: 15px;
     margin-top: 0;
 }
 .aplicate-button.accept-button {
