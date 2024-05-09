@@ -456,6 +456,45 @@ export default {
     }
   },
   methods: {
+    clear() {
+      this.vehicle = {
+        brand: '',
+        model: '',
+        year: '',
+        condition: '',
+        mileage: '',
+        fuel: '',
+        transmission: '',
+        driveTrain: '',
+        cylinderCapacity: '',
+        airbag: '',
+        price: '',
+        owners: '',
+        seguro: '',
+        doors: '',
+        interiorColor: '',
+        exteriorColor: '',
+        description: '',
+        region: '',
+        provincia: '',
+        comuna: '',
+        comfortFeatures: [],
+        insuranceOptions: [],
+        errorMessage: {
+          mileage: '',
+          year: '',
+          doors: '',
+          cylinderCapacity: '',
+          owners: '',
+          power: '',
+          groundClearance: ''
+        }
+      }
+      this.errorMessage = ''
+      this.successMessage = ''
+      this.imagePreviews = []
+      this.filesToUpload = []
+    },
     formatKMInput() {
       let value = this.vehicle.mileage.replace(/[\D]/g, '')
       value = parseInt(value, 10)
@@ -734,6 +773,7 @@ export default {
         this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {
           this.successMessage = ''
+          this.clear()
         }, 2000)
         const response = await axios.post('http://localhost:8080/posts', vehicleData)
         console.log('Response from the server:', response.data)
@@ -797,7 +837,7 @@ export default {
       this.fetchProvincia()
     },
     'vehicle.provincia'() {
-      this.fetchComunas() // Añade esto si gestionas comunas
+      this.fetchComunas()
     },
     selectedComfortFeatures(newVal) {
       this.vehicle.comfortFeatures = newVal
@@ -821,7 +861,7 @@ export default {
   border-radius: 4px;
   padding: 6px 12px;
   box-sizing: border-box;
-  resize: none; /* Esto desactiva la capacidad de cambiar el tamaño del textarea */
+  resize: none;
   margin-left: 9px;
 }
 

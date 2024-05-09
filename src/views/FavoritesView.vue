@@ -147,10 +147,10 @@ export default {
 
 <style scoped>
 .favorite-info h2 {
-  margin-bottom: 0.5rem; /* Reducir el margen inferior entre h2 y los párrafos */
+  margin-bottom: 0.5rem;
 }
 .favorite-info p {
-  margin-bottom: 0.2rem; /* Reducir el margen inferior entre los párrafos */
+  margin-bottom: 0.2rem;
 }
 .containerFav input {
   position: absolute;
@@ -230,21 +230,21 @@ export default {
 }
 .title {
   margin-top: 2rem;
-  display: flex; /* Agregado */
-  align-items: center; /* Agregado */
+  display: flex; 
+  align-items: center; 
 }
 .title-car {
   position: relative;
   color: black;
   font-size: 1.5em;
   font-weight: bold;
-  display: inline-block; /* Asegura que el título del automóvil se comporte como un elemento en línea */
+  display: inline-block;
 }
 .description {
   text-align: justify;
   color: black;
   font-size: 15px;
-  max-height: 5.8rem; /* Establece una altura máxima para .description */
+  max-height: 5.8rem;
   overflow-y: auto;
   padding-right: 15px;
 }
@@ -255,22 +255,22 @@ export default {
 }
 
 .imageContainer {
-  height: 18em; /* Altura en em */
+  height: 18em;
   overflow: hidden;
 }
 .favorites-container {
-  width: 90%; /* Establece el ancho del contenedor */
-  margin: 0 auto; /* Centra el contenedor */
+  width: 90%;
+  margin: 0 auto;
   justify-content: center;
   align-items: center;
 }
 
 .favorite-card {
   position: relative;
-  width: calc(33% - 20px); /* Ancho de la tarjeta */
-  margin: 10px; /* Margen entre las tarjetas */
-  padding: 1em; /* Relleno de la tarjeta */
-  box-sizing: border-box; /* Incluye el relleno en el cálculo del tamaño */
+  width: calc(33% - 20px);
+  margin: 10px;
+  padding: 1em;
+  box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -306,7 +306,7 @@ export default {
 
 .favorites-list {
   display: flex;
-  flex-wrap: wrap; /* Permite que las tarjetas se envuelvan automáticamente */
+  flex-wrap: wrap;
 }
 
 .navigation {

@@ -168,6 +168,12 @@ export default {
         this.isLoading = false
       }
     },
+
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)
+      this.$router.push({ name: 'comparison' })
+    },
+
     async fetchFavorites() {
       const userId = this.$store.state.user._id
       try {
