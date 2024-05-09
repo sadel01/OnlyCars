@@ -7,9 +7,23 @@
     <main class="vehicle-listing" v-if="!isLoadingCar">
       <div class="vehicle-header">
         <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
-        <p class="vehicle-price">${{ product.price }} CLP</p>
+        <label class="containerFav" @click.stop="addToFavorites(product)">
+  <input type="checkbox" :checked="isFavorite(product)" />
+  <div class="checkmark">
+    <svg viewBox="0 0 256 256" >
+      <rect fill="none" height="256" width="256"></rect>
+      <path
+        d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
+        stroke-width="25px"
+        stroke="#333"
+        fill="none"
+      ></path>
+    </svg>
+  </div>
+</label>
+        
       </div>
-
+      <p class="vehicle-price">${{ product.price }} CLP</p>
       <!-- Sección principal del vehículo -->
       <section class="vehicle-section">
         <!-- Carrusel de imágenes del vehículo -->
@@ -38,7 +52,11 @@
               </p>
               <p>
                 <img src="@/assets/icons/engine.svg" class="icon" alt="Motor" />
-                <strong>Motor: </strong> {{ product.engine }}
+                <strong>Cilindraje: </strong> {{ product.cylinderCapacity }}
+              </p>
+              <p>
+                <img src="@/assets/icons/horse.svg" class="icon" alt="Potencia" />
+                <strong>Potencia: </strong> {{ product.power }} HP
               </p>
             </div>
             <!-- Columna derecha -->
@@ -55,10 +73,14 @@
                 <img src="@/assets/icons/camera-solid.svg" class="icon" alt="Cámara trasera" />
                 <strong>Cámara trasera: </strong> {{ product.hasBackupCamera ? 'Sí' : 'No' }}
               </p>
+              <p>
+                <img src="@/assets/icons/suspension.svg" class="icon" alt="Suspensión" />
+                <strong>Suspensión: </strong> {{ product.suspensionType }}
+              </p>
             </div>
           </div>
           <!-- Botón de contacto -->
-          <button @click="contactSeller" class="btn-contact-seller">Iniciar chat</button>
+          <button @click="contactSeller" class="btn-contact-seller"><span> Iniciar chat</span></button>
         </div>
       </section>
 
@@ -144,11 +166,11 @@
               <span class="boldd">Color exterior:</span> {{ product.exteriorColor }}
             </div>
             <div class="detail-row">
-              <span class="boldd">Capacidad cilindraje:</span> {{ product.cylinderCapacity }}
+              <span class="boldd">Tipo neumático:</span> {{ product.tireType }}
             </div>
             <div class="detail-row">
               <span class="boldd">Airbag:</span>
-              {{ product.airbag ? 'Yes' : 'No' }}
+              {{ product.airbag ? 'Sí' : 'No' }}
             </div>
           </div>
         </div>
@@ -213,6 +235,7 @@ export default {
       errorMessage: '',
       isDetailsVisible: false,
       chat: null,
+      cars: [],
       isVerificated: false,
     }
   },
@@ -228,6 +251,62 @@ export default {
     }
   },
   methods: {
+    async addToFavorites(product) {
+      try {
+        if (!this.$store.state.user) {
+          this.$router.push('/login');
+          return;
+        }
+
+        this.isLoading = true
+        const user = this.$store.state.user
+        const vehicleData = {
+          userId: user._id,
+          postId: product._id
+        }
+        if (this.isFavorite(product)) {
+          // Si el producto ya está en favoritos, lo eliminamos
+          await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
+        } else {
+          // Si el producto no está en favoritos, lo agregamos
+          await axios.post('http://localhost:8080/favorites', vehicleData)
+        }
+        // Actualizamos la lista de favoritos
+        await this.fetchFavorites()
+      } catch (error) {
+        this.errorMessage = 'Error al actualizar los favoritos'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 1500)
+        console.error('Error al actualizar los favoritos:', error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async fetchFavorites() {
+      try {
+        const userId = this.$store.state.user._id;
+        const response = await axios.get('http://localhost:8080/favorites', {
+          params: { userId: userId }
+        });
+
+        // Verificar si la respuesta contiene datos de autos favoritos
+        if (response.data && Array.isArray(response.data)) {
+          this.cars = response.data;
+        } else {
+          console.error('La respuesta del servidor no contiene datos de autos favoritos válidos:', response);
+        }
+      } catch (error) {
+        console.error('Error al obtener los autos favoritos:', error);
+      }
+    },
+    isFavorite(product) {
+      if (this.cars) {
+        return this.cars.some((car) => car._id === product._id);
+      } else {
+        return false;
+      }
+    },
     toggleDetails() {
       this.isDetailsVisible = !this.isDetailsVisible
     },
@@ -285,11 +364,19 @@ export default {
     }
   },
   async created() {
+    // Primero, cargamos los favoritos
+    await this.fetchFavorites();
+
+    // Luego, obtenemos el producto actual
     const id = this.$route.params.id
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
-      
+
+      // Verificamos si el producto actual está en favoritos
+      if (this.product) {
+        this.product.isFavorited = this.isFavorite(this.product);
+      }
     } catch (error) {
       console.error(error)
     }
@@ -306,6 +393,7 @@ export default {
   }
 }
 </script>
+
 
 <style scoped>
 /*Si pueden corregir userNameverifacted verifacion para que que queden alineados con el nombre 
@@ -326,8 +414,85 @@ del usuario y el icono de verificado seria genial ;D
   margin-left: 10px;
 }
 
+.vehicle-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  margin-top: 1rem;
+}
+.containerFav input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.containerFav {
+  display: block;
+  position: relative;
+  right: 2%;
+  cursor: pointer;
+  user-select: none;
+  transition: 100ms;
+  margin-left: 3rem;
+}
+
+.checkmark {
+  top: 7rem;
+  left: 0;
+  height: 2.5em;
+  width: 2.5em;
+  transition: 100ms;
+  animation: dislike_effect 400ms ease;
+}
+
+.containerFav input:checked ~ .checkmark path {
+  fill: #fbc40e;
+  stroke-width: 0;
+  height: 2.5em;
+  width: 2.5em;
+}
+
+.containerFav input:checked ~ .checkmark {
+  animation: like_effect 400ms ease;
+}
+
+.containerFav:hover {
+  transform: scale(1.1);
+}
+
+@keyframes like_effect {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes dislike_effect {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
 .main-container {
   min-height: 100vh;
+  
 }
 
 .loading-container {
@@ -623,6 +788,7 @@ strong {
 .vehicle-price {
   font-size: 28px;
   color: #fbc40e;
+  margin-top: 0.5rem;
 }
 
 .vehicle-specs-container {
@@ -639,14 +805,51 @@ strong {
 }
 
 .btn-contact-seller {
-  padding: 10px 40px;
-  background-color: #fbc40e;
-  color: black;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
+  margin-top: 3%;
+  margin-bottom: 5%;
+  margin-left: 2.5%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #fbc40e;
+  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
   cursor: pointer;
-  margin-top: auto;
+  border: none;
+  padding: 3% 20%;
+}
+.btn-contact-seller:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #c19400;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+}
+
+.btn-contact-seller:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+.btn-contact-seller span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+.btn-contact-seller:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
 }
 
 .user-container,

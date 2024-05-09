@@ -17,7 +17,7 @@
               sint incidunt ipsa repudiandae, pariatur totam atque praesentium.
             </p>
             <RouterLink to="/sell" class="boton">
-              <button class="botonVendeAuto">Vende tu auto</button>
+              <button class="botonVendeAuto"><span>Vende tu auto</span></button>
             </RouterLink>
           </div>
         </div>
@@ -26,10 +26,21 @@
   </div>
 </template>
 
+
 <style scoped>
+@keyframes wipe-in-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 .content-wrapper {
+  animation: 5s cubic-bezier(.25, 1, .30, 1) wipe-in-right both;
   display: flex;
-  align-items: center;
+  align-items: center; /* Alinea los elementos hijos verticalmente en el centro */
   justify-content: center;
   gap: 4rem;
   margin: 0 5%;
@@ -61,6 +72,7 @@
 
 .text-block {
   padding: 1rem;
+  padding-top: 7rem;
 }
 
 .title {
@@ -69,67 +81,49 @@
   font-weight: bold;
 }
 
-.botonVendeAuto{
-  font-weight: bold;
-  padding: 10px 30px;
-}
-
-button {
-  appearance: none;
-  background-color: #fbc40e;
-  border: 1px solid rgba(27, 31, 35, 0.15);
-  border-radius: 6px;
-  box-shadow:
-    rgba(27, 31, 35, 0.04) 0 1px 0,
-    rgba(255, 255, 255, 0.25) 0 1px 0 inset;
-  box-sizing: border-box;
-  color: #24292e;
-  cursor: pointer;
-  display: inline-block;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  list-style: none;
-  padding: 6px 16px;
+.botonVendeAuto {
   position: relative;
-  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  vertical-align: middle;
-  white-space: nowrap;
-  word-wrap: break-word;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #fbc40e;
+  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 1.6% 3.7%;
+}
+.botonVendeAuto:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #c19400;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
 }
 
-button:hover {
-  background-color: #fad55c;
+.botonVendeAuto:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+.botonVendeAuto span {
+  text-align: center;
   text-decoration: none;
-  transition-duration: 0.1s;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
 }
-
-button:disabled {
-  background-color: #fbc40e;
-  border-color: rgba(27, 31, 35, 0.15);
-  color: #e0af0e;
-  cursor: default;
-}
-
-button:active {
-  background-color: #f8e39d;
-  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
-  transition: none 0s;
-}
-
-button:focus {
-  outline: 1px transparent;
-}
-
-button:before {
-  display: none;
-}
-
-button:-webkit-details-marker {
-  display: none;
+.botonVendeAuto:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
 }
 
 @media (max-width: 768px) {
@@ -155,10 +149,6 @@ button:-webkit-details-marker {
     font-size: 1.5rem;
   }
 
-  button {
-    font-size: 18px;
-    padding: 0.75rem;
-  }
 }
 
 @media (max-width: 480px) {
@@ -166,9 +156,5 @@ button:-webkit-details-marker {
     font-size: 1.25rem;
   }
 
-  button {
-    font-size: 18px;
-    padding: 0.75rem;
-  }
 }
 </style>
