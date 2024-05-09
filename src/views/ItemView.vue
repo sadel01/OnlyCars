@@ -237,9 +237,8 @@ export default {
       isDetailsVisible: false,
       chat: null,
       cars: [],
-      isLoadingCar: true
-      isVerificated: false,
-
+      isLoadingCar: true,
+      isVerificated: false
     }
   },
   components: {
