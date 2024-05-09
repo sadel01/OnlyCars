@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Navbar />
     <main>
       <div class="content-wrapper">
         <div class="text-container">
@@ -24,16 +23,6 @@
   </div>
 </template>
 
-<script>
-import Navbar from '@/components/Navbar.vue'
-
-export default {
-  components: {
-    Navbar
-  }
-}
-</script>
-
 <style scoped>
 @keyframes wipe-in-left {
   from {
@@ -45,7 +34,7 @@ export default {
 }
 
 .content-wrapper {
-  animation: 6s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-left both;
+  animation: 6s cubic-bezier(.25, 1, .30, 1) wipe-in-left both;
 }
 .content-wrapper {
   display: flex;

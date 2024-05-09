@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Navbar />
     <main>
       <div class="content-wrapper">
         <div class="image-container">
@@ -25,16 +24,6 @@
     </main>
   </div>
 </template>
-
-<script>
-import Navbar from '@/components/Navbar.vue'
-
-export default {
-  components: {
-    Navbar
-  }
-}
-</script>
 
 <style scoped>
 @keyframes wipe-in-right {
