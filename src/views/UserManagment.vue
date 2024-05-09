@@ -20,7 +20,6 @@
                         <th>Mail</th>
                         <th>Rol</th>
                         <th>Tipo</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
@@ -43,13 +42,24 @@
             </table>
         </div>
         
-    </div>
-|       <div class="buttons-container" :class="{ 'hidden': dataChanged }">
-        <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
-        <button class="aplicate-button" @click="rehacerCambio()">Rehacer</button>
-    </div>
-    </div>
+        </div>
+    |       <div class="buttons-container" :class="{ 'hidden': dataChanged }">
+            <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
+            <button class="aplicate-button" @click="rehacerCambio()">Rehacer</button>
+        
+        </div>
+        <div class="modal" v-if="showModal">
+            <div class="modal-content">
+                <button class="aplicate-button close-button " @click="closeModal()">x</button>
+                 <p class="pop-up-text">¡Tus cambios se han realizado con exito!</p>
+                <button class="aplicate-button accept-button" @click="closeModal()">Aceptar</button>
+            </div>
+        </div>
+        <div class="modal-overlay" v-if="showModal"></div>
 
+        
+    </div>
+   
 </template>
 
 
@@ -64,7 +74,8 @@ export default {
             searchEmail: '',
             searchRut: '',
             searchLastName: '',
-            dataChanged: false
+            dataChanged: false,
+            showModal: false
         }
     },
     async created() {
@@ -93,9 +104,12 @@ export default {
                 user.originalTipo = user.tipo;
             }
 
-            console.log('Se aplicaron cambios a :', changedUsers);
+            
+            
             this.dataChanged = false;
-            alert('Se aplicaron los cambios');
+
+            this.showModal = true;
+            
         },
         async rehacerCambio() {
             const changedUsers = this.users.filter(user => user.tipo !== user.originalTipo);
@@ -104,7 +118,10 @@ export default {
                 user.tipo = user.originalTipo;
             }
             this.dataChanged = false;
-        }
+        },
+        closeModal() {
+            this.showModal = false;
+        },
 
     }
 
@@ -113,6 +130,52 @@ export default {
 </script>
 
 <style scoped>
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+}
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    height: 200px;
+    width: 400px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    animation: modalAppear 0.5s ease-out;
+}
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    height: 100%;
+}
+.aplicate-button.close-button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    left: 5px;
+    margin-top: 0;
+}
+.aplicate-button.accept-button {
+    border: none;
+    left: 65%;
+}
+.pop-up-text {
+    margin-left: 12%;
+    color: #1a1a1a;
+}
+
+
 .buttons-container {
     display: flex;
     position: relative;
@@ -307,5 +370,16 @@ input {
     overflow-x:auto;
     height: 90vh;
     margin-bottom: 1rem;
+}
+
+@keyframes modalAppear {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
 }
 </style>
