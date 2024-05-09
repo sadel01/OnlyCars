@@ -43,7 +43,7 @@
           <div class="card">
             <FontAwesomeIcon :icon="faWrench" class="icono" />
             <div class="text-container">
-              <p class="fecha-text"><strong>Motor</strong></p>
+              <p class="fecha-text"><strong>Cilindraje</strong></p>
               <p class="year-text">{{ product.cylinderCapacity }}</p>
             </div>
           </div>
@@ -93,6 +93,7 @@ export default {
       slide: 0
     }
   },
+
   methods: {
     closePanel() {
       this.$emit('close')
@@ -115,7 +116,6 @@ export default {
 </script>
 
 <style scoped>
-
 .productText {
   font-size: 15px;
   color: black;
@@ -169,7 +169,7 @@ export default {
   width: 120px;
 }
 
-.cards-container{
+.cards-container {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -200,7 +200,7 @@ export default {
 }
 
 .verMas {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-optical-sizing: auto;
   font-size: 16px;
   margin: auto;

@@ -1,8 +1,6 @@
 <template>
   <div class="searchContainer">
-    <FontAwesomeIcon :icon="faCar" class="icono-marca" />
     <div class="searchItems">
-      <FontAwesomeIcon :icon="faPhone" class="iconos" />
       <input
         class="inputCarName"
         type="text"
@@ -134,7 +132,6 @@
 
 <script>
 import axios from 'axios'
-import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 export default {
   components: {
@@ -142,6 +139,7 @@ export default {
   },
   data() {
     return {
+      isLoading: true,
       searchTerm: '',
       brands: [],
       models: [],
@@ -185,7 +183,10 @@ export default {
       this.$emit('inputAirbag', this.airbag)
     },
     inputModel() {
-      this.$emit('inputModel', this.model)
+      if (this.model === null || this.model === '') {
+        this.$emit('showFullCatalog');
+      }
+      this.$emit('inputModel', this.model);
     },
     inputTransmission() {
       this.$emit('inputTransmission', this.transmission)

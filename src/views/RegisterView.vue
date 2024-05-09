@@ -197,7 +197,9 @@ export default {
         rut: this.rut,
         mail: this.mail,
         password: this.password,
-        confirmPassword: this.confirmPassword
+        confirmPassword: this.confirmPassword,
+        rol : 'user',
+        tipo: 'normal'
       })
       if (response.data.success) {
         this.nombre = '';
@@ -313,6 +315,7 @@ export default {
   align-items: center;
   padding-top: 5%;
   padding-bottom: 6%;
+  height: 75vh;
 }
 .login-box {
   display: flex;

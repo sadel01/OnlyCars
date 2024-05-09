@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="wrapper">
-      <nav>
+      <nav v-if="!user || user.rol !== 'admin'">
         <RouterLink to="/" class="logo-container">
           <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
@@ -14,8 +14,43 @@
           <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
         </div>
         <div class="nav-buttons" :class="{ active: navActive }">
+          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"
+            ><font-awesome-icon :icon="['fas', 'message']" class="iconNavbar"
+          /></RouterLink>
+          <RouterLink to="/favorites" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"
+            ><font-awesome-icon :icon="['fas', 'heart']" class="iconNavbar"
+          /></RouterLink>
+
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" /> {{ user.nombre + ' ' + user.apellido }}
+            <FontAwesomeIcon :icon="faUser" class="iconUser" />
+            {{ user.nombre + ' ' + user.apellido }}
+          </RouterLink>
+          <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
+            <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
+          </RouterLink>
+          <RouterLink v-if="!user" to="/register" class="nav-button" @click="closeNav"
+            >Registrarse</RouterLink
+          >
+        </div>
+      </nav>
+
+      <nav v-else>
+        <RouterLink to="/AdminView" class="logo-container">
+          <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
+        </RouterLink>
+        <div class="nav-links" :class="{ active: navActive }">
+          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav"
+            >Catálogo</RouterLink
+          >
+          <RouterLink to="/userManagment" class="nav-link" @click="closeNav"
+            >Gestionar Usuarios</RouterLink
+          >
+        </div>
+
+        <div class="nav-buttons" :class="{ active: navActive }">
+          <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
+            <FontAwesomeIcon :icon="faUser" class="iconUser" />
+            {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
@@ -47,6 +82,8 @@ const closeNav = () => {
   navActive.value = false
 }
 
+const isLoggedIn = computed(() => store.state.user !== null)
+
 const user = computed(() => store.state.user)
 </script>
 
@@ -58,6 +95,14 @@ const user = computed(() => store.state.user)
   padding: 0 20px;
   background-color: #1f1f1f;
   height: 60px;
+}
+
+.iconUser {
+  margin-right: 5px;
+}
+
+.iconNavbar {
+  font-size: 18px;
 }
 
 nav {
@@ -94,9 +139,8 @@ nav {
   justify-content: flex-start;
   flex-grow: 1;
 }
-.nav-link:hover{
-  color: #FBC40E;
-
+.nav-link:hover {
+  color: #fbc40e;
 }
 
 .nav-link,
@@ -118,11 +162,11 @@ nav {
   flex-grow: 1;
   color: #fbc40e;
 }
-.nav-button:hover{
+.nav-button:hover {
   color: #c19400;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .hamburger {
     display: block;
   }

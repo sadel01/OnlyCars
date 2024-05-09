@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Navbar />
     <main>
       <div class="content-wrapper">
         <div class="text-container">
@@ -24,11 +23,19 @@
   </div>
 </template>
 
-<script setup>
-import { RouterLink } from 'vue-router'
-</script>
-
 <style scoped>
+@keyframes wipe-in-left {
+  from {
+    clip-path: inset(0 0 0 100%);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.content-wrapper {
+  animation: 6s cubic-bezier(.25, 1, .30, 1) wipe-in-left both;
+}
 .content-wrapper {
   display: flex;
   align-items: center;

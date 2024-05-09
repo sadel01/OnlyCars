@@ -30,8 +30,31 @@ const upload = multer({ storage: storage })
 // Configuracion de CORS para permitir la conexion entre el cliente y el servidor
 const corsOptions = {
   origin: 'http://localhost:5173',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
+}
+
+function appendFuelUnit(cylinderCapacity, fuelType) {
+  let unit
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+    unit = ' L'
+  } else if (fuelType === 'Eléctrico') {
+    unit = ' kW'
+  } else {
+    unit = ''
+  }
+  return cylinderCapacity + unit
+}
+function appendPotencyUnit(power, fuelType) {
+  let unit
+  if (fuelType === 'Gasolina' || fuelType === 'Diésel') {
+    unit = ' HP'
+  } else if (fuelType === 'Eléctrico') {
+    unit = ' kWh'
+  } else {
+    unit = ''
+  }
+  return power + unit
 }
 
 app.use(cors(corsOptions))
@@ -73,17 +96,9 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', () => {
-    // Cuando un cliente se desconecta, se puede manejar aquí
+    console.log('user disconnected')
   })
 })
-
-function formatCurrency(value) {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0
-  }).format(value)
-}
 
 app.get('/catalog/:id', async (req, res) => {
   const id = req.params.id
@@ -97,40 +112,40 @@ app.get('/catalog/:id', async (req, res) => {
   }
 })
 
-app.get('/regions', async (req, res) => { 
-  try { 
-    const database = client.db('onlycars') 
-    const collection = database.collection('location') 
-    const regions = await collection.distinct('region') 
-    res.send(regions) 
-  } catch (error) { 
-    res.status(500).send(error.message) 
-  } 
-}) 
- 
-app.get('/provincia/:region', async (req, res) => { 
-  const region = req.params.region; 
-  try { 
-    const database = client.db('onlycars'); 
-    const collection = database.collection('location'); 
-    const provincias1 = await collection.distinct('provincia', { region: region }); 
-    res.send(provincias1); // Asegúrate de que este mapeo es correcto 
-  } catch (error) { 
-    res.status(500).send(error.message); 
-  } 
-}); 
- 
-app.get('/comuna/:provincia', async (req, res) => { 
-  const provincia = req.params.provincia; 
-  try { 
-    const database = client.db('onlycars'); 
-    const collection = database.collection('location'); 
-    const comuna = await collection.find({ provincia: provincia }).toArray(); 
-    res.send(comuna.map(comuna => comuna.comuna)); // Asegúrate de que este mapeo es correcto 
-  } catch (error) { 
-    res.status(500).send(error.message); 
-  } 
-}); 
+app.get('/regions', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('location')
+    const regions = await collection.distinct('region')
+    res.send(regions)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/provincia/:region', async (req, res) => {
+  const region = req.params.region
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('location')
+    const provincias1 = await collection.distinct('provincia', { region: region })
+    res.send(provincias1) // Asegúrate de que este mapeo es correcto
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/comuna/:provincia', async (req, res) => {
+  const provincia = req.params.provincia
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('location')
+    const comuna = await collection.find({ provincia: provincia }).toArray()
+    res.send(comuna.map((comuna) => comuna.comuna)) // Asegúrate de que este mapeo es correcto
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
 
 app.post('/register', async (req, res) => {
   try {
@@ -144,11 +159,13 @@ app.post('/register', async (req, res) => {
   }
 })
 
-app.post('/postsPrueba', async (req, res) => {
+app.post('/posts', async (req, res) => {
   try {
     const database = client.db('onlycars')
     const collection = database.collection('posts') // SE DEBE CAMBIAR postsPrueba POR posts
     req.body.price = req.body.price.replace('$', '')
+    req.body.cylinderCapacity = appendFuelUnit(req.body.cylinderCapacity, req.body.fuel)
+    req.body.power = appendPotencyUnit(req.body.power, req.body.fuel)
     const result = await collection.insertOne(req.body)
     res.send({ message: 'Item publicado con éxito', itemId: result.insertedId })
   } catch (error) {
@@ -172,7 +189,9 @@ app.post('/login', async (req, res) => {
             nombre: user.nombre,
             apellido: user.apellido,
             rut: user.rut,
-            mail: user.mail
+            mail: user.mail,
+            rol : user.rol,
+            tipo : user.tipo
           }
         })
         console.log('Inicio de sesion exitoso')
@@ -231,6 +250,7 @@ app.post('/chat/startChat', async (req, res) => {
     const collection = database.collection('chat')
     let chat = await collection.findOne({ buyerID, sellerID, productID })
 
+    console.log('SE ENTRA A STARTCHAT')
     if (!chat) {
       if (buyerID === sellerID) {
         const chats = await collection.find({ sellerID }).toArray()
@@ -238,6 +258,7 @@ app.post('/chat/startChat', async (req, res) => {
         return
       }
       chat = await collection.insertOne({ buyerID, sellerID, productID, messages: [] })
+      res.send(chat)
     } else {
       res.send(chat)
     }
@@ -249,8 +270,8 @@ app.post('/chat/startChat', async (req, res) => {
 app.post('/chat/:id', async (req, res) => {
   try {
     const id = req.params.id
-    const message = req.body.message.text
-    const user = req.body.message.user
+    const message = req.body.message
+    const user = req.body.user
     const database = client.db('onlycars')
     const collection = database.collection('chat')
     const chat = await collection.findOne({ _id: new ObjectId(id) })
@@ -263,7 +284,6 @@ app.post('/chat/:id', async (req, res) => {
       { $push: { messages: { text: message, user: user } } }
     )
     res.send(chat)
-
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -303,33 +323,51 @@ app.get('/findChat', async (req, res) => {
   }
 })
 
-app.get('/findSellerChats', async (req, res) => {
+app.get('/findUserChats', async (req, res) => {
   try {
-    const sellerID = req.query.sellerID
+    const userID = req.query.userID
     const database = client.db('onlycars')
     const collection = database.collection('chat')
-    const chats = await collection.find({ sellerID }).toArray()
-    const chatIds = chats.map((chat) => chat._id)
+    const chats = await collection
+      .find({ $or: [{ buyerID: userID }, { sellerID: userID }] })
+      .toArray()
 
     const userCollection = database.collection('users')
     const productCollection = database.collection('posts')
     const chatsWithBuyerDetails = await Promise.all(
       chats.map(async (chat) => {
         const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+        const seller = await userCollection.findOne({ _id: new ObjectId(chat.sellerID) })
         const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+
+        let otherUserName = ''
+        let otherUserLastName = ''
+
+        if (chat.buyerID === userID) {
+          otherUserName = seller ? seller.nombre : ''
+          otherUserLastName = seller ? seller.apellido : ''
+        } else {
+          otherUserName = buyer ? buyer.nombre : ''
+          otherUserLastName = buyer ? buyer.apellido : ''
+        }
+
         return {
           ...chat,
           buyerName: buyer ? buyer.nombre : '',
           buyerLastName: buyer ? buyer.apellido : '',
+          sellerName: seller ? seller.nombre : '',
+          sellerLastName: seller ? seller.apellido : '',
+          otherUserName: otherUserName,
+          otherUserLastName: otherUserLastName,
           brand: product ? product.brand : '',
-          model: product ? product.model : ''
+          model: product ? product.model : '',
+          product: product ? product : {}
         }
       })
     )
 
     res.send(chatsWithBuyerDetails)
     console.log('chats encontrados')
-    console.log(chatsWithBuyerDetails)
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -348,6 +386,7 @@ app.get('/findSpecificChat', async (req, res) => {
     console.log('chat no encontrado')
   }
 })
+
 app.get('/users/:id', async (req, res) => {
   try {
     const id = req.params.id
@@ -360,6 +399,92 @@ app.get('/users/:id', async (req, res) => {
   }
 })
 
+// Manejo de solicitudes para agregar y obtener de favoritos
+
+app.post('/favorites', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
+
+    const result = await collection.updateOne(
+      { userId: userId },
+      { $addToSet: { postIds: postId } },
+      { upsert: true }
+    )
+
+    if (result.modifiedCount === 0) {
+      res.send({ message: 'Item ya estaba en favoritos' })
+    } else {
+      res.send({ message: 'Item agregado a favoritos' })
+    }
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/favorites', async (req, res) => {
+  console.log('Obteniendo favoritos')
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const userId = req.query.userId
+    console.log(userId)
+    const favorites = await collection.findOne({ userId: userId })
+    console.log(favorites.postIds)
+    const productCollection = database.collection('posts')
+    const products = await productCollection
+      .find({ _id: { $in: favorites.postIds.map((id) => new ObjectId(id)) } })
+      .toArray()
+    res.send(products)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.delete('/favorites', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('favorites')
+    const { userId, postId } = req.body
+
+    const result = await collection.updateOne({ userId: userId }, { $pull: { postIds: postId } })
+
+    if (result.modifiedCount === 0) {
+      res.send({ message: 'Item no estaba en favoritos' })
+    } else {
+      res.send({ message: 'Item eliminado de favoritos' })
+    }
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get("/admin/users", async (req, res) => {
+  try {
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const users = await collection.find().toArray();
+    res.send(users);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
+app.post("/admin/users/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("onlycars");
+    const collection = database.collection("users");
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: req.body }
+    );
+    res.send({ message: "Usuario actualizado con éxito" });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

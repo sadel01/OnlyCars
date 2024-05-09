@@ -1,16 +1,22 @@
 <template>
   <main>
     <div v-if="comparisonList.length" class="comparisonBar">
-      <div v-for="item in comparisonList" :key="item.id" class="comparisonItem">
-        {{ item.brand }} {{ item.model }}
-        <button @click="toggleComparison(item)">Quitar</button>
+      <div class="comparisonItemsContainer">
+        <div v-for="item in comparisonList" :key="item.id" class="comparisonItem">
+          <img :src="item.image" alt="Product image" class="smallImage" />
+          {{ item.brand }} {{ item.model }}
+          <button @click="toggleComparison(item)" class="removeButton">
+            <i class="fa-regular fa-trash-can"></i>
+          </button>
+        </div>
       </div>
+      <button class="compareButton" v-on:click="goToComparisonView">Comparar</button>
     </div>
     <div class="principalContainer">
       <div class="container listContainer">
         <ul class="list">
           <li
-            v-for="product in paginatedProducts"
+            v-for="product in productsWithComparisonState"
             :key="product.id"
             @click="showProductDetail(product)"
           >
@@ -19,8 +25,23 @@
                 <img :src="product.image[0]" alt="product image" class="imagenes" />
               </div>
               <div class="vehicleDescription">
-                <div>
+                <div class="productTitleWithCheckmark">
                   <p class="productText productTitle">{{ product.brand }} {{ product.model }}</p>
+
+                  <label class="containerFav" @click.stop="addToFavorites(product)">
+                    <input type="checkbox" :checked="isFavorite(product)" />
+                    <div class="checkmark">
+                      <svg viewBox="0 0 256 256">
+                        <rect fill="none" height="256" width="256"></rect>
+                        <path
+                          d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
+                          stroke-width="20px"
+                          stroke="black"
+                          fill="none"
+                        ></path>
+                      </svg>
+                    </div>
+                  </label>
                 </div>
                 <div class="description">
                   <div class="detail">
@@ -37,14 +58,26 @@
                       {{ product.transmission }}
                     </p>
                   </div>
-                  <div class="detail">
-                    <button @click="toggleComparison(product)">Comparar</button>
+                  <div class="detailButtons">
+                    <div class="detail">
+                      <button
+                        @click.stop="toggleComparison(product)"
+                        :class="{ plus: !product.isCompared, minus: product.isCompared }"
+                      >
+                        <font-awesome-icon
+                          :icon="product.isCompared ? 'circle-minus' : 'circle-plus'"
+                        />
+                        {{ product.isCompared ? ' Comparar' : ' Comparar' }}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="productPrice">
                   <p class="productText productPriceNumber">${{ product.price }} CLP</p>
+                  <button @click="viewMore(product._id)" class="verMas2">
+                    <span>Ver más</span>
+                  </button>
                 </div>
-                <button @click="viewMore(product._id)" class="verMas2"><span>Ver más</span></button>
               </div>
             </div>
           </li>
@@ -82,7 +115,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { faCar } from '@fortawesome/free-solid-svg-icons'
 import mileageIcon from '@/assets/icons/mileage.svg'
 import gearboxIcon from '@/assets/icons/gearbox.svg'
-
+import 'sweetalert2/dist/sweetalert2.min.css'
 import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
 import axios from 'axios'
@@ -97,28 +130,86 @@ export default {
       selectedProduct: null,
       page: 1,
       perPage: 6,
-      isLargeScreen: window.innerWidth > 1280 || window.innerHeight > 1024
+      cars: [],
+      isLargeScreen: window.innerWidth > 1280 || window.innerHeight > 1024,
+      isLoading: false
     }
   },
   methods: {
-    isCompared(product) {
-      const compared = this.comparisonList.some((p) => p.id === product.id)
-      console.log(`Producto ${product.id} comparado:`, compared)
-      return compared
+    async addToFavorites(product) {
+      try {
+        if (!this.$store.state.user) {
+          this.$router.push('/login')
+          return
+        }
+
+        this.isLoading = true
+        const user = this.$store.state.user
+        const vehicleData = {
+          userId: user._id,
+          postId: product._id
+        }
+        if (this.isFavorite(product)) {
+          // Si el producto ya está en favoritos, lo eliminamos
+          await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
+        } else {
+          // Si el producto no está en favoritos, lo agregamos
+          await axios.post('http://localhost:8080/favorites', vehicleData)
+        }
+        // Actualizamos la lista de favoritos
+        await this.fetchFavorites()
+      } catch (error) {
+        this.errorMessage = 'Error al actualizar los favoritos'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 1500)
+        console.error('Error al actualizar los favoritos:', error)
+      } finally {
+        this.isLoading = false
+      }
     },
 
-    toggleComparison(product) {
-      const index = this.comparisonList.findIndex((p) => p._id === product._id)
-      if (index !== -1) {
-        // El producto ya está en la lista, así que lo eliminamos.
-        this.comparisonList.splice(index, 1)
-        product.isCompared = false
-      } else {
-        // El producto no está en la lista, así que lo agregamos.
-        product.isCompared = true
-        this.comparisonList.push(product)
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)
+      this.$router.push({ name: 'comparison' })
+    },
+
+    async fetchFavorites() {
+      const userId = this.$store.state.user._id
+      try {
+        const response = await axios.get('http://localhost:8080/favorites', {
+          params: {
+            userId: userId
+          }
+        })
+        this.cars = response.data
+      } catch (error) {
+        console.error('Error al obtener los autos favoritos:', error)
       }
-      console.log(this.comparisonList)
+    },
+    isFavorite(product) {
+      return this.cars.some((car) => car._id === product._id)
+    },
+    isCompared(product) {
+      const compared = this.comparisonList.some((p) => p._id === product._id)
+      console.log(`Producto ${product._id} comparado:`, compared)
+      return compared
+    },
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)
+      this.$router.push({ name: 'comparison' })
+    },
+    toggleComparison(product) {
+      const productIndex = this.comparisonList.findIndex((p) => p._id === product._id)
+      if (productIndex !== -1) {
+        this.comparisonList.splice(productIndex, 1)
+      } else {
+        if (this.comparisonList.length < 6) {
+          this.comparisonList.push(product)
+        } else {
+          alert('No puedes comparar más de 6 productos') //TOTALMENTE SUJETO A CAMBIOS GRACIAS, NO ME GUSTA EL ALERT
+        }
+      }
     },
 
     nextPage() {
@@ -162,12 +253,14 @@ export default {
     handleResize() {
       this.isLargeScreen = window.innerWidth > 1280 || window.innerHeight > 1024
       if (!this.isLargeScreen && this.selectedProduct) {
-        this.selectedProduct = null // Cierra el detalle del producto si la pantalla no es lo suficientemente grande
+        this.selectedProduct = null
       }
     }
   },
+  created() {
+    this.fetchFavorites()
+  },
   mounted() {
-    // Llama al método handleResize cuando se monta el componente
     this.handleResize()
     window.addEventListener('resize', () => {
       this.handleResize()
@@ -183,6 +276,12 @@ export default {
     ProductDetail
   },
   computed: {
+    productsWithComparisonState() {
+      return this.products.map((product) => ({
+        ...product,
+        isCompared: this.comparisonList.some((compProduct) => compProduct._id === product._id)
+      }))
+    },
     maxPage() {
       return Math.ceil(this.products.length / this.perPage)
     },
@@ -201,29 +300,238 @@ export default {
 </script>
 
 <style scoped>
-.compared {
-  background-color: red; /* El color que deseas para el botón cuando esté seleccionado */
+.containerFav input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
 }
-.not-compared {
-  /* Estilos para el botón cuando no está seleccionado */
+
+.containerFav {
+  display: block;
+  position: relative;
+  right: 2%;
+  cursor: pointer;
+  user-select: none;
+  transition: 100ms;
+}
+
+.checkmark {
+  top: 7rem;
+  left: 0;
+  height: 1.5em;
+  width: 1.5em;
+  transition: 100ms;
+  animation: dislike_effect 400ms ease;
+}
+
+.containerFav input:checked ~ .checkmark path {
+  fill: #fbc40e;
+  stroke-width: 0;
+}
+
+.containerFav input:checked ~ .checkmark {
+  animation: like_effect 400ms ease;
+}
+
+.containerFav:hover {
+  transform: scale(1.1);
+}
+
+@keyframes like_effect {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes dislike_effect {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.2);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.detail button {
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition:
+    background-color 0.3s,
+    transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.detail button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.detail button:focus {
+  outline: none;
+}
+
+.detail button.plus {
+  background-color: #fbc40e;
+  color: black;
+}
+
+.detail button.minus {
+  background-color: #1a1a1a;
+}
+
+.detailButtons {
+  display: flex;
+  margin-top: 10px;
+}
+
+.font-awesome-icon {
+  margin-right: 5px;
 }
 
 .comparisonBar {
-  width: 100%;
-  background-color: #f8f9fa;
-  color: black;
-  padding: 10px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: start;
+  padding: 10px;
+  background-color: #f0f8ff;
+  position: relative;
+  color: #f0f8ff;
+}
+
+.comparisonItemsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  padding-right: 30px;
+  min-height: 50px;
+  flex-grow: 1;
+}
+
+.compareButton {
+  appearance: none;
+  background-color: #fbc40e;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0;
+  box-sizing: border-box;
+  color: #24292e;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  list-style: none;
+  padding: 5px 15px;
+  position: absolute;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  word-wrap: break-word;
+  margin-left: auto;
+  height: 50px;
+  right: 10px;
+  margin-top: 10px;
+  top: center;
+  user-select: none;
+}
+
+.compareButton:hover {
+  background-color: #fad55c;
+  text-decoration: none;
+  transition-duration: 0.1s;
+}
+
+.compareButton:disabled {
+  background-color: #fbc40e;
+  border-color: rgba(27, 31, 35, 0.15);
+  color: #e0af0e;
+  cursor: default;
+}
+
+.compareButton:active {
+  background-color: #f8e39d;
+  box-shadow: rgba(225, 228, 232, 0.2) 0 1px 0 inset;
+  transition: none 0s;
+}
+
+.compareButton:focus {
+  outline: 1px transparent;
+}
+
+.compareButton:before {
+  display: none;
+}
+
+.compareButton:-webkit-details-marker {
+  display: none;
 }
 
 .comparisonItem {
-  display: inline-block;
-  margin: 0 10px;
+  display: flex;
+  align-items: center;
   padding: 5px 10px;
-  background-color: #e9ecef;
+  margin-right: 10px;
+  background-color: #cccccc5f;
+  border: 2px solid #0707072c;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   border-radius: 5px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  position: relative;
+  color: #000;
+  margin-top: 10px;
+  width: 210px;
+  height: 50px;
+  user-select: none;
+}
+.smallImage {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 5px;
+  user-select: none;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  margin-left: auto;
+  font-size: 20px;
+}
+
+.fas.fa-trash {
+  font-size: 18px;
+}
+
+.removeButton:hover {
+  color: #a3202a;
 }
 
 .productDetailOpen {
@@ -252,6 +560,10 @@ export default {
   margin-bottom: 4px;
 }
 
+.detailFav {
+  display: none;
+}
+
 .pageButton {
   position: relative;
   display: flex;
@@ -269,16 +581,19 @@ export default {
   font-size: 15px;
   border: 2px solid #fbc40e;
   transition: all 0.3s ease-in-out;
+  height: 2rem;
+  font-weight: bold;
 }
 
 .buttonPageActive {
-  background-color: #fbc40e;
+  background-color: #e9b302;
   transform: scale(1.13);
   border: 1px solid #fbc40e;
   font-weight: bold;
 }
 
 .buttonPage:hover {
+  cursor: pointer;
   background-color: #fbc40e;
   border: 1px solid #c19400;
   color: white;
@@ -297,7 +612,7 @@ export default {
   cursor: pointer;
   border: none;
   margin-left: 75%;
-  height: 3rem; /* Cambia esto a la altura que necesites */
+  height: 3rem;
   width: 20%;
   margin-bottom: 30%;
 }
@@ -355,6 +670,7 @@ export default {
 
 .principalContainer {
   display: flex;
+  max-width: 100%;
 }
 
 .product-detail {
@@ -417,6 +733,7 @@ export default {
 }
 
 .productCard:hover {
+  transform: scale(1.005);
   border: 2px solid #0707072c;
   box-shadow: 3px 4px 5px rgb(218, 218, 218);
   background-color: #cccccc5f;
@@ -440,12 +757,52 @@ export default {
   font-size: 20px;
 }
 
-@media screen and (max-width: 1280px) and (max-height: 1024px) {
+.productTitleWithCheckmark {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 1600px) {
   .product-detail {
     display: none;
   }
+
+  .productPrice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .checkmark {
+    height: 1.5em;
+    width: 1.5em;
+    transition: 100ms;
+    animation: dislike_effect 400ms ease;
+  }
+
   .verMas2 {
-    display: block;
+    display: flex;
+    border-radius: 5px;
+    background: #fbc40e;
+    box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    height: 2.5rem;
+    width: 20%;
+    margin: 0;
+    margin-right: 10px;
+  }
+
+  .productPriceNumber {
+    margin: 0;
+  }
+
+  .productTitleWithCheckmark {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>
