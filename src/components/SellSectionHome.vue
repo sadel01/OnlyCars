@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Navbar />
     <main>
       <div class="content-wrapper">
         <div class="image-container">
@@ -26,7 +25,6 @@
   </div>
 </template>
 
-
 <style scoped>
 @keyframes wipe-in-right {
   from {
@@ -38,7 +36,7 @@
 }
 
 .content-wrapper {
-  animation: 5s cubic-bezier(.25, 1, .30, 1) wipe-in-right both;
+  animation: 5s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-right both;
   display: flex;
   align-items: center; /* Alinea los elementos hijos verticalmente en el centro */
   justify-content: center;
@@ -148,13 +146,11 @@
   .title {
     font-size: 1.5rem;
   }
-
 }
 
 @media (max-width: 480px) {
   .title {
     font-size: 1.25rem;
   }
-
 }
 </style>
