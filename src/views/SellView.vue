@@ -768,7 +768,8 @@ export default {
             email: user.mail,
             rut: user.rut
           },
-          visitas: 0
+          visitas: 0,
+          fechaPublicacion: new Date().toISOString()
         }
         this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {

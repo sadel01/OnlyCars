@@ -22,6 +22,7 @@
           </div>
         </label>
       </div>
+      <p class="fechaPublicacion">{{ formatDate(product.fechaPublicacion) }}</p>
       <p class="vehicle-price" v-if="product">${{ product.price }} CLP</p>
       <!-- Sección principal del vehículo -->
       <section class="vehicle-section">
@@ -96,10 +97,8 @@
                 <img src="@/assets/icons/verified.svg" alt="User Verified" class="icon" />
                 Vendedor verificado
               </div>
-            
             </div>
 
-            
             <p class="user-email">{{ product.user.email }}</p>
           </div>
         </div>
@@ -242,15 +241,13 @@ export default {
     }
   },
 
-  async mounted(){
-    try{
-      await axios.post(`http://localhost:8080/catalog/${this.$route.params.id}/visit`);
-    }
-    catch(error){
-      console.error(error);
+  async mounted() {
+    try {
+      await axios.post(`http://localhost:8080/catalog/${this.$route.params.id}/visit`)
+    } catch (error) {
+      console.error(error)
     }
   },
-
 
   components: {
     Carousel,
@@ -264,6 +261,10 @@ export default {
     }
   },
   methods: {
+    formatDate(date) {
+      const options = { year: 'numeric', month: 'long', day: 'numeric' }
+      return new Date(date).toLocaleDateString('es-CL', options)
+    },
     async addToFavorites(product) {
       try {
         if (!this.$store.state.user) {
@@ -391,7 +392,7 @@ export default {
     } catch (error) {
       console.error(error)
     }
-    
+
     try {
       const response = await axios.get(`http://localhost:8080/users/${this.product.user._id}`)
       if (response.data.tipo === 'verificado') {
@@ -400,7 +401,6 @@ export default {
     } catch (error) {
       console.error(error)
     }
-
   }
 }
 </script>
@@ -410,11 +410,16 @@ export default {
 del usuario y el icono de verificado seria genial ;D
 */
 
+.fechaPublicacion{
+  font-size: 0.9rem;
+  color: #333;
+  margin-top: 0;
+}
+
 .userNameVerificated {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  
 }
 
 .verifacion {
@@ -427,7 +432,6 @@ del usuario y el icono de verificado seria genial ;D
 .vehicle-header {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
   margin-top: 1rem;
 }
 .containerFav input {
@@ -792,6 +796,7 @@ strong {
   font-size: 36px;
   font-weight: bold;
   color: #333;
+  margin-bottom: 0;
 }
 
 .vehicle-price {

@@ -118,6 +118,14 @@ export default {
               return b.mileage - a.mileage
             }
           })
+        case 'date':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return new Date(a.fechaPublicacion) - new Date(b.fechaPublicacion)
+            } else {
+              return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion)
+            }
+          })
         default:
           return this.products
       }
