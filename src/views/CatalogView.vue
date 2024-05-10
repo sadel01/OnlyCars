@@ -16,6 +16,19 @@
       />
     </div>
     <div class="productsList">
+      <div class="sortBy">
+        <p>Ordenar por:</p>
+        <select class="sortSelection">
+          <option value="price">Precio</option>
+          <option value="year">Año</option>
+          <option value="mileage">Kilometraje</option>
+        </select>
+        <button class="ascOrDesc" @click="toggleSortOrder">
+          <font-awesome-icon v-if="sortOrder === null" :icon="['fas', 'sort']" />
+          <font-awesome-icon v-if="sortOrder === 'asc'" :icon="['fas', 'sort-up']" />
+          <font-awesome-icon v-if="sortOrder === 'desc'" :icon="['fas', 'sort-down']" />
+        </button>
+      </div>
       <ProductsList :products="filteredProducts" />
       <div class="loading-container" v-if="isLoading">
         <p id="loading-text">Conectando...</p>
@@ -29,6 +42,7 @@
 import ProductsList from '../components/CatalogComponents/ProductsList.vue'
 import SearchItems from '../components/CatalogComponents/SearchItems.vue'
 import axios from 'axios'
+
 
 export default {
   components: {
@@ -49,7 +63,8 @@ export default {
       selectedAirbag: '',
       selectedRegion: '',
       products: [],
-      isLoading: false
+      isLoading: false,
+      sortOrder: null
     }
   },
   computed: {
@@ -57,22 +72,22 @@ export default {
       return this.products.filter(
         (product) =>
           product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-          product.model.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-          (!this.selectedBrand || product.brand === this.selectedBrand) &&
-          (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
-          (!this.selectedYear || product.year === this.selectedYear) &&
-          (!this.selectedFuel || product.fuel === this.selectedFuel) &&
-          (!this.selectedModel || product.model === this.selectedModel) &&
-          (!this.selectedRegion || product.region === this.selectedRegion) &&
-          (!this.selectedMileage ||
-            parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
-          (!this.selectedMinPrice ||
-            !this.selectedMaxPrice || // Modificación aquí
-            (parseInt(product.price.replace(/\D/g, '')) >=
-              parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
-              parseInt(product.price.replace(/\D/g, '')) <=
-                parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
-          (!this.selectedAirbag || product.airbag === this.selectedAirbag)
+          (product.model.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+            (!this.selectedBrand || product.brand === this.selectedBrand) &&
+            (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
+            (!this.selectedYear || product.year === this.selectedYear) &&
+            (!this.selectedFuel || product.fuel === this.selectedFuel) &&
+            (!this.selectedModel || product.model === this.selectedModel) &&
+            (!this.selectedRegion || product.region === this.selectedRegion) &&
+            (!this.selectedMileage ||
+              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
+            (!this.selectedMinPrice ||
+              !this.selectedMaxPrice || // Modificación aquí
+              (parseInt(product.price.replace(/\D/g, '')) >=
+                parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
+                parseInt(product.price.replace(/\D/g, '')) <=
+                  parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
+            (!this.selectedAirbag || product.airbag === this.selectedAirbag))
       )
     }
   },
@@ -132,7 +147,15 @@ export default {
       } finally {
         this.isLoading = false
       }
-    }
+    },
+
+    toggleSortOrder() {
+      if (this.sortOrder === null || this.sortOrder === 'desc') {
+        this.sortOrder = 'asc';
+      } else if (this.sortOrder === 'asc') {
+        this.sortOrder = 'desc';
+      }
+    },
   },
   created() {
     this.fetchProducts()
@@ -141,6 +164,39 @@ export default {
 </script>
 
 <style scoped>
+
+.sortBy{
+  display: flex;
+  align-items: center;
+}
+
+.fa-sort-up, .fa-sort-down{
+  margin: 0;
+  padding: 0;
+  color: black;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.ascOrDesc{
+  border: none;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  background-color: transparent;
+}
+
+.sortSelection{
+  height: 30%;
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #fbc40e;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .catalog-section {
   display: flex;
   background-color: aliceblue;
