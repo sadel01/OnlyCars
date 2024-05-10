@@ -733,7 +733,6 @@ export default {
       // Añade este método si gestionas comunas
       if (!this.vehicle.provincia) {
         this.comunas = []
-        returnF
       }
       try {
         // Debes tener un endpoint para obtener comunas basado en la provincia
@@ -768,7 +767,8 @@ export default {
             lastName: user.apellido,
             email: user.mail,
             rut: user.rut
-          }
+          },
+          visitas: 0
         }
         this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {

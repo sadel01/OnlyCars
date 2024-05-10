@@ -242,6 +242,20 @@ app.get('/posts', async (req, res) => {
   }
 })
 
+// Contador de visitas
+
+app.post('/catalog/:id/visit', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('posts')
+    const post = await collection.findOne({ _id: new ObjectId(req.params.id) })
+    await collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { visitas: post.visitas + 1 } })
+    res.send({ message: 'Visita registrada' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
 // iniciar un chat
 app.post('/chat/startChat', async (req, res) => {
   try {

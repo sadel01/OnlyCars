@@ -241,6 +241,17 @@ export default {
       isVerificated: false
     }
   },
+
+  async mounted(){
+    try{
+      await axios.post(`http://localhost:8080/catalog/${this.$route.params.id}/visit`);
+    }
+    catch(error){
+      console.error(error);
+    }
+  },
+
+
   components: {
     Carousel,
     Slide,
