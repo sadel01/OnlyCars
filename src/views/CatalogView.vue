@@ -18,10 +18,11 @@
     <div class="productsList">
       <div class="sortBy">
         <p>Ordenar por:</p>
-        <select class="sortSelection">
-          <option value="price">Precio</option>
+        <select class="sortSelection" v-model="selectedSortOption">
           <option value="year">Año</option>
           <option value="mileage">Kilometraje</option>
+          <option value="relevance">Relevancia</option>
+          <option value="date">Fecha</option>
         </select>
         <button class="ascOrDesc" @click="toggleSortOrder">
           <font-awesome-icon v-if="sortOrder === null" :icon="['fas', 'sort']" />
@@ -29,7 +30,7 @@
           <font-awesome-icon v-if="sortOrder === 'desc'" :icon="['fas', 'sort-down']" />
         </button>
       </div>
-      <ProductsList :products="filteredProducts" />
+      <ProductsList :products="sortedProducts" />
       <div class="loading-container" v-if="isLoading">
         <p id="loading-text">Conectando...</p>
         <div id="loading-spinner"></div>
@@ -42,7 +43,6 @@
 import ProductsList from '../components/CatalogComponents/ProductsList.vue'
 import SearchItems from '../components/CatalogComponents/SearchItems.vue'
 import axios from 'axios'
-
 
 export default {
   components: {
@@ -62,6 +62,7 @@ export default {
       selectedMinPrice: '',
       selectedAirbag: '',
       selectedRegion: '',
+      selectedSortOption: '',
       products: [],
       isLoading: false,
       sortOrder: null
@@ -89,6 +90,37 @@ export default {
                   parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
             (!this.selectedAirbag || product.airbag === this.selectedAirbag))
       )
+    },
+
+    sortedProducts() {
+      switch (this.selectedSortOption) {
+        case 'relevance':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.visitas - b.visitas
+            } else {
+              return b.visitas - a.visitas
+            }
+          })
+        case 'year':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.year - b.year
+            } else {
+              return b.year - a.year
+            }
+          })
+        case 'mileage':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.mileage - b.mileage
+            } else {
+              return b.mileage - a.mileage
+            }
+          })
+        default:
+          return this.products
+      }
     }
   },
   methods: {
@@ -151,11 +183,11 @@ export default {
 
     toggleSortOrder() {
       if (this.sortOrder === null || this.sortOrder === 'desc') {
-        this.sortOrder = 'asc';
+        this.sortOrder = 'asc'
       } else if (this.sortOrder === 'asc') {
-        this.sortOrder = 'desc';
+        this.sortOrder = 'desc'
       }
-    },
+    }
   },
   created() {
     this.fetchProducts()
@@ -164,13 +196,13 @@ export default {
 </script>
 
 <style scoped>
-
-.sortBy{
+.sortBy {
   display: flex;
   align-items: center;
 }
 
-.fa-sort-up, .fa-sort-down{
+.fa-sort-up,
+.fa-sort-down {
   margin: 0;
   padding: 0;
   color: black;
@@ -178,7 +210,7 @@ export default {
   font-size: 24px;
 }
 
-.ascOrDesc{
+.ascOrDesc {
   border: none;
   margin-left: 10px;
   cursor: pointer;
@@ -186,7 +218,7 @@ export default {
   background-color: transparent;
 }
 
-.sortSelection{
+.sortSelection {
   height: 30%;
   margin-left: 10px;
   padding: 5px;

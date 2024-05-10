@@ -86,12 +86,10 @@ io.on('connection', (socket) => {
   // Cuando un cliente se conecta, se une a una sala específica
   socket.on('join', (room) => {
     socket.join(room)
-    console.log('joined room: ' + room)
   })
 
   // Cuando se recibe un mensaje, se emite solo a la sala específica
   socket.on('message', (room, message) => {
-    console.log('message1: ' + message)
     io.to(room).emit('message', message)
   })
 
@@ -194,14 +192,11 @@ app.post('/login', async (req, res) => {
             tipo : user.tipo
           }
         })
-        console.log('Inicio de sesion exitoso')
       } else {
         res.send('Contraseña incorrecta')
-        console.log('Contraseña incorrecta')
       }
     } else {
       res.send('Usuario no encontrado')
-      console.log('User no encontrado')
     }
   } catch (error) {
     console.log(error)
@@ -264,7 +259,6 @@ app.post('/chat/startChat', async (req, res) => {
     const collection = database.collection('chat')
     let chat = await collection.findOne({ buyerID, sellerID, productID })
 
-    console.log('SE ENTRA A STARTCHAT')
     if (!chat) {
       if (buyerID === sellerID) {
         const chats = await collection.find({ sellerID }).toArray()
@@ -289,9 +283,6 @@ app.post('/chat/:id', async (req, res) => {
     const database = client.db('onlycars')
     const collection = database.collection('chat')
     const chat = await collection.findOne({ _id: new ObjectId(id) })
-
-    console.log('message: ' + message)
-    console.log('user: ' + user)
 
     await collection.updateOne(
       { _id: new ObjectId(id) },
@@ -333,7 +324,6 @@ app.get('/findChat', async (req, res) => {
     res.send(chat)
   } catch (error) {
     res.status(500).send(error.message)
-    console.log('chat no encontrado')
   }
 })
 
@@ -381,7 +371,6 @@ app.get('/findUserChats', async (req, res) => {
     )
 
     res.send(chatsWithBuyerDetails)
-    console.log('chats encontrados')
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -397,7 +386,6 @@ app.get('/findSpecificChat', async (req, res) => {
     res.send(chat)
   } catch (error) {
     res.status(500).send(error.message)
-    console.log('chat no encontrado')
   }
 })
 
@@ -438,14 +426,11 @@ app.post('/favorites', async (req, res) => {
 })
 
 app.get('/favorites', async (req, res) => {
-  console.log('Obteniendo favoritos')
   try {
     const database = client.db('onlycars')
     const collection = database.collection('favorites')
     const userId = req.query.userId
-    console.log(userId)
     const favorites = await collection.findOne({ userId: userId })
-    console.log(favorites.postIds)
     const productCollection = database.collection('posts')
     const products = await productCollection
       .find({ _id: { $in: favorites.postIds.map((id) => new ObjectId(id)) } })
