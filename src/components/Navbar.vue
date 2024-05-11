@@ -14,11 +14,16 @@
           <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
         </div>
         <div class="nav-buttons" :class="{ active: navActive }">
-          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"><font-awesome-icon :icon="['fas', 'message']" class="iconNavbar"/></RouterLink>
-          <RouterLink to="/favorites" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"><font-awesome-icon :icon="['fas', 'heart']" class="iconNavbar"/></RouterLink>
+          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"
+            ><font-awesome-icon :icon="['fas', 'message']" class="iconNavbar"
+          /></RouterLink>
+          <RouterLink to="/favorites" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"
+            ><font-awesome-icon :icon="['fas', 'heart']" class="iconNavbar"
+          /></RouterLink>
 
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" class="iconUser" /> {{ user.nombre + ' ' + user.apellido }}
+            <FontAwesomeIcon :icon="faUser" class="iconUser" />
+            {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
@@ -34,14 +39,18 @@
           <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
         <div class="nav-links" :class="{ active: navActive }">
-          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav">Catálogo</RouterLink>
-          <RouterLink to="/userManagment" class="nav-link" @click="closeNav">Gestionar Usuarios</RouterLink>
+          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav"
+            >Catálogo</RouterLink
+          >
+          <RouterLink to="/userManagment" class="nav-link" @click="closeNav"
+            >Gestionar Usuarios</RouterLink
+          >
         </div>
 
         <div class="nav-buttons" :class="{ active: navActive }">
-         
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" class="iconUser" /> {{ user.nombre + ' ' + user.apellido }}
+            <FontAwesomeIcon :icon="faUser" class="iconUser" />
+            {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
@@ -51,8 +60,6 @@
           >
         </div>
       </nav>
-
-
     </div>
   </header>
 </template>
@@ -90,11 +97,11 @@ const user = computed(() => store.state.user)
   height: 60px;
 }
 
-.iconUser{
+.iconUser {
   margin-right: 5px;
 }
 
-.iconNavbar{
+.iconNavbar {
   font-size: 18px;
 }
 
@@ -132,9 +139,8 @@ nav {
   justify-content: flex-start;
   flex-grow: 1;
 }
-.nav-link:hover{
-  color: #FBC40E;
-
+.nav-link:hover {
+  color: #fbc40e;
 }
 
 .nav-link,
@@ -156,11 +162,9 @@ nav {
   flex-grow: 1;
   color: #fbc40e;
 }
-.nav-button:hover{
+.nav-button:hover {
   color: #c19400;
 }
-
-
 
 @media (max-width: 1024px) {
   .hamburger {

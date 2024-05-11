@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <Navbar />
     <main>
       <div class="content-wrapper">
         <div class="text-container">

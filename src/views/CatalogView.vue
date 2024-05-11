@@ -54,29 +54,26 @@ export default {
   },
   computed: {
     filteredProducts() {
-      try {
-        return this.products.filter(
-          (product) =>
-            product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-            (!this.selectedBrand || product.brand === this.selectedBrand) &&
-            (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
-            (!this.selectedYear || product.year === this.selectedYear) &&
-            (!this.selectedFuel || product.fuel === this.selectedFuel) &&
-            (!this.selectedModel || product.model === this.selectedModel) &&
-            (!this.selectedRegion || product.region === this.selectedRegion) &&
-            (!this.selectedMileage ||
-              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
-            (!this.selectedMinPrice ||
-              !this.selectedMaxPrice || // Modificación aquí
-              (parseInt(product.price.replace(/\D/g, '')) >=
-                parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
-                parseInt(product.price.replace(/\D/g, '')) <=
-                  parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
-            (!this.selectedAirbag || product.airbag === this.selectedAirbag)
-        )
-      } catch (error) {
-        console.error(error)
-      }
+      return this.products.filter(
+        (product) =>
+          product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          product.model.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+          (!this.selectedBrand || product.brand === this.selectedBrand) &&
+          (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
+          (!this.selectedYear || product.year === this.selectedYear) &&
+          (!this.selectedFuel || product.fuel === this.selectedFuel) &&
+          (!this.selectedModel || product.model === this.selectedModel) &&
+          (!this.selectedRegion || product.region === this.selectedRegion) &&
+          (!this.selectedMileage ||
+            parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
+          (!this.selectedMinPrice ||
+            !this.selectedMaxPrice || // Modificación aquí
+            (parseInt(product.price.replace(/\D/g, '')) >=
+              parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
+              parseInt(product.price.replace(/\D/g, '')) <=
+                parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
+          (!this.selectedAirbag || product.airbag === this.selectedAirbag)
+      )
     }
   },
   methods: {
