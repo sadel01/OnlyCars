@@ -138,8 +138,8 @@
             <strong>Color: </strong> {{ selectedChat.product.exteriorColor }}
           </p>
           <p>
-            <img src="@/assets/icons/engine.svg" class="icon" alt="Motor" />
-            <strong>Motor: </strong> {{ selectedChat.product.engine }}
+            <img src="@/assets/icons/horse.svg" class="icon" alt="Motor" />
+            <strong>Motor: </strong> {{ selectedChat.product.power + ' HP'}}
           </p>
 
           <p>

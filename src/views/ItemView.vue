@@ -5,25 +5,24 @@
       <div id="loading-spinner"></div>
     </div>
     <main class="vehicle-listing" v-if="!isLoadingCar">
-      <div class="vehicle-header">
+      <div class="vehicle-header" v-if="product">
         <h1 class="vehicle-title">{{ product.year }} {{ product.brand }} {{ product.model }}</h1>
         <label class="containerFav" @click.stop="addToFavorites(product)">
-  <input type="checkbox" :checked="isFavorite(product)" />
-  <div class="checkmark">
-    <svg viewBox="0 0 256 256" >
-      <rect fill="none" height="256" width="256"></rect>
-      <path
-        d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
-        stroke-width="25px"
-        stroke="#333"
-        fill="none"
-      ></path>
-    </svg>
-  </div>
-</label>
-        
+          <input type="checkbox" :checked="isFavorite(product)" />
+          <div class="checkmark">
+            <svg viewBox="0 0 256 256">
+              <rect fill="none" height="256" width="256"></rect>
+              <path
+                d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
+                stroke-width="25px"
+                stroke="#333"
+                fill="none"
+              ></path>
+            </svg>
+          </div>
+        </label>
       </div>
-      <p class="vehicle-price">${{ product.price }} CLP</p>
+      <p class="vehicle-price" v-if="product">${{ product.price }} CLP</p>
       <!-- Sección principal del vehículo -->
       <section class="vehicle-section">
         <!-- Carrusel de imágenes del vehículo -->
@@ -41,7 +40,7 @@
           <h2 class="details-title">Detalles</h2>
           <div class="vehicle-specs-container">
             <!-- Columna izquierda -->
-            <div class="specs-left">
+            <div class="specs-left" v-if="product">
               <p>
                 <img src="@/assets/icons/mileage.svg" class="icon" alt="Kilometraje" />
                 <strong>Kilometraje: </strong> {{ ' ' + product.mileage }}
@@ -60,7 +59,7 @@
               </p>
             </div>
             <!-- Columna derecha -->
-            <div class="specs-right">
+            <div class="specs-right" v-if="product">
               <p>
                 <img src="@/assets/icons/gas-pump-solid.svg" class="icon" alt="Combustible" />
                 <strong>Combustible: </strong> {{ product.fuel }}
@@ -80,16 +79,27 @@
             </div>
           </div>
           <!-- Botón de contacto -->
-          <button @click="contactSeller" class="btn-contact-seller"><span> Iniciar chat</span></button>
+          <button @click="contactSeller" class="btn-contact-seller">
+            <span> Iniciar chat</span>
+          </button>
         </div>
       </section>
 
       <!-- Sección del perfil del usuario ajustada -->
-      <section class="user-profile">
+      <section class="user-profile" v-if="product">
         <div class="user-avatar-name">
           <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
           <div class="user-info">
-            <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
+            <div class="userNameVerificated">
+              <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
+              <div class="verifacion" v-if="isVerificated">
+                <img src="@/assets/icons/verified.svg" alt="User Verified" class="icon" />
+                Vendedor verificado
+              </div>
+            
+            </div>
+
+            
             <p class="user-email">{{ product.user.email }}</p>
           </div>
         </div>
@@ -121,7 +131,7 @@
       </section>
 
       <!-- Sección de descripción del vehículo -->
-      <section class="vehicle-description">
+      <section class="vehicle-description" v-if="product">
         <h2>Descripción</h2>
         <p class="user-email">{{ product.description }}</p>
       </section>
@@ -132,7 +142,7 @@
           Información Adicional
           <span class="toggle-icon">{{ isDetailsVisible ? '−' : '+' }}</span>
         </h2>
-        <div v-show="isDetailsVisible" class="details-content">
+        <div v-show="isDetailsVisible" class="details-content" v-if="product">
           <!-- Primera columna de detalles -->
           <!-- Primera columna de detalles -->
           <div class="detail-column">
@@ -227,6 +237,8 @@ export default {
       isDetailsVisible: false,
       chat: null,
       cars: [],
+      isLoadingCar: true,
+      isVerificated: false
     }
   },
   components: {
@@ -244,8 +256,8 @@ export default {
     async addToFavorites(product) {
       try {
         if (!this.$store.state.user) {
-          this.$router.push('/login');
-          return;
+          this.$router.push('/login')
+          return
         }
 
         this.isLoading = true
@@ -275,26 +287,29 @@ export default {
     },
     async fetchFavorites() {
       try {
-        const userId = this.$store.state.user._id;
+        const userId = this.$store.state.user._id
         const response = await axios.get('http://localhost:8080/favorites', {
           params: { userId: userId }
-        });
+        })
 
         // Verificar si la respuesta contiene datos de autos favoritos
         if (response.data && Array.isArray(response.data)) {
-          this.cars = response.data;
+          this.cars = response.data
         } else {
-          console.error('La respuesta del servidor no contiene datos de autos favoritos válidos:', response);
+          console.error(
+            'La respuesta del servidor no contiene datos de autos favoritos válidos:',
+            response
+          )
         }
       } catch (error) {
-        console.error('Error al obtener los autos favoritos:', error);
+        console.error('Error al obtener los autos favoritos:', error)
       }
     },
     isFavorite(product) {
       if (this.cars) {
-        return this.cars.some((car) => car._id === product._id);
+        return this.cars.some((car) => car._id === product._id)
       } else {
-        return false;
+        return false
       }
     },
     toggleDetails() {
@@ -303,7 +318,7 @@ export default {
     async contactSeller() {
       if (!this.user) {
         this.errorMessage = 'Debe iniciar sesión para contactar al vendedor'
-        this.$router.push('/login');
+        this.$router.push('/login')
         return
       }
 
@@ -316,10 +331,7 @@ export default {
           }
         })
 
-        console.log(response.data)
-
         if (response.data) {
-          console.log('ENTRA ACA 1')
           this.$store.commit('setChat', {
             _id: response.data._id,
             buyerID: this.user._id,
@@ -328,7 +340,6 @@ export default {
           })
           this.$router.push(`/chats`)
         } else {
-          console.log('ENTRA ACA 2')
           const newChat = await axios.post('http://localhost:8080/chat/startChat', {
             buyerID: this.user._id,
             sellerID: this.product.user._id,
@@ -343,8 +354,6 @@ export default {
               productID: this.product._id
             })
 
-            console.log('Actualizacion de store')
-
             await this.$router.push(`/chats`)
           }
         }
@@ -355,27 +364,55 @@ export default {
   },
   async created() {
     // Primero, cargamos los favoritos
-    await this.fetchFavorites();
+    await this.fetchFavorites()
 
     // Luego, obtenemos el producto actual
     const id = this.$route.params.id
     try {
       const response = await axios.get(`http://localhost:8080/catalog/${id}`)
       this.product = response.data
+      this.isLoadingCar = false
 
       // Verificamos si el producto actual está en favoritos
       if (this.product) {
-        this.product.isFavorited = this.isFavorite(this.product);
+        this.product.isFavorited = this.isFavorite(this.product)
       }
     } catch (error) {
       console.error(error)
     }
+    
+    try {
+      const response = await axios.get(`http://localhost:8080/users/${this.product.user._id}`)
+      if (response.data.tipo === 'verificado') {
+        this.isVerificated = true
+      }
+    } catch (error) {
+      console.error(error)
+    }
+
   }
 }
 </script>
 
-
 <style scoped>
+/*Si pueden corregir userNameverifacted verifacion para que que queden alineados con el nombre 
+del usuario y el icono de verificado seria genial ;D
+*/
+
+.userNameVerificated {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+}
+
+.verifacion {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
 .vehicle-header {
   display: flex;
   align-items: center;
@@ -454,7 +491,6 @@ export default {
 
 .main-container {
   min-height: 100vh;
-  
 }
 
 .loading-container {
