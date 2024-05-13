@@ -19,10 +19,12 @@
       <div class="sortBy">
         <p>Ordenar por:</p>
         <select class="sortSelection" v-model="selectedSortOption">
+          <option value="price">Precio</option>
           <option value="year">Año</option>
           <option value="mileage">Kilometraje</option>
           <option value="relevance">Relevancia</option>
           <option value="date">Fecha</option>
+          <option value="power">Potencia</option>
         </select>
         <button class="ascOrDesc" @click="toggleSortOrder">
           <font-awesome-icon v-if="sortOrder === null" :icon="['fas', 'sort']" />
@@ -124,6 +126,24 @@ export default {
               return new Date(a.fechaPublicacion) - new Date(b.fechaPublicacion)
             } else {
               return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion)
+            }
+          })
+        case 'price':
+          return [...this.filteredProducts].sort((a, b) => {
+            let priceA = parseInt(a.price.replace(/\D/g, ''))
+            let priceB = parseInt(b.price.replace(/\D/g, ''))
+            if (this.sortOrder === 'asc') {
+              return priceA - priceB;
+            } else {
+              return priceB - priceA;
+            }
+          })
+          case 'power':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.power - b.power
+            } else {
+              return b.power - a.power
             }
           })
         default:
