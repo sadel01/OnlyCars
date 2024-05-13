@@ -11,14 +11,26 @@
           <RouterLink to="/catalog" class="nav-link" @click="closeNav">Catálogo</RouterLink>
           <RouterLink to="/contact" class="nav-link" @click="closeNav">Contacto</RouterLink>
           <RouterLink to="/about" class="nav-link" @click="closeNav">Nosotros</RouterLink>
-          <RouterLink to="/sell" :class="'nav-link'" @click="closeNav">Vender</RouterLink>
+          <RouterLink to="/sell" class="nav-link" @click="closeNav">Vender</RouterLink>
+          <RouterLink to="/profile" class="nav-link profile-link" @click="closeNav"
+            >Perfil</RouterLink
+          >
+          <RouterLink to="/chats" class="nav-link chat-link" @click="closeNav">Chat</RouterLink>
+          <RouterLink to="/favorites" class="nav-link favorites-link" @click="closeNav"
+            >Favoritos</RouterLink
+          >
         </div>
         <div class="nav-buttons" :class="{ active: navActive }">
-          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"><font-awesome-icon :icon="['fas', 'message']" class="iconNavbar"/></RouterLink>
-          <RouterLink to="/favorites" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"><font-awesome-icon :icon="['fas', 'heart']" class="iconNavbar"/></RouterLink>
+          <RouterLink to="/chats" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"
+            ><font-awesome-icon :icon="['fas', 'message']" class="iconNavbar"
+          /></RouterLink>
+          <RouterLink to="/favorites" :class="'nav-link'" @click="closeNav" v-if="isLoggedIn"
+            ><font-awesome-icon :icon="['fas', 'heart']" class="iconNavbar"
+          /></RouterLink>
 
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" class="iconUser" /> {{ user.nombre + ' ' + user.apellido }}
+            <FontAwesomeIcon :icon="faUser" class="iconUser" />
+            {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
@@ -34,14 +46,18 @@
           <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
         <div class="nav-links" :class="{ active: navActive }">
-          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav">Catálogo</RouterLink>
-          <RouterLink to="/userManagment" class="nav-link" @click="closeNav">Gestionar Usuarios</RouterLink>
+          <RouterLink to="/catalogManagment" class="nav-link" @click="closeNav"
+            >Catálogo</RouterLink
+          >
+          <RouterLink to="/userManagment" class="nav-link" @click="closeNav"
+            >Gestionar Usuarios</RouterLink
+          >
         </div>
 
         <div class="nav-buttons" :class="{ active: navActive }">
-         
           <RouterLink v-if="user" to="/profile" class="nav-button" @click="closeNav">
-            <FontAwesomeIcon :icon="faUser" class="iconUser" /> {{ user.nombre + ' ' + user.apellido }}
+            <FontAwesomeIcon :icon="faUser" class="iconUser" />
+            {{ user.nombre + ' ' + user.apellido }}
           </RouterLink>
           <RouterLink v-else to="/login" class="nav-button" @click="closeNav">
             <FontAwesomeIcon :icon="faRightToBracket" /> Ingresar
@@ -51,14 +67,12 @@
           >
         </div>
       </nav>
-
-
     </div>
   </header>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import { useStore } from 'vuex'
 import { RouterLink } from 'vue-router'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -78,9 +92,18 @@ const closeNav = () => {
 const isLoggedIn = computed(() => store.state.user !== null)
 
 const user = computed(() => store.state.user)
+
+watchEffect(() => {
+  document.body.style.overflow = navActive.value ? 'hidden' : 'auto'
+})
 </script>
 
 <style scoped>
+body {
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
 .wrapper {
   display: flex;
   justify-content: space-between;
@@ -88,13 +111,22 @@ const user = computed(() => store.state.user)
   padding: 0 20px;
   background-color: #1f1f1f;
   height: 60px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.iconUser{
+.profile-link,
+.chat-link,
+.favorites-link {
+  display: none;
+}
+
+.iconUser {
   margin-right: 5px;
 }
 
-.iconNavbar{
+.iconNavbar {
   font-size: 18px;
 }
 
@@ -132,9 +164,9 @@ nav {
   justify-content: flex-start;
   flex-grow: 1;
 }
-.nav-link:hover{
-  color: #FBC40E;
 
+.nav-link:hover {
+  color: #fbc40e;
 }
 
 .nav-link,
@@ -156,50 +188,85 @@ nav {
   flex-grow: 1;
   color: #fbc40e;
 }
-.nav-button:hover{
+
+.nav-button:hover {
   color: #c19400;
 }
 
-
-
 @media (max-width: 1024px) {
-  .hamburger {
-    display: block;
-  }
-
-  .nav-links,
-  .nav-buttons {
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    width: 100%;
-    display: none;
-    background-color: #1f1f1f;
-    z-index: 1000;
-    padding-top: 10px;
-  }
-
-  .nav-links.active,
-  .nav-buttons.active {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
+  .profile-link,
+  .chat-link,
+  .favorites-link,
   .nav-link,
-  .nav-button {
+  .hamburger,
+  .nav-buttons,
+  .nav-links,
+  .close-btn {
+    transition: all 0.7s ease;
+  }
+
+  .profile-link,
+  .chat-link,
+  .favorites-link,
+  .nav-link {
+    display: block;
     width: 100%;
     text-align: left;
-    padding: 10px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 10px;
+    margin-left: 80px;
+    padding: 15px 20px;
     color: white;
+    font-size: 1.2rem;
     background-color: transparent;
+    overflow-x: hidden;
+    transform: translateY(-20px);
   }
 
-  .nav-button {
-    color: #fbc40e;
+  .hamburger {
+    display: block;
+    z-index: 1002;
+  }
+
+  .nav-buttons {
+    display: none !important;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    width: 100%;
+    justify-content: flex-start;
+    flex-direction: column;
+    background-color: #1f1f1f;
+    align-items: center;
+    padding-top: 20px;
+    margin-top: 58px;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    visibility: hidden;
+  }
+
+  .nav-links.active {
+    height: 100vh;
+    visibility: visible;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    margin-top: 60px;
+    overflow-x: hidden;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    z-index: 1002;
   }
 }
 </style>

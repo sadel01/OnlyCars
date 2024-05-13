@@ -3,14 +3,14 @@
     <h1 class="title">Favoritos</h1>
     <div class="favorites-container">
       <div class="favorites-list">
-      <div v-for="car in cars" :key="car._id" class="favorite-card" @click=goCatalog(car._id)>
-        <div class="imageContainer">
-        <img :src="car.image" :alt="car.name" class="carImage"/>
-        </div>
-        <div class="favorite-info">
-          <div class="header">
-        <h2 class="title-car">{{ car.year }} {{ car.brand }} {{ car.model }}</h2>
-        <label class="containerFav" @click.stop="addToFavorites(car)">
+        <div v-for="car in cars" :key="car._id" class="favorite-card" @click="goCatalog(car._id)">
+          <div class="imageContainer">
+            <img :src="car.image" :alt="car.name" class="carImage" />
+          </div>
+          <div class="favorite-info">
+            <div class="header">
+              <h2 class="title-car">{{ car.year }} {{ car.brand }} {{ car.model }}</h2>
+              <label class="containerFav" @click.stop="addToFavorites(car)">
                 <input type="checkbox" :checked="isFavorite(car)" />
                 <div class="checkmark">
                   <svg viewBox="0 0 256 256">
@@ -25,17 +25,17 @@
                 </div>
               </label>
             </div>
-        <p class="precio"><strong>Precio: ${{ car.price }}</strong></p>
-        <p><strong>Kilometraje: </strong> {{ car.mileage }}</p>
-        <p><strong>Cilindraje: </strong> {{ car.cylinderCapacity }}</p>
-        <p><strong>Ubicación: </strong> {{ car.comuna }}, {{ car.region }}</p>
-        <p><strong>Dueño(a): </strong> {{ car.user.name }} {{ car.user.lastName }}</p>
-        <p class="description"><strong>Descripción: </strong>{{ car.description }}</p>
-        
-        
+            <p class="precio">
+              <strong>Precio: ${{ car.price }}</strong>
+            </p>
+            <p><strong>Kilometraje: </strong> {{ car.mileage }}</p>
+            <p><strong>Cilindraje: </strong> {{ car.cylinderCapacity }}</p>
+            <p><strong>Ubicación: </strong> {{ car.comuna }}, {{ car.region }}</p>
+            <p><strong>Dueño(a): </strong> {{ car.user.name }} {{ car.user.lastName }}</p>
+            <p class="description"><strong>Descripción: </strong>{{ car.description }}</p>
+          </div>
         </div>
       </div>
-    </div>
     </div>
     <div class="navigation">
       <button v-if="page > 1" @click="previousPage" class="buttonPage">Anterior</button>
@@ -58,45 +58,44 @@ export default {
   data() {
     return {
       cars: [],
-      page: 1, 
-      perPage: 9 
+      page: 1,
+      perPage: 9
     }
   },
   methods: {
     async addToFavorites(car) {
       try {
-      if (!this.$store.state.user) {
-        this.$router.push('/login');
-        return;
-      }
-      
-      this.isLoading = true
-      const user = this.$store.state.user
-      const vehicleData = {
-        userId: user._id,
-        postId: car._id
-      }
-      if (this.isFavorite(car)) {
-        // Si el producto ya está en favoritos, lo eliminamos
-        await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
-      } else {
-        // Si el producto no está en favoritos, lo agregamos
-        await axios.post('http://localhost:8080/favorites', vehicleData)
-      }
-      // Actualizamos la lista de favoritos
-      await this.fetchFavorites()
+        if (!this.$store.state.user) {
+          this.$router.push('/login')
+          return
+        }
+
+        this.isLoading = true
+        const user = this.$store.state.user
+        const vehicleData = {
+          userId: user._id,
+          postId: car._id
+        }
+        if (this.isFavorite(car)) {
+          // Si el producto ya está en favoritos, lo eliminamos
+          await axios.delete(`http://localhost:8080/favorites`, { data: vehicleData })
+        } else {
+          // Si el producto no está en favoritos, lo agregamos
+          await axios.post('http://localhost:8080/favorites', vehicleData)
+        }
+        // Actualizamos la lista de favoritos
+        await this.fetchFavorites()
       } catch (error) {
-      this.errorMessage = 'Error al actualizar los favoritos'
-      setTimeout(() => {
-        this.errorMessage = ''
-      }, 1500)
-      console.error('Error al actualizar los favoritos:', error)
+        this.errorMessage = 'Error al actualizar los favoritos'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 1500)
+        console.error('Error al actualizar los favoritos:', error)
       } finally {
-      this.isLoading = false
+        this.isLoading = false
       }
     },
     async fetchFavorites() {
-      console.log('Fetching favorites...')
       const userId = this.$store.state.user._id
       try {
         const response = await axios.get('http://localhost:8080/favorites', {
@@ -104,7 +103,6 @@ export default {
             userId: userId
           }
         })
-        console.log('Autos favoritos:', response.data)
         this.cars = response.data
       } catch (error) {
         console.error('Error al obtener los autos favoritos:', error)
@@ -114,9 +112,9 @@ export default {
       return this.cars.some((car) => car._id === car._id)
     },
     goCatalog(id) {
-    this.$router.push(`/catalog/${id}`)
-    window.scrollTo(0, 0);
-  },
+      this.$router.push(`/catalog/${id}`)
+      window.scrollTo(0, 0)
+    },
     previousPage() {
       if (this.page > 1) {
         this.page--
@@ -129,20 +127,6 @@ export default {
     },
     goToPage(page) {
       this.page = page
-    },
-    async fetchFavorites() {
-      const userId = this.$store.state.user._id
-      try {
-        const response = await axios.get('http://localhost:8080/favorites', {
-          params: {
-            userId: userId
-          }
-        })
-        console.log('Autos favoritos:', response.data)
-        this.cars = response.data
-      } catch (error) {
-        console.error('Error al obtener los autos favoritos:', error)
-      }
     }
   },
   computed: {
@@ -178,9 +162,9 @@ export default {
 
 .containerFav {
   display: block;
-  position: absolute; 
+  position: absolute;
   top: 10px;
-  right: 10px; 
+  right: 10px;
   z-index: 1;
   cursor: pointer;
   font-size: 20px;
@@ -188,7 +172,6 @@ export default {
   transition: 100ms;
   align-self: flex-end;
   margin-bottom: 1rem;
-
 }
 
 .checkmark {
@@ -242,10 +225,10 @@ export default {
   }
 }
 
-.precio{
+.precio {
   font-size: 16px;
 }
-.title{
+.title {
   margin-top: 2rem;
   display: flex; 
   align-items: center; 
@@ -340,7 +323,7 @@ export default {
   font-size: 15px;
   border: 2px solid #fbc40e;
   transition: all 0.3s ease-in-out;
-  height: 2rem; 
+  height: 2rem;
   font-weight: bold;
   margin-bottom: 2rem;
 }
@@ -358,5 +341,18 @@ export default {
   border: 1px solid #c19400;
   color: white;
   font-weight: bold;
+}
+
+@media (max-width: 1024px) {
+  .favorites-list {
+    flex-direction: column;
+    align-items: center;
+  }
+  .favorite-card {
+    width: 550px;
+  }
+  .navigation {
+    margin-bottom: 2rem;
+  }
 }
 </style>

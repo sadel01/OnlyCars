@@ -456,6 +456,45 @@ export default {
     }
   },
   methods: {
+    clear() {
+      this.vehicle = {
+        brand: '',
+        model: '',
+        year: '',
+        condition: '',
+        mileage: '',
+        fuel: '',
+        transmission: '',
+        driveTrain: '',
+        cylinderCapacity: '',
+        airbag: '',
+        price: '',
+        owners: '',
+        seguro: '',
+        doors: '',
+        interiorColor: '',
+        exteriorColor: '',
+        description: '',
+        region: '',
+        provincia: '',
+        comuna: '',
+        comfortFeatures: [],
+        insuranceOptions: [],
+        errorMessage: {
+          mileage: '',
+          year: '',
+          doors: '',
+          cylinderCapacity: '',
+          owners: '',
+          power: '',
+          groundClearance: ''
+        }
+      }
+      this.errorMessage = ''
+      this.successMessage = ''
+      this.imagePreviews = []
+      this.filesToUpload = []
+    },
     formatKMInput() {
       let value = this.vehicle.mileage.replace(/[\D]/g, '')
       value = parseInt(value, 10)
@@ -694,7 +733,6 @@ export default {
       // Añade este método si gestionas comunas
       if (!this.vehicle.provincia) {
         this.comunas = []
-        returnF
       }
       try {
         // Debes tener un endpoint para obtener comunas basado en la provincia
@@ -729,14 +767,16 @@ export default {
             lastName: user.apellido,
             email: user.mail,
             rut: user.rut
-          }
+          },
+          visitas: 0,
+          fechaPublicacion: new Date().toISOString()
         }
         this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {
           this.successMessage = ''
+          this.clear()
         }, 2000)
         const response = await axios.post('http://localhost:8080/posts', vehicleData)
-        console.log('Response from the server:', response.data)
         // Reset vehicle data
         this.vehicle = {
           brand: '',
