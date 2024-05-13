@@ -140,10 +140,12 @@ export default {
           })
           case 'power':
           return [...this.filteredProducts].sort((a, b) => {
+            let powerA = parseInt(a.power.replace(/\D/g, ''))
+            let powerB = parseInt(b.power.replace(/\D/g, ''))
             if (this.sortOrder === 'asc') {
-              return a.power - b.power
+              return powerA - powerB
             } else {
-              return b.power - a.power
+              return powerB - powerA
             }
           })
         default:
