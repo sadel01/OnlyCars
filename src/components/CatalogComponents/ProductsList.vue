@@ -25,8 +25,23 @@
                 <img :src="product.image[0]" alt="product image" class="imagenes" />
               </div>
               <div class="vehicleDescription">
-                <div>
+                <div class="productTitleWithCheckmark">
                   <p class="productText productTitle">{{ product.brand }} {{ product.model }}</p>
+
+                  <label class="containerFav" @click.stop="addToFavorites(product)">
+                    <input type="checkbox" :checked="isFavorite(product)" />
+                    <div class="checkmark">
+                      <svg viewBox="0 0 256 256">
+                        <rect fill="none" height="256" width="256"></rect>
+                        <path
+                          d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
+                          stroke-width="20px"
+                          stroke="black"
+                          fill="none"
+                        ></path>
+                      </svg>
+                    </div>
+                  </label>
                 </div>
                 <div class="description">
                   <div class="detail">
@@ -43,38 +58,27 @@
                       {{ product.transmission }}
                     </p>
                   </div>
-                  <div class="detail">
-                    <button
-                      @click.stop="toggleComparison(product)"
-                      :class="{ plus: !product.isCompared, minus: product.isCompared }"
-                    >
-                      <font-awesome-icon
-                        :icon="product.isCompared ? 'circle-minus' : 'circle-plus'"
-                      />
-                      {{ product.isCompared ? ' Comparar' : ' Comparar' }}
-                    </button>
+                  <div class="detailButtons">
+                    <div class="detail">
+                      <button
+                        @click.stop="toggleComparison(product)"
+                        :class="{ plus: !product.isCompared, minus: product.isCompared }"
+                      >
+                        <font-awesome-icon
+                          :icon="product.isCompared ? 'circle-minus' : 'circle-plus'"
+                        />
+                        {{ product.isCompared ? ' Comparar' : ' Comparar' }}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="productPrice">
                   <p class="productText productPriceNumber">${{ product.price }} CLP</p>
+                  <button @click="viewMore(product._id)" class="verMas2">
+                    <span>Ver más</span>
+                  </button>
                 </div>
-                <button @click="viewMore(product._id)" class="verMas2"><span>Ver más</span></button>
               </div>
-
-              <label class="containerFav" @click.stop="addToFavorites(product)">
-                <input type="checkbox" :checked="isFavorite(product)" />
-                <div class="checkmark">
-                  <svg viewBox="0 0 256 256">
-                    <rect fill="none" height="256" width="256"></rect>
-                    <path
-                      d="M224.6,51.9a59.5,59.5,0,0,0-43-19.9,60.5,60.5,0,0,0-44,17.6L128,59.1l-7.5-7.4C97.2,28.3,59.2,26.3,35.9,47.4a59.9,59.9,0,0,0-2.3,87l83.1,83.1a15.9,15.9,0,0,0,22.6,0l81-81C243.7,113.2,245.6,75.2,224.6,51.9Z"
-                      stroke-width="20px"
-                      stroke="black"
-                      fill="none"
-                    ></path>
-                  </svg>
-                </div>
-              </label>
             </div>
           </li>
         </ul>
@@ -127,7 +131,8 @@ export default {
       page: 1,
       perPage: 6,
       cars: [],
-      isLargeScreen: window.innerWidth > 1280 || window.innerHeight > 1024
+      isLargeScreen: window.innerWidth > 1280 || window.innerHeight > 1024,
+      isLoading: false
     }
   },
   methods: {
@@ -170,7 +175,6 @@ export default {
     },
 
     async fetchFavorites() {
-      console.log('Fetching favorites...')
       const userId = this.$store.state.user._id
       try {
         const response = await axios.get('http://localhost:8080/favorites', {
@@ -178,7 +182,6 @@ export default {
             userId: userId
           }
         })
-        console.log('Autos favoritos:', response.data)
         this.cars = response.data
       } catch (error) {
         console.error('Error al obtener los autos favoritos:', error)
@@ -192,7 +195,10 @@ export default {
       console.log(`Producto ${product._id} comparado:`, compared)
       return compared
     },
-
+    goToComparisonView() {
+      this.$store.commit('comparison/setList', this.comparisonList)
+      this.$router.push({ name: 'comparison' })
+    },
     toggleComparison(product) {
       const productIndex = this.comparisonList.findIndex((p) => p._id === product._id)
       if (productIndex !== -1) {
@@ -314,8 +320,8 @@ export default {
 .checkmark {
   top: 7rem;
   left: 0;
-  height: 2em;
-  width: 2em;
+  height: 1.5em;
+  width: 1.5em;
   transition: 100ms;
   animation: dislike_effect 400ms ease;
 }
@@ -393,6 +399,11 @@ export default {
 
 .detail button.minus {
   background-color: #1a1a1a;
+}
+
+.detailButtons {
+  display: flex;
+  margin-top: 10px;
 }
 
 .font-awesome-icon {
@@ -549,6 +560,10 @@ export default {
   margin-bottom: 4px;
 }
 
+.detailFav {
+  display: none;
+}
+
 .pageButton {
   position: relative;
   display: flex;
@@ -655,6 +670,7 @@ export default {
 
 .principalContainer {
   display: flex;
+  max-width: 100%;
 }
 
 .product-detail {
@@ -741,12 +757,52 @@ export default {
   font-size: 20px;
 }
 
-@media screen and (max-width: 1280px) and (max-height: 1024px) {
+.productTitleWithCheckmark {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media (max-width: 1600px) {
   .product-detail {
     display: none;
   }
+
+  .productPrice {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .checkmark {
+    height: 1.5em;
+    width: 1.5em;
+    transition: 100ms;
+    animation: dislike_effect 400ms ease;
+  }
+
   .verMas2 {
-    display: block;
+    display: flex;
+    border-radius: 5px;
+    background: #fbc40e;
+    box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    cursor: pointer;
+    border: none;
+    height: 2.5rem;
+    width: 20%;
+    margin: 0;
+    margin-right: 10px;
+  }
+
+  .productPriceNumber {
+    margin: 0;
+  }
+
+  .productTitleWithCheckmark {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 </style>

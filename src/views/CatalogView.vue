@@ -16,7 +16,21 @@
       />
     </div>
     <div class="productsList">
-      <ProductsList :products="filteredProducts" />
+      <div class="sortBy">
+        <p>Ordenar por:</p>
+        <select class="sortSelection" v-model="selectedSortOption">
+          <option value="year">Año</option>
+          <option value="mileage">Kilometraje</option>
+          <option value="relevance">Relevancia</option>
+          <option value="date">Fecha</option>
+        </select>
+        <button class="ascOrDesc" @click="toggleSortOrder">
+          <font-awesome-icon v-if="sortOrder === null" :icon="['fas', 'sort']" />
+          <font-awesome-icon v-if="sortOrder === 'asc'" :icon="['fas', 'sort-up']" />
+          <font-awesome-icon v-if="sortOrder === 'desc'" :icon="['fas', 'sort-down']" />
+        </button>
+      </div>
+      <ProductsList :products="sortedProducts" />
       <div class="loading-container" v-if="isLoading">
         <p id="loading-text">Conectando...</p>
         <div id="loading-spinner"></div>
@@ -48,16 +62,18 @@ export default {
       selectedMinPrice: '',
       selectedAirbag: '',
       selectedRegion: '',
+      selectedSortOption: '',
       products: [],
-      isLoading: false
+      isLoading: false,
+      sortOrder: null
     }
   },
   computed: {
     filteredProducts() {
-      try {
-        return this.products.filter(
-          (product) =>
-            product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
+      return this.products.filter(
+        (product) =>
+          product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+          (product.model.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
             (!this.selectedBrand || product.brand === this.selectedBrand) &&
             (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
             (!this.selectedYear || product.year === this.selectedYear) &&
@@ -72,10 +88,46 @@ export default {
                 parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
                 parseInt(product.price.replace(/\D/g, '')) <=
                   parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
-            (!this.selectedAirbag || product.airbag === this.selectedAirbag)
-        )
-      } catch (error) {
-        console.error(error)
+            (!this.selectedAirbag || product.airbag === this.selectedAirbag))
+      )
+    },
+
+    sortedProducts() {
+      switch (this.selectedSortOption) {
+        case 'relevance':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.visitas - b.visitas
+            } else {
+              return b.visitas - a.visitas
+            }
+          })
+        case 'year':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.year - b.year
+            } else {
+              return b.year - a.year
+            }
+          })
+        case 'mileage':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return a.mileage - b.mileage
+            } else {
+              return b.mileage - a.mileage
+            }
+          })
+        case 'date':
+          return [...this.filteredProducts].sort((a, b) => {
+            if (this.sortOrder === 'asc') {
+              return new Date(a.fechaPublicacion) - new Date(b.fechaPublicacion)
+            } else {
+              return new Date(b.fechaPublicacion) - new Date(a.fechaPublicacion)
+            }
+          })
+        default:
+          return this.products
       }
     }
   },
@@ -135,6 +187,14 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+
+    toggleSortOrder() {
+      if (this.sortOrder === null || this.sortOrder === 'desc') {
+        this.sortOrder = 'asc'
+      } else if (this.sortOrder === 'asc') {
+        this.sortOrder = 'desc'
+      }
     }
   },
   created() {
@@ -144,6 +204,39 @@ export default {
 </script>
 
 <style scoped>
+.sortBy {
+  display: flex;
+  align-items: center;
+}
+
+.fa-sort-up,
+.fa-sort-down {
+  margin: 0;
+  padding: 0;
+  color: black;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.ascOrDesc {
+  border: none;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 24px;
+  background-color: transparent;
+}
+
+.sortSelection {
+  height: 30%;
+  margin-left: 10px;
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #fbc40e;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .catalog-section {
   display: flex;
   background-color: aliceblue;
