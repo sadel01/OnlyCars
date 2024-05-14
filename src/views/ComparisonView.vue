@@ -219,15 +219,15 @@ export default {
       score += powerScore
 
       if(product.suspensionType === 'Ajustable'){ // SUSPENSIÓN EQUIVALE AL 15% DE LA PUNTUACIÓN
-        score += 20
+        score += 15
       }else if(product.suspensionType === 'Estándar'){
-        score += 10
+        score += 7
       }
 
       const tireTypeScore = product.tireType === 'Todo Terreno' ? 25 : 0 // TIPO DE NEUMÁTICOS EQUIVALE AL 25% DE LA PUNTUACIÓN
       score += tireTypeScore
       
-      if(product.groundClearance > 10 && product.groundClearance < 15){      
+      if(product.groundClearance > 20 && product.groundClearance < 30){      
         score += 5// ALTURA AL SUELO EQUIVALE AL 5% DE LA PUNTUACIÓN
       }
 
@@ -242,33 +242,40 @@ export default {
     calculateConfortScore(product) {
       let score = 0
 
-      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
-        score += parseFloat(product.cylinderCapacity.replace(' L', ''))
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') { // CILINDRAJE EQUIVALE AL 5% DE LA PUNTUACIÓN
+        score += (parseFloat(product.cylinderCapacity.replace(' L', '')))/2
       }else{
-        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 70)
         score += cylinderScore
       }     
 
-      const transmissionScore = product.transmission === 'Automatico' ? 10 : -5
+      const transmissionScore = product.transmission === 'Automático' ? 10 : 0 // TRANSMISION EQUIVALE AL 10% DE LA PUNTUACIÓN
       score += transmissionScore
 
-      const airbagScore = product.airbag === 'yes' ? 10 : -5
-      score += airbagScore
-
-      const powerScore = product.power / 150 // PUEDE CAMBIAR
+      const power = parseInt(product.power.replace(' HP', ''))
+      const normalizedPower = (power - 0) / (1000 - 0) // POTENCIA EQUIVALE AL 5% DE LA PUNTUACIÓN
+      const powerScore = (normalizedPower / 20)*100 
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'Estándar' ? 10 : -5
-      score += suspensionScore
+      if(product.suspensionType === 'Ajustable'){ // SUSPENSIÓN EQUIVALE AL 20% DE LA PUNTUACIÓN
+        score += 20
+      }else if(product.suspensionType === 'Estándar'){
+        score += 10
+      }
 
-      const tireTypeScore = product.tireType === 'Mixtos' ? 10 : -5
+      const tireTypeScore = product.tireType === 'Mixtos' ? 10 : 0 // TIPO DE NEUMÁTICOS EQUIVALE AL 10% DE LA PUNTUACIÓN
       score += tireTypeScore
+      
+      if(product.groundClearance > 12 && product.groundClearance < 16){      
+        score += 10// ALTURA AL SUELO EQUIVALE AL 10% DE LA PUNTUACIÓN
+      }
 
-      const driveTrainScore = product.driveTrain === 'Tracción total' ? 10 : -5
-      score += driveTrainScore
+      if(product.driveTrain === 'Tracción total'){// TRACCIÓN EQUIVALE AL 10% DE LA PUNTUACIÓN
+        score += 10
+      }
 
       for (let i = 0; i < product.comfortFeatures.length; i++) {
-        score += 2       
+        score += 3
       }
 
       score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
