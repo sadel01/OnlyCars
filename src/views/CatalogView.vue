@@ -128,7 +128,7 @@ export default {
             }
           })
         case 'price':
-          return [...this.filteredProducts].sort((a, b) => {
+          return [...this.products].sort((a, b) => {
             let priceA = parseInt(a.price.replace(/\D/g, ''))
             let priceB = parseInt(b.price.replace(/\D/g, ''))
             if (this.sortOrder === 'asc') {
@@ -137,8 +137,8 @@ export default {
               return priceB - priceA;
             }
           })
-          case 'power':
-          return [...this.filteredProducts].sort((a, b) => {
+        case 'power':
+          return [...this.products].sort((a, b) => {
             let powerA = parseInt(a.power.replace(/\D/g, ''))
             let powerB = parseInt(b.power.replace(/\D/g, ''))
             if (this.sortOrder === 'asc') {
