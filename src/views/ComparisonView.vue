@@ -163,41 +163,40 @@ export default {
     calculateSportScore(product) {
       let score = 0
 
-      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') { // CILINDRAJE EQUIVALE AL 10% DE LA PUNTUACIÓN
         score += parseFloat(product.cylinderCapacity.replace(' L', ''))
       }else{
-        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 70) * 2
         score += cylinderScore
       }     
 
-      const transmissionScore = product.transmission === 'Manual' ? 10 : -5
+      const transmissionScore = product.transmission === 'Manual' ? 15 : 0 // TRANSMISION EQUIVALE AL 15% DE LA PUNTUACIÓN
       score += transmissionScore
 
-      const powerScore = product.power / 30 // PUEDE CAMBIAR
+      console.log(product.power)
+      const power = parseInt(product.power.replace(' HP', ''))
+      const normalizedPower = (power - 0) / (1000 - 0) // POTENCIA EQUIVALE AL 25% DE LA PUNTUACIÓN
+      const powerScore = (normalizedPower / 4)*100 
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'Deportiva' ? 10 : -5
-      score += suspensionScore
+      if(product.suspensionType === 'Deportiva'){ // SUSPENSIÓN EQUIVALE AL 20% DE LA PUNTUACIÓN
+        score += 20
+      }else if(product.suspensionType === 'Ajustable'){
+        score += 10
+      }
 
-      const tireTypeScore = product.tireType === 'De Carretera' ? 10 : -5
+      const tireTypeScore = product.tireType === 'De Carretera' ? 15 : 0 // TIPO DE NEUMÁTICOS EQUIVALE AL 15% DE LA PUNTUACIÓN
       score += tireTypeScore
       
-      if(product.groundClearance < 10){
-        const groundClearanceScore = product.groundClearance / 5 // PUEDE CAMBIAR
-        
-        score += groundClearanceScore
-      }else{
-        score += -(product.groundClearance) + 10
+      if(product.groundClearance > 10 && product.groundClearance < 15){      
+        score += 5// ALTURA AL SUELO EQUIVALE AL 5% DE LA PUNTUACIÓN
       }
 
-      for (let i = 0; i < product.comfortFeatures.length; i++) {
-        if (product.comfortFeatures[i] === 'Control de crucero') {
-          score += 2
-        }
+      if(product.driveTrain === 'Tracción trasera'){ // TRACCIÓN EQUIVALE AL 10% DE LA PUNTUACIÓN
+        score += 10
+      }else if(product.driveTrain === 'Tracción total'){
+        score += 5
       }
-
-      const driveTrainScore = product.driveTrain === 'Tracción trasera' ? 10 : -5
-      score += driveTrainScore
 
       score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
       return score
