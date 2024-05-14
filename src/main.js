@@ -20,7 +20,10 @@ import {
   faCircleMinus,
   faCirclePlus,
   faMessage,
-  faHeart
+  faHeart,
+  faSortUp,
+  faSortDown,
+  faSort
 } from '@fortawesome/free-solid-svg-icons'
 import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -62,7 +65,10 @@ library.add(
   faCircleMinus,
   faCirclePlus,
   faMessage,
-  faHeart
+  faHeart,
+  faSortUp,
+  faSortDown,
+  faSort
 )
 library.add(faFacebookF)
 
