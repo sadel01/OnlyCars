@@ -30,7 +30,7 @@
           <font-awesome-icon v-if="sortOrder === 'desc'" :icon="['fas', 'sort-down']" />
         </button>
       </div>
-      <ProductsList :products="sortedProducts" />
+      <ProductsList :products="filteredProducts" />
       <div class="loading-container" v-if="isLoading">
         <p id="loading-text">Conectando...</p>
         <div id="loading-spinner"></div>
@@ -70,32 +70,31 @@ export default {
   },
   computed: {
     filteredProducts() {
-      return this.products.filter(
+      return this.sortedProducts.filter(
         (product) =>
-          product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-          (product.model.toLowerCase().includes(this.searchTerm.toLowerCase()) &&
-            (!this.selectedBrand || product.brand === this.selectedBrand) &&
-            (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
-            (!this.selectedYear || product.year === this.selectedYear) &&
-            (!this.selectedFuel || product.fuel === this.selectedFuel) &&
-            (!this.selectedModel || product.model === this.selectedModel) &&
-            (!this.selectedRegion || product.region === this.selectedRegion) &&
-            (!this.selectedMileage ||
-              parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
-            (!this.selectedMinPrice ||
-              !this.selectedMaxPrice || // Modificación aquí
-              (parseInt(product.price.replace(/\D/g, '')) >=
-                parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
-                parseInt(product.price.replace(/\D/g, '')) <=
-                  parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
-            (!this.selectedAirbag || product.airbag === this.selectedAirbag))
+          (product.brand.toLowerCase().includes(this.searchTerm.toLowerCase()) || product.model.toLowerCase().includes(this.searchTerm.toLowerCase())) &&
+          (!this.selectedBrand || product.brand === this.selectedBrand) &&
+          (!this.selectedTransmission || product.transmission === this.selectedTransmission) &&
+          (!this.selectedYear || product.year === this.selectedYear) &&
+          (!this.selectedFuel || product.fuel === this.selectedFuel) &&
+          (!this.selectedModel || product.model === this.selectedModel) &&
+          (!this.selectedRegion || product.region === this.selectedRegion) &&
+          (!this.selectedMileage ||
+            parseInt(product.mileage.replace('.', '')) <= parseInt(this.selectedMileage)) &&
+          (!this.selectedMinPrice ||
+            !this.selectedMaxPrice || // Modificación aquí
+            (parseInt(product.price.replace(/\D/g, '')) >=
+              parseInt(this.selectedMinPrice.replace(/\D/g, '')) &&
+              parseInt(product.price.replace(/\D/g, '')) <=
+                parseInt(this.selectedMaxPrice.replace(/\D/g, '')))) &&
+          (!this.selectedAirbag || product.airbag === this.selectedAirbag)
       )
     },
 
     sortedProducts() {
       switch (this.selectedSortOption) {
         case 'relevance':
-          return [...this.filteredProducts].sort((a, b) => {
+          return [...this.products].sort((a, b) => {
             if (this.sortOrder === 'asc') {
               return a.visitas - b.visitas
             } else {
@@ -103,7 +102,7 @@ export default {
             }
           })
         case 'year':
-          return [...this.filteredProducts].sort((a, b) => {
+          return [...this.products].sort((a, b) => {
             if (this.sortOrder === 'asc') {
               return a.year - b.year
             } else {
@@ -111,7 +110,7 @@ export default {
             }
           })
         case 'mileage':
-          return [...this.filteredProducts].sort((a, b) => {
+          return [...this.products].sort((a, b) => {
             if (this.sortOrder === 'asc') {
               return a.mileage - b.mileage
             } else {
@@ -119,7 +118,7 @@ export default {
             }
           })
         case 'date':
-          return [...this.filteredProducts].sort((a, b) => {
+          return [...this.products].sort((a, b) => {
             if (this.sortOrder === 'asc') {
               return new Date(a.fechaPublicacion) - new Date(b.fechaPublicacion)
             } else {
