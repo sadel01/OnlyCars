@@ -116,7 +116,6 @@ export default {
 </script>
 
 <style scoped>
-
 .productText {
   font-size: 15px;
   color: black;
@@ -170,7 +169,7 @@ export default {
   width: 120px;
 }
 
-.cards-container{
+.cards-container {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
@@ -201,7 +200,7 @@ export default {
 }
 
 .verMas {
-  font-family: "Poppins", sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-optical-sizing: auto;
   font-size: 16px;
   margin: auto;
