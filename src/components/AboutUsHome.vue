@@ -5,13 +5,13 @@
         <div class="text-container">
           <div class="text-block">
             <strong class="title">Nosotros</strong>
-            <p>
-              Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sint omnis quis ad
-              asperiores ab exercitationem nesciunt, minus voluptatum nihil repudiandae impedit
-              perferendis laborum sapiente iste quo modi molestias provident natus. Cupiditate,
-              nesciunt officia! Repellat nam assumenda aperiam blanditiis porro officiis vel enim
-              accusantium autem. At iusto similique nemo. Veniam dolorum quia pariatur minus ipsa
-              placeat. Impedit, tenetur nesciunt! Officia deleniti ducimus maiores corporis nisi!
+            <p class="description">
+              En OnlyCars, nos dedicamos a ofrecerte la mejor experiencia en la compra y venta de
+              vehículos en Chile. Nuestro compromiso es proporcionarte una plataforma segura, fácil
+              de usar y confiable para tus transacciones automotrices.
+              <br /><br />
+              ¿Listo para ser parte de nuestra comunidad? Regístrate hoy mismo y descubre por qué
+              somos la elección número uno para miles de personas en busca de su próximo vehículo.
             </p>
           </div>
         </div>
@@ -34,7 +34,7 @@
 }
 
 .content-wrapper {
-  animation: 6s cubic-bezier(.25, 1, .30, 1) wipe-in-left both;
+  animation: 6s cubic-bezier(0.25, 1, 0.3, 1) wipe-in-left both;
 }
 .content-wrapper {
   display: flex;
@@ -74,6 +74,11 @@
   font-size: 2rem;
   margin-bottom: 1rem;
   font-weight: bold;
+}
+
+.description{
+  font-size: 1.125rem;
+  line-height: 1.5;
 }
 
 button {
