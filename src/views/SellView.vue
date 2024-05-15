@@ -784,7 +784,8 @@ export default {
             name: user.nombre,
             lastName: user.apellido,
             email: user.mail,
-            rut: user.rut
+            rut: user.rut,
+            imgProfile: user.imgProfile
           },
           visitas: 0,
           fechaPublicacion: new Date().toISOString()
