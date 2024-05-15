@@ -485,5 +485,22 @@ app.post("/admin/users/:id", async (req, res) => {
   }
 });
 
+
+app.post("/profile/users/:id", async (req, res) => {
+  try {
+    const schedules = req.body;
+    const id = req.params.id;
+    const database = client.db('onlycars');
+    const collection = database.collection('users');
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { schedules: schedules } }
+    );
+    res.send({ message: 'Horarios actualizados con éxito' });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))

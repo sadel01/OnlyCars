@@ -53,23 +53,67 @@
             <flat-pickr v-model="time.end" :config="config"></flat-pickr>
           </div>
           <div class="deleteContainer">
-          <div class="buttonDelete" @click="deleteSchedule(day, timeIndex)">
-            <div class="button-wrapper">
-              <div class="text">Borrar</div>
-              <span class="icon-delete">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M10 11V17" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M14 11V17" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M4 7H20" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z" stroke="#ffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
-              </span>
+            <div class="buttonDelete" @click="deleteSchedule(day, timeIndex)">
+              <div class="button-wrapper">
+                <div class="text">Borrar</div>
+                <span class="icon-delete">
+                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      <path
+                        d="M10 11V17"
+                        stroke="#ffff"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M14 11V17"
+                        stroke="#ffff"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M4 7H20"
+                        stroke="#ffff"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z"
+                        stroke="#ffff"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                      <path
+                        d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                        stroke="#ffff"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      ></path>
+                    </g>
+                  </svg>
+                </span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="addContainer">
-        <button class="addTimeBtn" @click="addTime(day)">Añadir horario</button>
-      </div>
+        <div class="addContainer">
+          <button class="addTimeBtn" @click="addTime(day)">Añadir horario</button>
+        </div>
       </div>
     </div>
     <div class="buttonSave-container">
-      <button class="save"><span>Guardar horario</span></button>
+      <button class="save" @click="saveSchedule()"><span>Guardar horario</span></button>
     </div>
   </div>
 </template>
@@ -131,6 +175,23 @@ export default {
     },
     deleteSchedule(day, timeIndex) {
       this.schedule[day].splice(timeIndex, 1)
+    },
+    saveSchedule() {
+      const userId = this.user._id
+      console.log('id: ',userId)
+      console.log('horarios: ', this.schedule)
+      if (Object.values(this.schedule).some((day) => day.some((time) => time.start && time.end))) {
+        axios
+          .post(`http://localhost:8080/profile/users/${userId}`, { schedules: this.schedule }) 
+          .then(() => {
+        console.log('Horarios guardados exitosamente')
+          })
+          .catch((error) => {
+        console.error('Error al guardar horarios:', error)
+          })
+      } else {
+        console.log('No se han definido horarios')
+      }
     }
   },
   created() {
@@ -143,8 +204,7 @@ export default {
 </script>
 
 <style scoped>
-
-.addContainer{
+.addContainer {
   justify-content: center;
   align-items: center;
   display: flex;
@@ -220,9 +280,6 @@ export default {
   transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
 }
 
-
-
-
 .deleteContainer {
   display: flex;
   justify-content: center;
@@ -239,7 +296,7 @@ export default {
   color: white;
   width: var(--width);
   height: var(--height);
-  border:3px solid #fbc40e;
+  border: 3px solid #fbc40e;
   background: var(--button-color);
   position: relative;
   text-align: center;
@@ -248,7 +305,6 @@ export default {
   transition: background 0.3s;
   margin-bottom: 0.5rem;
 }
-
 
 .buttonDelete::after,
 .button::before {
@@ -365,8 +421,8 @@ export default {
   width: 100%;
   margin-left: 15%;
 }
-.labelStart{
-  margin-top:10%
+.labelStart {
+  margin-top: 10%;
 }
 .labelEnd {
   margin-bottom: 1rem; /* Ajusta el margen según tu preferencia */
@@ -460,9 +516,10 @@ export default {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 @media screen and (min-width: 1281px) {
-.schedule-container .schedule > div:not(:last-child) {
-  border-right: 1px solid #fff;
-}}
+  .schedule-container .schedule > div:not(:last-child) {
+    border-right: 1px solid #fff;
+  }
+}
 @media screen and (max-width: 1280px) {
   .schedule-container .schedule {
     flex-direction: column; /* Cambia la dirección de los elementos a columna */
@@ -486,8 +543,8 @@ export default {
     margin-bottom: 0.3rem;
     margin-right: 3rem;
   }
-  .buttonDelete{
-    margin-top:1rem;
+  .buttonDelete {
+    margin-top: 1rem;
   }
 }
 .profile-image {
