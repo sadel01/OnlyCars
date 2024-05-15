@@ -533,5 +533,59 @@ app.post('/reportChat', async (req, res) => {
   }
 });
 
+app.get('/getReportedChats', async (req, res) => {
+  try {
+    console.log('HOLA');
+
+    const database = client.db('onlycars');
+    const userCollection = database.collection('users')
+    const productCollection = database.collection('posts')
+    const chatsCollection = database.collection('chat');
+
+    // Encontrar todos los chats que han sido reportados
+    const reportedChats = await chatsCollection.find({ reported: true }).toArray();
+
+    const chatsWithBuyerDetails = await Promise.all(
+    reportedChats.map(async (chat) => {
+      const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+      const seller = await userCollection.findOne({ _id: new ObjectId(chat.sellerID) })
+      const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+
+      return {
+        buyerName: buyer ? buyer.nombre : '',
+        buyerLastName: buyer ? buyer.apellido : '',
+        sellerName: seller ? seller.nombre : '',
+        sellerLastName: seller ? seller.apellido : '',
+        brand: product ? product.brand : '',
+        model: product ? product.model : '',
+        product: product ? product : {}
+      }
+    })
+  )
+  
+      res.send(chatsWithBuyerDetails);
+    }
+    catch (error) {
+      res.status(500).send(error.message);
+    } 
+
+});
+
+app.delete("/admin/delete/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("onlycars");
+    const collection = database.collection("posts");
+    const collection2 = database.collection("favorites");
+
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    const result2 = await collection2.updateMany({}, { $pull: { postIds: id } });
+
+    res.send({ message: "Publicación eliminada con éxito" });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
