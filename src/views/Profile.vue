@@ -1,4 +1,5 @@
 <template>
+  <div>
   <div v-if="user" class="profile-container">
     <div class="profile-image"></div>
 
@@ -38,7 +39,7 @@
     </div>
   </div>
 
-  <div class="schedule-container">
+  <div class="schedule-container" v-if="user.rol!='admin'">
     <h1 class="day-title">Define tus horarios de atención</h1>
     <div class="schedule">
       <div class="day-container" v-for="(day, index) in days" :key="index">
@@ -116,6 +117,7 @@
       <button class="save" @click="saveSchedule()"><span>Guardar horario</span></button>
     </div>
   </div>
+</div>
 </template>
 
 <script>
@@ -204,10 +206,12 @@ export default {
 </script>
 
 <style scoped>
+
 .addContainer {
   justify-content: center;
   align-items: center;
   display: flex;
+  margin-top:0.5rem;
 }
 .addTimeBtn {
   transition: all 0.2s ease-in;
@@ -217,10 +221,10 @@ export default {
   cursor: pointer;
   font-size: 15px;
   border-radius: 0.3em;
-  border: 3px solid #fbc40e;
-  background: #ececec;
+  border: none;
+  background: rgb(209, 208, 208);
   color: #090909;
-  width: 100%;
+  width: 80%;
   height: 2.5rem;
   font-weight: bold;
   margin: 1rem auto 1rem; /* Centrado horizontal y ajuste de margen superior e inferior */
@@ -287,16 +291,15 @@ export default {
 }
 .buttonDelete {
   cursor: pointer;
-  --width: 95px;
+  --width: 65px;
   --height: 28px;
   --tooltip-height: 35px;
   --tooltip-width: 90px;
   --gap-between-tooltip-to-button: 18px;
-  --button-color: transparent;
-  color: white;
+  --button-color: #e0e0e0;
+  color: black;
   width: var(--width);
   height: var(--height);
-  border: 3px solid #fbc40e;
   background: var(--button-color);
   position: relative;
   text-align: center;
@@ -327,7 +330,7 @@ export default {
   width: 100%;
   height: 100%;
   left: 0;
-  color: #fff;
+  color: black;
 }
 
 .text {
@@ -340,7 +343,7 @@ export default {
 }
 
 .icon-delete {
-  color: #fff;
+  color: black;
   top: 100%;
   display: flex;
   align-items: center;
@@ -439,6 +442,7 @@ export default {
   width: 100%;
 }
 
+
 .save {
   position: relative;
   display: flex;
@@ -468,6 +472,10 @@ export default {
   position: absolute;
   transition: all 0.4s ease-in-out;
   right: 0;
+}
+
+.time-slot{
+  border-bottom:1px solid #eeeeee
 }
 
 .save:hover::after {
@@ -506,18 +514,18 @@ export default {
 .schedule-container {
   flex: 1;
   position: relative;
-  background-color: #1a1a1a;
+  background-color: #fff;
   max-width: 70%;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #bbbaba;
   border-radius: 20px;
-  color: #fff;
+  color: black;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 @media screen and (min-width: 1281px) {
   .schedule-container .schedule > div:not(:last-child) {
-    border-right: 1px solid #fff;
+    border-right: 1px solid #c9c9c9;
   }
 }
 @media screen and (max-width: 1280px) {
@@ -527,7 +535,7 @@ export default {
   .day-container {
     width: 100%; /* Ancho completo cuando está en modo columna */
     margin-bottom: 1rem; /* Reducir el margen inferior entre los elementos */
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #8f8f8f;
   }
   .time-slot {
     margin-bottom: 10px; /* Reducir el espacio entre los slots de tiempo */
