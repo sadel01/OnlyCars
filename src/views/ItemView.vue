@@ -89,7 +89,11 @@
       <!-- Sección del perfil del usuario ajustada -->
       <section class="user-profile" v-if="product">
         <div class="user-avatar-name">
-          <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
+          <img
+            :src="product.user.imgProfile || '@/assets/icons/userDefault.jpg'"
+            alt="User Avatar"
+            class="avatar"
+          />
           <div class="user-info">
             <div class="userNameVerificated">
               <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
@@ -410,7 +414,7 @@ export default {
 del usuario y el icono de verificado seria genial ;D
 */
 
-.fechaPublicacion{
+.fechaPublicacion {
   font-size: 0.9rem;
   color: #333;
   margin-top: 0;

@@ -188,8 +188,9 @@ app.post('/login', async (req, res) => {
             apellido: user.apellido,
             rut: user.rut,
             mail: user.mail,
-            rol : user.rol,
-            tipo : user.tipo
+            rol: user.rol,
+            tipo: user.tipo,
+            imgProfile: user.imgProfile
           }
         })
       } else {
@@ -244,7 +245,10 @@ app.post('/catalog/:id/visit', async (req, res) => {
     const database = client.db('onlycars')
     const collection = database.collection('posts')
     const post = await collection.findOne({ _id: new ObjectId(req.params.id) })
-    await collection.updateOne({ _id: new ObjectId(req.params.id) }, { $set: { visitas: post.visitas + 1 } })
+    await collection.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: { visitas: post.visitas + 1 } }
+    )
     res.send({ message: 'Visita registrada' })
   } catch (error) {
     res.status(500).send(error.message)
@@ -306,6 +310,46 @@ app.get('/chat/:id', async (req, res) => {
   }
 })
 
+// Actualizar el perfil del usuario
+app.post('/updateUserProfile', async (req, res) => {
+  try {
+    const { id, nombre, apellido, mail, rut, imgProfile } = req.body
+    const database = client.db('onlycars')
+    const usersCollection = database.collection('users')
+    const postsCollection = database.collection('posts')
+
+    // Actualizar el perfil del usuario en la colección de users
+    await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          nombre: nombre,
+          apellido: apellido,
+          mail: mail,
+          rut: rut,
+          imgProfile: imgProfile
+        }
+      }
+    )
+
+    // Actualizar el nombre del usuario en la colección de posts
+    await postsCollection.updateMany(
+      { 'user._id': id },
+      {
+        $set: {
+          'user.name': nombre,
+          'user.lastName': apellido,
+          'user.imgProfile': imgProfile
+        }
+      }
+    )
+
+    res.send({ message: 'Usuario y publicaciones actualizadas con éxito' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
 // Buscar un chat en la base de datos entre dos usuarios, user1 y user2, independiente de quien es el comprador y quien es el vendedor
 
 app.get('/findChat', async (req, res) => {
@@ -346,13 +390,16 @@ app.get('/findUserChats', async (req, res) => {
 
         let otherUserName = ''
         let otherUserLastName = ''
+        let otherImgProfile = ''
 
         if (chat.buyerID === userID) {
           otherUserName = seller ? seller.nombre : ''
           otherUserLastName = seller ? seller.apellido : ''
+          otherImgProfile = seller ? seller.imgProfile : ''
         } else {
           otherUserName = buyer ? buyer.nombre : ''
           otherUserLastName = buyer ? buyer.apellido : ''
+          otherImgProfile = buyer ? buyer.imgProfile : ''
         }
 
         return {
@@ -363,6 +410,7 @@ app.get('/findUserChats', async (req, res) => {
           sellerLastName: seller ? seller.apellido : '',
           otherUserName: otherUserName,
           otherUserLastName: otherUserLastName,
+          otherImgProfile: otherImgProfile,
           brand: product ? product.brand : '',
           model: product ? product.model : '',
           product: product ? product : {}
@@ -459,49 +507,46 @@ app.delete('/favorites', async (req, res) => {
   }
 })
 
-app.get("/admin/users", async (req, res) => {
+app.get('/admin/users', async (req, res) => {
   try {
-    const database = client.db("onlycars");
-    const collection = database.collection("users");
-    const users = await collection.find().toArray();
-    res.send(users);
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
+    const users = await collection.find().toArray()
+    res.send(users)
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
-app.post("/admin/users/:id", async (req, res) => {
+app.post('/admin/users/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    const database = client.db("onlycars");
-    const collection = database.collection("users");
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: req.body }
-    );
-    res.send({ message: "Usuario actualizado con éxito" });
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
+    const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: req.body })
+    res.send({ message: 'Usuario actualizado con éxito' })
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
 app.post('/reportChat', async (req, res) => {
   try {
-    const { chatId, reportedBy } = req.body;
-    const database = client.db('onlycars');
-    const chatsCollection = database.collection('chat');
-    const usersCollection = database.collection('users');
+    const { chatId, reportedBy } = req.body
+    const database = client.db('onlycars')
+    const chatsCollection = database.collection('chat')
+    const usersCollection = database.collection('users')
 
     // Encontrar el chat que se está reportando
-    const chat = await chatsCollection.findOne({ _id: new ObjectId(chatId) });
+    const chat = await chatsCollection.findOne({ _id: new ObjectId(chatId) })
 
     if (!chat) {
-      res.status(404).send('Chat no encontrado');
-      return;
+      res.status(404).send('Chat no encontrado')
+      return
     }
 
     // Encontrar todos los usuarios con rol de admin
-    const admins = await usersCollection.find({ rol: 'admin' }).toArray();
+    const admins = await usersCollection.find({ rol: 'admin' }).toArray()
 
     // Enviar un mensaje a cada admin
     for (const admin of admins) {
@@ -509,11 +554,11 @@ app.post('/reportChat', async (req, res) => {
       // Había pensado en enviar un correo, pero no sé si es posible hacerlo desde acá (probablemente sí)
     }
 
-    res.send({ success: true, message: 'Chat reportado con éxito' });
+    res.send({ success: true, message: 'Chat reportado con éxito' })
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
