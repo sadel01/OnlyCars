@@ -56,7 +56,7 @@
               </p>
               <p>
                 <img src="@/assets/icons/horse.svg" class="icon" alt="Potencia" />
-                <strong>Potencia: </strong> {{ product.power }} HP
+                <strong>Potencia: </strong> {{ product.power }}
               </p>
             </div>
             <!-- Columna derecha -->

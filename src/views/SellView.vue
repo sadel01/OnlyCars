@@ -92,6 +92,7 @@
             placeholder="Precio del vehículo"
             @input="formatPriceInput"
           />
+          <p v-if="priceWarning" class="warning">{{ priceWarning }}</p>
         </div>
 
         <div class="form-group">
@@ -375,6 +376,17 @@ export default {
       user: computed(() => store.state.user)
     }
   },
+  computed: {
+    priceWarning() {
+      if (this.vehicle.price !== '' && this.vehicle.price == '$0') {
+        return 'El precio no puede ser 0'
+      } else if (this.vehicle.price == '$27.452.700.001') {
+        return 'El precio no puede ser 27.452.700.001' // Rolls-Royce Droptail — $30M (auto más caro del mundo)
+      } else {
+        return ''
+      }
+    }
+  },
   data() {
     return {
       selectedComfortFeatures: [], // las características de confort seleccionadas
@@ -389,7 +401,6 @@ export default {
         'Asistencia en carretera',
         'GAP',
         'Sin seguro'
-        // ... añadir más según se desee ...
       ],
       comfortFeatures: [
         // Lista de sistemas de confort para elegir
@@ -403,7 +414,6 @@ export default {
         'Cierre centralizado',
         'Ventanas eléctricas',
         'Sistema de navegación GPS'
-        // ... añadir más según se desee ...
       ],
       vehicle: {
         brand: '',
@@ -754,6 +764,14 @@ export default {
         return
       }
 
+      if (this.vehicle.price == '$0' || this.vehicle.price == '$27.452.700.001') {
+        this.errorMessage = 'El precio no puede ser $0 ni $27.452.700.001'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 2000)
+        return
+      }
+
       try {
         this.isLoading = true
         const user = this.$store.state.user
@@ -777,7 +795,6 @@ export default {
           this.clear()
         }, 2000)
         const response = await axios.post('http://localhost:8080/posts', vehicleData)
-        // Reset vehicle data
         this.vehicle = {
           brand: '',
           model: '',
@@ -854,6 +871,10 @@ export default {
 </script>
 
 <style scoped>
+.warning {
+  color: red;
+}
+
 #description {
   width: 98%;
   height: 150px;
