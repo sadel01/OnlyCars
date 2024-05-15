@@ -23,7 +23,9 @@ import {
   faHeart,
   faSortUp,
   faSortDown,
-  faSort
+  faSort,
+  faPhone,
+  faClock
 } from '@fortawesome/free-solid-svg-icons'
 import { faWarehouse } from '@fortawesome/free-solid-svg-icons'
 import { faFacebookF } from '@fortawesome/free-brands-svg-icons'
@@ -68,7 +70,9 @@ library.add(
   faHeart,
   faSortUp,
   faSortDown,
-  faSort
+  faSort,
+  faPhone,
+  faClock
 )
 library.add(faFacebookF)
 

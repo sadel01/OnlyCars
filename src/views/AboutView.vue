@@ -6,17 +6,16 @@
     <p class="about-text">
       En OnlyCars, estamos comprometidos con la excelencia en la industria automotriz. Nos enorgullece ofrecer una plataforma integral para la compra y venta de vehículos en Chile, con un enfoque en la seguridad, la transparencia y la satisfacción del cliente. <br><br>
 
-Nuestra Visión: Ser líderes en innovación y servicio dentro del mercado automotriz chileno, proporcionando una experiencia de usuario superior y fomentando relaciones comerciales sólidas y confiables. <br><br>
+Nuestra Visión: Ser líderes en innovación y servicio dentro del mercado automotriz chileno, proporcionando una experiencia de usuario superior y fomentando relaciones comerciales sólidas y confiables.
 
 
-<h1>Por Qué Elegirnos: <br><br></h1>
-
-<span class="subtitleWhy">Innovación Tecnológica:</span> Utilizamos la última tecnología para ofrecer una plataforma robusta y fácil de usar que simplifica el proceso de compra y venta de vehículos. <br><br>
+<h1>Por Qué Elegirnos:</h1>
+<p class="about-text"><span class="subtitleWhy">Innovación Tecnológica:</span> Utilizamos la última tecnología para ofrecer una plataforma robusta y fácil de usar que simplifica el proceso de compra y venta de vehículos. <br><br>
 <span class="subtitleWhy">Seguridad Garantizada:</span> Implementamos medidas de seguridad rigurosas para proteger la información de nuestros usuarios y garantizar transacciones seguras. <br><br>
 <span class="subtitleWhy">Compromiso con la Comunidad:</span> Nos comprometemos a ser una fuerza positiva en la comunidad automotriz, apoyando prácticas comerciales éticas y sostenibles. <br><br>
-En OnlyCars, nos esforzamos por establecer relaciones sólidas y duraderas con nuestros usuarios. Únete a nosotros y experimenta la diferencia hoy mismo.
+En OnlyCars, nos esforzamos por establecer relaciones sólidas y duraderas con nuestros usuarios. Únete a nosotros y experimenta la diferencia hoy mismo.</p>
+
     </p>
-    <br><br>
     <h1 class="team-title">NUESTRO EQUIPO</h1>
     <div class="team">
       <div class="member">

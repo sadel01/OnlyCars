@@ -120,7 +120,7 @@
   text-decoration: none;
   width: 100%;
   color: black;
-  font-size: 1.125em;
+  font-size: 1.2em;
   font-weight: 700;
   letter-spacing: 0.1em;
   z-index: 20;

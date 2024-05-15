@@ -1,68 +1,101 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faRightToBracket } from '@fortawesome/free-solid-svg-icons'
-import { ref } from 'vue'
-import { faPhone, faLocationDot, faClock } from '@fortawesome/free-solid-svg-icons'
-
-const nombre = ref('')
-const email = ref('')
-const descripcion = ref('')
-const enviado = ref(false)
-const enviarFormulario = () => {
-  if (nombre.value && email.value && descripcion.value) {
-    enviado.value = true
-  }
-}
-const limpiarMensaje = () => {
-  enviado.value = false
-}
-</script>
 <template>
   <main class="principal">
     <div class="transparent-box">
       <div class="datos">
         <div class="container1">
-          <FontAwesomeIcon :icon="faPhone" class="iconosContacto" />
+          <font-awesome-icon :icon="['fas', 'phone']" class="iconosContacto" />
           <p class="textoDatos">Teléfono</p>
         </div>
         <p class="textoDatos2">+56 9 7358 8879</p>
         <div class="container1">
-          <FontAwesomeIcon :icon="faLocationDot" class="iconosContacto" />
+          <font-awesome-icon :icon="['fas', 'location-dot']" class="iconosContacto" />
           <p class="textoDatos">Ubicación</p>
         </div>
-        <p class="textoDatos2">Donde no llegan las pelaitas.</p>
+        <p class="textoDatos2">Universidad de Talca.</p>
         <div class="container1">
-          <FontAwesomeIcon :icon="faClock" class="iconosContacto" />
+          <font-awesome-icon :icon="['fas', 'clock']" class="iconosContacto" />
           <p class="textoDatos">Horario</p>
         </div>
-        <p class="textoDatos2">No disponible. Somos universitarios.</p>
+        <p class="textoDatos2">No disponible.</p>
       </div>
       <div class="linea"></div>
       <div class="enviarCorreo">
         <p class="textoContactanos">Contáctanos</p>
         <form class="form" type="contacto">
           <div class="groupC">
-            <input placeholder="‎" type="text" required="" />
-            <label for="name">Nombre</label>
+            <input  v-model="name" type="text" required="" placeholder="Nombre"/>
           </div>
           <div class="groupC">
-            <input placeholder="‎" type="email" id="email" name="email" required="" />
-            <label for="email">Correo Electrónico</label>
+            <input placeholder="Correo Electrónico" v-model="email" type="email" id="email" name="email" required="" />
           </div>
           <div class="groupC">
-            <textarea placeholder="‎" id="comment" name="comment" rows="5" required=""></textarea>
-            <label for="comment">Mensaje</label>
+            <textarea placeholder="Mensaje" v-model="message"  name="comment" rows="5" required=""></textarea>
           </div>
         </form>
         <button type="botonsubmit" @click="enviarFormulario"><span>ENVIAR</span></button>
-        <div v-if="enviado" class="mensajeExito">(*)Mensaje enviado con éxito</div>
       </div>
     </div>
   </main>
 </template>
 
+<script>
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faPhone, faDotCircle, faClock } from '@fortawesome/free-solid-svg-icons'
+import Swal from 'sweetalert2'
+
+export default {
+  name: 'ContactView',
+  components: {
+    FontAwesomeIcon
+  },
+  data() {
+    return {
+      enviado: false,
+      name: '',
+      email: '',
+      message: ''
+    }
+  },
+  methods: {
+    enviarFormulario() {
+      if (this.nombre === '' || this.email === '' || this.mensaje === '') {
+        this.errorMessage()
+        return
+      }
+      this.successMessage()
+      this.resetForm()
+    },
+
+    successMessage() {
+      Swal.fire({
+        icon: 'success',
+        title: 'Mensaje enviado con éxito',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    },
+
+    errorMessage() {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error, complete todos los campos.',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    },
+
+    resetForm() {
+      this.name = ''
+      this.email = ''
+      this.message = ''
+    }
+  }
+}
+</script>
+
 <style scoped>
+
 .form[type='contacto'] {
   bottom: 20%;
   display: flex;
@@ -97,12 +130,7 @@ const limpiarMensaje = () => {
   font-size: 16px;
 }
 
-.form[type='contacto'] .groupC input:placeholder-shown + label,
-.form .groupC textarea:placeholder-shown + label {
-  top: 15px;
-  background-color: transparent;
-  color: white;
-}
+
 
 .form[type='contacto'] .groupC input:focus,
 .form[type='contacto'] .groupC textarea:focus {
@@ -134,9 +162,8 @@ const limpiarMensaje = () => {
   height: 100vh;
 }
 
-
 .iconosContacto {
-  font-size: 30px
+  font-size: 30px;
 }
 
 .textoDatos {
@@ -177,7 +204,7 @@ const limpiarMensaje = () => {
 
 .enviarCorreo input::placeholder,
 .enviarCorreo textarea::placeholder {
-  color: #000000; /* Cambia el color del texto del marcador de posición a amarillo */
+  color: hsla(0, 0%, 100%, 0.614); /* Cambia el color del texto del marcador de posición a amarillo */
 }
 
 .datos {
@@ -222,6 +249,7 @@ const limpiarMensaje = () => {
   margin-right: 110px;
   margin-bottom: 50px;
   width: 35%;
+  height: 100%;
 }
 
 .enviarCorreo textarea {
@@ -237,6 +265,7 @@ const limpiarMensaje = () => {
     rgb(0 0 0 / 24%) 0px 1px 2px;
   background: #d1ccbd;
   transition: all 0.1s ease 0s;
+  font-family: "Poppins", sans-serif;;
   resize: none;
 }
 
