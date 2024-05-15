@@ -560,5 +560,21 @@ app.post('/reportChat', async (req, res) => {
   }
 })
 
+app.delete("/admin/delete/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const database = client.db("onlycars");
+    const collection = database.collection("posts");
+    const collection2 = database.collection("favorites");
+
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    const result2 = await collection2.updateMany({}, { $pull: { postIds: id } });
+
+    res.send({ message: "Publicación eliminada con éxito" });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
