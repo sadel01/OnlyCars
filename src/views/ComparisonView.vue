@@ -13,35 +13,28 @@
               <h3><strong>Marca y Modelo</strong></h3>
               <p><strong>Marca:</strong> {{ product.brand }}</p>
               <p><strong>Modelo:</strong> {{ product.model }}</p>
-              <p><strong>Año:</strong> {{ product.year }}</p>
+              <p><strong>Año:</strong> {{ product.year }} <span v-if="newestCarIndices.includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span></p>
             </section>
             <section class="details">
               <h3><strong>Detalles</strong></h3>
               <p>
                 <strong>Condición:</strong> {{ product.condition === 'used' ? 'Usado' : 'Nuevo' }}
               </p>
-              <p><strong>Kilometraje:</strong> {{ product.mileage }}
-                <span v-if="index === minMileageIndex">🡇</span>
-              </p>
+              <p><strong>Kilometraje:</strong> {{ product.mileage }} <span v-if="lowestMileageIndices.includes(index)"><i class="fa-solid fa-arrow-down" style="color: #63E6BE;"></i></span></p>
               <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
               <p><strong>Combustible:</strong> {{ product.fuel }}</p>
-              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}
-                <span v-if="index === maxCylinderCapacityIndex">🡅</span>
-              </p>
+              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }} <span v-if="maxCylinderCapacityIndices.includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span></p>
               <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
-              <p>
-                <strong>Potencia:</strong> {{product.power}} {{ product.fuel === 'Eléctrico' ? ' kW' : 'HP' }}
-                <span v-if="index === maxPowerIndex">🡅</span>
-              </p>
+              <p><strong>Potencia:</strong> {{ product.power }} <span v-if="maxPowerIndices.includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span></p>
               <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
               <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
             </section>
             <section class="pricing">
               <h3>Precio</h3>
-              <p>${{ product.price }} CLP</p>
+              <p>${{ product.price }} <span v-if="lowestPriceIndices.includes(index)"><i class="fa-solid fa-arrow-down" style="color: #63E6BE;"></i></span></p>
             </section>
             <section class="comfort">
-              <h3><strong>Tecnologías de confort</strong></h3>
+              <h3><strong>Tecnologías de confort</strong> <span v-if="maxComfortTechIndices.includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span></h3>
               <ul>
                 <li v-for="(technology, index) in product.comfortFeatures" :key="index">{{ technology }}</li>
               </ul>
@@ -58,7 +51,7 @@
               <!-- Agregar mas cosas a futuro para mejor comparasao -->
             </section>
             <section class="insurances">
-              <h3><strong>Seguros</strong></h3>
+              <h3><strong>Seguros</strong> <span v-if="maxInsuranceIndices.includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span></h3>
               <ul>
                 <li v-for="(seguro, index) in product.insuranceOptions" :key="index">{{ seguro }}</li>
               </ul>
@@ -129,29 +122,103 @@ export default {
       });
       return index;
     },
-    minMileageIndex() {
-      let minMileage = Infinity;
-      let index = -1;
+    lowestMileageIndices() {
+      let lowestMileage = Infinity;
+      let indices = [];
       this.comparisonList.forEach((product, i) => {
         let mileage = Number(product.mileage);
-        if (mileage < minMileage) {
-          minMileage = mileage;
-          index = i;
+        if (mileage < lowestMileage) {
+          lowestMileage = mileage;
+          indices = [i];
+        } else if (mileage === lowestMileage) {
+          indices.push(i);
         }
       });
-      return index;
+      return indices;
     },
-    maxCylinderCapacityIndex() {
-      let maxCapacity = 0;
-      let index = -1;
+    newestCarIndices() {
+      let newestYear = 0;
+      let indices = [];
       this.comparisonList.forEach((product, i) => {
-        let capacity = Number(product.cylinderCapacity.split(' ')[0]);
+        let year = Number(product.year);
+        if (year > newestYear) {
+          newestYear = year;
+          indices = [i];
+        } else if (year === newestYear) {
+          indices.push(i);
+        }
+      });
+      return indices;
+    },
+    maxCylinderCapacityIndices() {
+      let maxCapacity = 0;
+      let indices = [];
+      this.comparisonList.forEach((product, i) => {
+        let capacity = Number(product.cylinderCapacity.replace(' L', '').replace(' kW', ''));
         if (capacity > maxCapacity) {
           maxCapacity = capacity;
-          index = i;
+          indices = [i];
+        } else if (capacity === maxCapacity) {
+          indices.push(i);
         }
       });
-      return index;
+      return indices;
+    },
+    maxPowerIndices() {
+      let maxPower = 0;
+      let indices = [];
+      this.comparisonList.forEach((product, i) => {
+        let power = Number(product.power.replace(' HP', '').replace(' kWh', ''));
+        if (power > maxPower) {
+          maxPower = power;
+          indices = [i];
+        } else if (power === maxPower) {
+          indices.push(i);
+        }
+      });
+      return indices;
+    },
+    lowestPriceIndices() {
+      let lowestPrice = Infinity;
+      let indices = [];
+      this.comparisonList.forEach((product, i) => {
+        let price = Number(product.price.replace('$', '').replace('.', ''));
+        if (price < lowestPrice) {
+          lowestPrice = price;
+          indices = [i];
+        } else if (price === lowestPrice) {
+          indices.push(i);
+        }
+      });
+      return indices;
+    },
+    maxComfortTechIndices() {
+      let maxTech = 0;
+      let indices = [];
+      this.comparisonList.forEach((product, i) => {
+        let techCount = product.comfortFeatures.length;
+        if (techCount > maxTech) {
+          maxTech = techCount;
+          indices = [i];
+        } else if (techCount === maxTech) {
+          indices.push(i);
+        }
+      });
+      return indices;
+    },
+    maxInsuranceIndices() {
+      let maxInsurance = 0;
+      let indices = [];
+      this.comparisonList.forEach((product, i) => {
+        let insuranceCount = product.insuranceOptions.length;
+        if (insuranceCount > maxInsurance) {
+          maxInsurance = insuranceCount;
+          indices = [i];
+        } else if (insuranceCount === maxInsurance) {
+          indices.push(i);
+        }
+      });
+      return indices;
     }
   },
   created() {
