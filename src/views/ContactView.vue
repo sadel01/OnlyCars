@@ -54,9 +54,10 @@ const limpiarMensaje = () => {
             <textarea placeholder="‎" id="comment" name="comment" rows="5" required=""></textarea>
             <label for="comment">Mensaje</label>
           </div>
+          <div class="botonEnviar">
+            <button type="botonsubmit" @click="enviarFormulario"><span>ENVIAR</span></button>
+          </div>
         </form>
-        <button type="botonsubmit" @click="enviarFormulario"><span>ENVIAR</span></button>
-        <div v-if="enviado" class="mensajeExito">(*)Mensaje enviado con éxito</div>
       </div>
     </div>
   </main>
@@ -134,9 +135,8 @@ const limpiarMensaje = () => {
   height: 100vh;
 }
 
-
 .iconosContacto {
-  font-size: 30px
+  font-size: 30px;
 }
 
 .textoDatos {
@@ -244,6 +244,7 @@ const limpiarMensaje = () => {
   font-size: 40px;
   text-align: center;
   font-weight: bold;
+  max-width: px;
 }
 
 button[type='botonsubmit'] {
@@ -294,13 +295,14 @@ button[type='botonsubmit']:hover span {
   animation: scaleUp 0.3s ease-in-out;
 }
 .mensajeExito {
-  position: absolute;
+  position: fixed;
   top: 10px;
   right: 10px;
   background-color: #4caf50;
   color: white;
   padding: 10px 20px;
   border-radius: 5px;
+  transform: translateX(-50%);
 }
 
 @media (max-width: 600px) {
@@ -317,5 +319,22 @@ button[type='botonsubmit']:hover span {
   .enviarCorreo textarea {
     width: 100%;
   }
+}
+.botonEnviar {
+  bottom: 5%;
+  margin-top: -50px;
+  margin-left: 20px;
+  position: center;
+}
+.botonEnviar button {
+  width: 100%;
+  color: white;
+  background-color: #fbc40e;
+  border: none;
+  border-radius: 5px;
+  padding: 25px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 </style>
