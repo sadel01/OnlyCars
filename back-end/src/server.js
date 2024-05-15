@@ -500,10 +500,12 @@ app.post('/reportChat', async (req, res) => {
       return;
     }
 
+    // Marcar el chat como reportado
+    await chatsCollection.updateOne({ _id: new ObjectId(chatId) }, { $set: { reported: true } });
+
     // Encontrar todos los usuarios con rol de admin
     const admins = await usersCollection.find({ rol: 'admin' }).toArray();
 
-    // Enviar un mensaje a cada admin
     for (const admin of admins) {
       // Hay que buscar alguna forma de informarle a los administradores, no sé qué puede ser.
       // Había pensado en enviar un correo, pero no sé si es posible hacerlo desde acá (probablemente sí)
@@ -513,6 +515,44 @@ app.post('/reportChat', async (req, res) => {
   } catch (error) {
     res.status(500).send(error.message);
   }
+});
+
+app.get('/getReportedChats', async (req, res) => {
+  try {
+    console.log('HOLA');
+
+    const database = client.db('onlycars');
+    const userCollection = database.collection('users')
+    const productCollection = database.collection('posts')
+    const chatsCollection = database.collection('chat');
+
+    // Encontrar todos los chats que han sido reportados
+    const reportedChats = await chatsCollection.find({ reported: true }).toArray();
+
+    const chatsWithBuyerDetails = await Promise.all(
+    reportedChats.map(async (chat) => {
+      const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+      const seller = await userCollection.findOne({ _id: new ObjectId(chat.sellerID) })
+      const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+
+      return {
+        buyerName: buyer ? buyer.nombre : '',
+        buyerLastName: buyer ? buyer.apellido : '',
+        sellerName: seller ? seller.nombre : '',
+        sellerLastName: seller ? seller.apellido : '',
+        brand: product ? product.brand : '',
+        model: product ? product.model : '',
+        product: product ? product : {}
+      }
+    })
+  )
+  
+      res.send(chatsWithBuyerDetails);
+    }
+    catch (error) {
+      res.status(500).send(error.message);
+    } 
+
 });
 
 app.delete("/admin/delete/:id", async (req, res) => {
