@@ -485,5 +485,35 @@ app.post("/admin/users/:id", async (req, res) => {
   }
 });
 
+app.post('/reportChat', async (req, res) => {
+  try {
+    const { chatId, reportedBy } = req.body;
+    const database = client.db('onlycars');
+    const chatsCollection = database.collection('chat');
+    const usersCollection = database.collection('users');
+
+    // Encontrar el chat que se está reportando
+    const chat = await chatsCollection.findOne({ _id: new ObjectId(chatId) });
+
+    if (!chat) {
+      res.status(404).send('Chat no encontrado');
+      return;
+    }
+
+    // Encontrar todos los usuarios con rol de admin
+    const admins = await usersCollection.find({ rol: 'admin' }).toArray();
+
+    // Enviar un mensaje a cada admin
+    for (const admin of admins) {
+      // Hay que buscar alguna forma de informarle a los administradores, no sé qué puede ser.
+      // Había pensado en enviar un correo, pero no sé si es posible hacerlo desde acá (probablemente sí)
+    }
+
+    res.send({ success: true, message: 'Chat reportado con éxito' });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
