@@ -485,7 +485,6 @@ app.post("/admin/users/:id", async (req, res) => {
   }
 });
 
-
 app.post("/profile/users/:id", async (req, res) => {
   try {
     const schedules = req.body;
@@ -497,6 +496,38 @@ app.post("/profile/users/:id", async (req, res) => {
       { $set: { schedules: schedules } }
     );
     res.send({ message: 'Horarios actualizados con éxito' });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+});
+    
+app.post('/reportChat', async (req, res) => {
+  try {
+    const { chatId, reportedBy } = req.body;
+    const database = client.db('onlycars');
+    const chatsCollection = database.collection('chat');
+    const usersCollection = database.collection('users');
+
+    // Encontrar el chat que se está reportando
+    const chat = await chatsCollection.findOne({ _id: new ObjectId(chatId) });
+
+    if (!chat) {
+      res.status(404).send('Chat no encontrado');
+      return;
+    }
+
+    // Marcar el chat como reportado
+    await chatsCollection.updateOne({ _id: new ObjectId(chatId) }, { $set: { reported: true } });
+
+    // Encontrar todos los usuarios con rol de admin
+    const admins = await usersCollection.find({ rol: 'admin' }).toArray();
+
+    for (const admin of admins) {
+      // Hay que buscar alguna forma de informarle a los administradores, no sé qué puede ser.
+      // Había pensado en enviar un correo, pero no sé si es posible hacerlo desde acá (probablemente sí)
+    }
+
+    res.send({ success: true, message: 'Chat reportado con éxito' });
   } catch (error) {
     res.status(500).send(error.message);
   }
