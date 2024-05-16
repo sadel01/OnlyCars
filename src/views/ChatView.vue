@@ -22,7 +22,19 @@
 
       <div class="chat">
         <div class="chat-header">
+          <div
+            class="profile-image"
+            :style="{
+              backgroundImage: `url(${user.imgProfile || '/src/assets/icons/userDefault.jpg'})`
+            }"
+          ></div>
           <h1>{{ selectedChat.otherUserName }} {{ selectedChat.otherUserLastName }}</h1>
+          <div class="report-section">
+            <p v-if="chatReported">Reportado correctamente &nbsp;</p>
+            <button class="report-button" @click="reportChat" :disabled="chatReported">
+              Reportar chat
+            </button>
+          </div>
         </div>
         <div class="chatContainer" ref="chatContainer">
           <div class="messages" ref="messages">
@@ -139,7 +151,7 @@
           </p>
           <p>
             <img src="@/assets/icons/horse.svg" class="icon" alt="Motor" />
-            <strong>Motor: </strong> {{ selectedChat.product.power + ' HP'}}
+            <strong>Motor: </strong> {{ selectedChat.product.power }}
           </p>
 
           <p>
@@ -181,6 +193,7 @@ export default {
       selectedChat: '',
       product: {},
       searchTerm: '',
+      chatReported: false,
       filteredChats: []
     }
   },
@@ -226,6 +239,26 @@ export default {
     container.scrollTop = container.scrollHeight
   },
   methods: {
+    async reportChat() {
+      try {
+        const response = await axios.post('http://localhost:8080/reportChat', {
+          chatId: this.chatId,
+          reportedBy: this.user
+        })
+
+        if (response.status === 200) {
+          this.successMessage = 'Chat reportado con éxito'
+          console.log('Chat reportado con éxito')
+          this.chatReported = true
+        } else {
+          this.errorMessage = 'Error al reportar el chat'
+          console.log('Error al reportar el chat')
+        }
+      } catch (error) {
+        this.errorMessage = 'Error al reportar el chat: ' + error.message
+      }
+    },
+
     emitInput() {
       this.filteredChats = this.userChats.filter((chat) => {
         return (
@@ -276,6 +309,24 @@ export default {
 </script>
 
 <style scoped>
+.profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.report-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  float: right;
+}
+
+.report-button {
+  /* Designado al departamento de CSS (Adrián) para agregar estilos, está default */
+}
+
 #messageInput:focus ~ #sendButton svg path,
 #messageInput:valid ~ #sendButton svg path {
   fill: #3c3c3c;
@@ -514,6 +565,9 @@ h1 {
   padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .chatContainer {
@@ -692,9 +746,8 @@ strong {
 }
 
 @media (max-width: 1024px) {
-  .sell-data{
-    display:none;
+  .sell-data {
+    display: none;
   }
-
 }
 </style>

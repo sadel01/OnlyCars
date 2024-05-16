@@ -92,6 +92,7 @@
             placeholder="Precio del vehículo"
             @input="formatPriceInput"
           />
+          <p v-if="priceWarning" class="warning">{{ priceWarning }}</p>
         </div>
 
         <div class="form-group">
@@ -249,6 +250,9 @@
             :id="'insurance-' + insuranceOption"
             :value="insuranceOption"
             v-model="vehicle.insuranceOptions"
+            :disabled="
+              vehicle.insuranceOptions.includes('Sin seguro') && insuranceOption !== 'Sin seguro'
+            "
           />
           <label :for="'insurance-' + insuranceOption">{{ insuranceOption }}</label>
         </div>
@@ -375,6 +379,17 @@ export default {
       user: computed(() => store.state.user)
     }
   },
+  computed: {
+    priceWarning() {
+      if (this.vehicle.price !== '' && this.vehicle.price == '$0') {
+        return 'El precio no puede ser 0'
+      } else if (this.vehicle.price == '$27.452.700.001') {
+        return 'El precio no puede ser 27.452.700.001' // Rolls-Royce Droptail — $30M (auto más caro del mundo)
+      } else {
+        return ''
+      }
+    }
+  },
   data() {
     return {
       selectedComfortFeatures: [], // las características de confort seleccionadas
@@ -389,7 +404,6 @@ export default {
         'Asistencia en carretera',
         'GAP',
         'Sin seguro'
-        // ... añadir más según se desee ...
       ],
       comfortFeatures: [
         // Lista de sistemas de confort para elegir
@@ -403,7 +417,6 @@ export default {
         'Cierre centralizado',
         'Ventanas eléctricas',
         'Sistema de navegación GPS'
-        // ... añadir más según se desee ...
       ],
       vehicle: {
         brand: '',
@@ -733,7 +746,6 @@ export default {
       // Añade este método si gestionas comunas
       if (!this.vehicle.provincia) {
         this.comunas = []
-        returnF
       }
       try {
         // Debes tener un endpoint para obtener comunas basado en la provincia
@@ -755,6 +767,14 @@ export default {
         return
       }
 
+      if (this.vehicle.price == '$0' || this.vehicle.price == '$27.452.700.001') {
+        this.errorMessage = 'El precio no puede ser $0 ni $27.452.700.001'
+        setTimeout(() => {
+          this.errorMessage = ''
+        }, 2000)
+        return
+      }
+
       try {
         this.isLoading = true
         const user = this.$store.state.user
@@ -767,8 +787,11 @@ export default {
             name: user.nombre,
             lastName: user.apellido,
             email: user.mail,
-            rut: user.rut
-          }
+            rut: user.rut,
+            imgProfile: user.imgProfile
+          },
+          visitas: 0,
+          fechaPublicacion: new Date().toISOString()
         }
         this.successMessage = 'Auto publicado con éxito'
         setTimeout(() => {
@@ -776,8 +799,6 @@ export default {
           this.clear()
         }, 2000)
         const response = await axios.post('http://localhost:8080/posts', vehicleData)
-        console.log('Response from the server:', response.data)
-        // Reset vehicle data
         this.vehicle = {
           brand: '',
           model: '',
@@ -854,6 +875,10 @@ export default {
 </script>
 
 <style scoped>
+.warning {
+  color: red;
+}
+
 #description {
   width: 98%;
   height: 150px;

@@ -9,66 +9,6 @@
             <img :src="product.image" alt="Imagen del producto" />
           </div>
           <div class="product-info">
-            <section class="brand-model">
-              <h3><strong>Marca y Modelo</strong></h3>
-              <p><strong>Marca:</strong> {{ product.brand }}</p>
-              <p><strong>Modelo:</strong> {{ product.model }}</p>
-              <p><strong>Año:</strong> {{ product.year }}</p>
-            </section>
-            <section class="details">
-              <h3><strong>Detalles</strong></h3>
-              <p>
-                <strong>Condición:</strong> {{ product.condition === 'used' ? 'Usado' : 'Nuevo' }}
-              </p>
-              <p><strong>Kilometraje:</strong> {{ product.mileage }}
-                <span v-if="index === minMileageIndex">🡇</span>
-              </p>
-              <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
-              <p><strong>Combustible:</strong> {{ product.fuel }}</p>
-              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}
-                <span v-if="index === maxCylinderCapacityIndex">🡅</span>
-              </p>
-              <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
-              <p>
-                <strong>Potencia:</strong> {{product.power}} {{ product.fuel === 'Eléctrico' ? ' kW' : 'HP' }}
-                <span v-if="index === maxPowerIndex">🡅</span>
-              </p>
-              <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
-              <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
-            </section>
-            <section class="pricing">
-              <h3>Precio</h3>
-              <p>${{ product.price }} CLP</p>
-            </section>
-            <section class="comfort">
-              <h3><strong>Tecnologías de confort</strong></h3>
-              <ul>
-                <li v-for="(technology, index) in product.comfortFeatures" :key="index">{{ technology }}</li>
-              </ul>
-            </section>
-            <section class="additional-info">
-              <h3><strong>Información Adicional</strong></h3>
-              <p><strong>Color Interior:</strong> {{ product.interiorColor }}</p>
-              <p><strong>Color Exterior:</strong> {{ product.exteriorColor }}</p>
-              <p><strong>Altura al suelo:</strong> {{ product.groundClearance }} cm</p>
-              <p><strong>Puertas:</strong> {{ product.doors }}</p>
-              <p><strong>Dueños:</strong> {{ product.owners }}</p>
-              <p><strong>Seguridad:</strong> {{ product.airbag === 'yes' ? 'Con airbag' : 'Sin airbag' }}</p>
-              
-              <!-- Agregar mas cosas a futuro para mejor comparasao -->
-            </section>
-            <section class="insurances">
-              <h3><strong>Seguros</strong></h3>
-              <ul>
-                <li v-for="(seguro, index) in product.insuranceOptions" :key="index">{{ seguro }}</li>
-              </ul>
-            </section>
-            <section class="ubication">
-              <h3><strong>Ubicación</strong></h3>
-              <p><strong>Región:</strong> {{ product.region }}</p>
-              <p><strong>Ciudad:</strong> {{ product.provincia }}</p>
-              <p><strong>Comuna:</strong> {{ product.comuna }}</p>
-            </section>
             <section class="scores">
               <h3><strong>Puntuaciones</strong></h3>
               <div class="score-bar">
@@ -96,6 +36,80 @@
                 ></progress>
               </div>
             </section>
+            <section class="brand-model">
+              <h3><strong>Marca y Modelo</strong></h3>
+              <p><strong>Marca:</strong> {{ product.brand }}</p>
+              <p><strong>Modelo:</strong> {{ product.model }}</p>
+              <p><strong>Año:</strong> {{ product.year }} 
+                <span v-if="newestCarIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="newestCarIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </p>
+            </section>
+            <section class="details">
+              <h3><strong>Detalles</strong></h3>
+              <p>
+                <strong>Condición:</strong> {{ product.condition === 'used' ? 'Usado' : 'Nuevo' }}
+              </p>
+              <p><strong>Kilometraje:</strong> {{ product.mileage }} 
+                <span v-if="lowestMileageIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #63E6BE;"></i></span>
+                <span v-if="lowestMileageIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #e72a08;"></i></span>
+              </p>
+              <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
+              <p><strong>Combustible:</strong> {{ product.fuel }}</p>
+              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }} 
+                <span v-if="maxCylinderCapacityIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxCylinderCapacityIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </p>
+              <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
+              <p><strong>Potencia:</strong> {{ product.power }} 
+                <span v-if="maxPowerIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxPowerIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </p>
+              <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
+              <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
+            </section>
+            <section class="pricing">
+              <h3>Precio</h3>
+              <p>${{ product.price }} 
+                <span v-if="lowestPriceIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #63E6BE;"></i></span>
+                <span v-if="lowestPriceIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #e72a08;"></i></span>
+              </p>
+            </section>
+            <section class="comfort">
+              <h3><strong>Tecnologías de confort </strong> 
+                <span v-if="maxComfortTechIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxComfortTechIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </h3>
+              <ul>
+                <li v-for="(technology, index) in product.comfortFeatures" :key="index">{{ technology }}</li>
+              </ul>
+            </section>
+            <section class="additional-info">
+              <h3><strong>Información Adicional</strong></h3>
+              <p><strong>Color Interior:</strong> {{ product.interiorColor }}</p>
+              <p><strong>Color Exterior:</strong> {{ product.exteriorColor }}</p>
+              <p><strong>Altura al suelo:</strong> {{ product.groundClearance }} cm</p>
+              <p><strong>Puertas:</strong> {{ product.doors }}</p>
+              <p><strong>Dueños:</strong> {{ product.owners }}</p>
+              <p><strong>Seguridad:</strong> {{ product.airbag === 'yes' ? 'Con airbag' : 'Sin airbag' }}</p>
+              
+              <!-- Agregar mas cosas a futuro para mejor comparasao -->
+            </section>
+            <section class="insurances">
+              <h3><strong>Seguros </strong> 
+                <span v-if="maxInsuranceIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxInsuranceIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </h3>
+              <ul>
+                <li v-for="(seguro, index) in product.insuranceOptions" :key="index">{{ seguro }}</li>
+              </ul>
+            </section>
+            <section class="ubication">
+              <h3><strong>Ubicación</strong></h3>
+              <p><strong>Región:</strong> {{ product.region }}</p>
+              <p><strong>Ciudad:</strong> {{ product.provincia }}</p>
+              <p><strong>Comuna:</strong> {{ product.comuna }}</p>
+            </section>
           </div>
         </div>
       </div>
@@ -117,41 +131,211 @@ export default {
         }
       })
     },
-    maxPowerIndex() {
-      let maxPower = 0;
-      let index = -1;
+    lowestMileageIndices() {
+      let lowestMileage = Infinity;
+      let highestMileage = 0;
+      let mayor = [];
+      let menor = [];
       this.comparisonList.forEach((product, i) => {
-        let power = Number(product.power);
-        if (power > maxPower) {
-          maxPower = power;
-          index = i;
+        let mileage = Number(product.mileage.replace('.', ''));
+        if (mileage < lowestMileage) {
+          lowestMileage = mileage;
+          menor = [i];
+        } else if (mileage === lowestMileage) {
+          menor.push(i);
         }
       });
-      return index;
-    },
-    minMileageIndex() {
-      let minMileage = Infinity;
-      let index = -1;
       this.comparisonList.forEach((product, i) => {
-        let mileage = Number(product.mileage);
-        if (mileage < minMileage) {
-          minMileage = mileage;
-          index = i;
+        let mileage = Number(product.mileage.replace('.', ''));
+        if (menor.length === this.comparisonList.length) {
+          return [mayor, menor];
+        }
+        else if (mileage > highestMileage) {
+          highestMileage = mileage;
+          mayor = [i];
+        } else if (mileage === highestMileage) {
+          mayor.push(i);
         }
       });
-      return index;
+      return [mayor, menor];
     },
-    maxCylinderCapacityIndex() {
+    newestCarIndices() {
+      let newestYear = 0;
+      let lowesYear = Infinity;
+      let mayor = [];
+      let menor = [];
+      for (let i = 0; i < this.comparisonList.length; i++) {
+        let product = this.comparisonList[i];
+        let year = Number(product.year);
+        if (year > newestYear) {
+          newestYear = year;
+          mayor = [i];
+        } else if (year === newestYear) {
+          mayor.push(i);
+        }
+      }
+      for (let i = 0; i < this.comparisonList.length; i++) {
+        let product = this.comparisonList[i];
+        let year = Number(product.year);
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }else if (year < lowesYear) {
+          lowesYear = year;
+          menor = [i];
+        } else if (year === lowesYear) {
+          menor.push(i);
+        }
+      }
+      return [mayor, menor];
+    },
+    maxCylinderCapacityIndices() {
       let maxCapacity = 0;
-      let index = -1;
+      let minCapacity = Infinity;
+      let mayor = [];
+      let menor = [];
       this.comparisonList.forEach((product, i) => {
-        let capacity = Number(product.cylinderCapacity.split(' ')[0]);
+        let capacity = Number(product.cylinderCapacity.replace(' L', '').replace(' kW', ''));
         if (capacity > maxCapacity) {
           maxCapacity = capacity;
-          index = i;
+          mayor = [i];
+        } else if (capacity === maxCapacity) {
+          mayor.push(i);
         }
       });
-      return index;
+      this.comparisonList.forEach((product, i) => {
+        let capacity = Number(product.cylinderCapacity.replace(' L', '').replace(' kW', ''));
+        if (mayor.length === this.comparisonList.length) {
+          return [mayor, menor];
+        }
+        else if (capacity < minCapacity) {
+          minCapacity = capacity;
+          menor = [i];
+        } else if (capacity === minCapacity) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    maxPowerIndices() {
+      let maxPower = 0;
+      let minPower = Infinity;
+      let mayor = [];
+      let menor = [];
+      let power = 0;
+      this.comparisonList.forEach((product, i) => {
+        if(product.fuel === 'Eléctrico'){
+          power = Number(product.power.replace(' kWh', ''))*0.7457;
+        }else{
+          power = Number(product.power.replace(' HP', ''));
+        }
+        if (power > maxPower) {
+          maxPower = power;
+          mayor = [i];
+        } else if (power === maxPower) {
+          mayor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        if(product.fuel === 'Eléctrico'){
+          power = Number(product.power.replace(' kWh', ''))*0.7457;
+        }else{
+          power = Number(product.power.replace(' HP', ''));
+        }
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (power < minPower) {
+          minPower = power;
+          menor = [i];
+        } else if (power === minPower) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    lowestPriceIndices() {
+      let lowestPrice = Infinity;
+      let highestPrice = 0;
+      let mayor = [];
+      let menor = [];
+      this.comparisonList.forEach((product, i) => {
+        let price = Number(product.price.replace('$', '').replace('.', ''));
+        if (price < lowestPrice) {
+          lowestPrice = price;
+          menor = [i];
+        } else if (price === lowestPrice) {
+          menor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        let price = Number(product.price.replace('$', '').replace('.', ''));
+        if(menor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (price > highestPrice) {
+          highestPrice = price;
+          mayor = [i];
+        } else if (price === highestPrice) {
+          mayor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    maxComfortTechIndices() {
+      let maxTech = 0;
+      let minTech = Infinity;
+      let mayor = [];
+      let menor = [];
+      this.comparisonList.forEach((product, i) => {
+        let techCount = product.comfortFeatures.length;
+        if (techCount > maxTech) {
+          maxTech = techCount;
+          mayor = [i];
+        } else if (techCount === maxTech) {
+          mayor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        let techCount = product.comfortFeatures.length;
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (techCount < minTech) {
+          minTech = techCount;
+          menor = [i];
+        } else if (techCount === minTech) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    maxInsuranceIndices() {
+      let maxInsurance = 0;
+      let minInsurance = Infinity;
+      let mayor = [];
+      let menor = [];
+      this.comparisonList.forEach((product, i) => {
+        let insuranceCount = product.insuranceOptions.length;
+        if (insuranceCount > maxInsurance) {
+          maxInsurance = insuranceCount;
+          mayor = [i];
+        } else if (insuranceCount === maxInsurance) {
+          mayor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        let insuranceCount = product.insuranceOptions.length;
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (insuranceCount < minInsurance) {
+          minInsurance = insuranceCount;
+          menor = [i];
+        } else if (insuranceCount === minInsurance) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
     }
   },
   created() {
@@ -163,41 +347,39 @@ export default {
     calculateSportScore(product) {
       let score = 0
 
-      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') { // CILINDRAJE EQUIVALE AL 10% DE LA PUNTUACIÓN
         score += parseFloat(product.cylinderCapacity.replace(' L', ''))
       }else{
-        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 70) * 2
         score += cylinderScore
       }     
 
-      const transmissionScore = product.transmission === 'Manual' ? 10 : -5
+      const transmissionScore = product.transmission === 'Manual' ? 15 : 0 // TRANSMISION EQUIVALE AL 15% DE LA PUNTUACIÓN
       score += transmissionScore
 
-      const powerScore = product.power / 30 // PUEDE CAMBIAR
+      const power = parseInt(product.power.replace(' HP', ''))
+      const normalizedPower = (power - 0) / (1000 - 0) // POTENCIA EQUIVALE AL 25% DE LA PUNTUACIÓN
+      const powerScore = (normalizedPower / 4)*100 
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'Deportiva' ? 10 : -5
-      score += suspensionScore
+      if(product.suspensionType === 'Deportiva'){ // SUSPENSIÓN EQUIVALE AL 20% DE LA PUNTUACIÓN
+        score += 20
+      }else if(product.suspensionType === 'Ajustable'){
+        score += 10
+      }
 
-      const tireTypeScore = product.tireType === 'De Carretera' ? 10 : -5
+      const tireTypeScore = product.tireType === 'De Carretera' ? 15 : 0 // TIPO DE NEUMÁTICOS EQUIVALE AL 15% DE LA PUNTUACIÓN
       score += tireTypeScore
       
-      if(product.groundClearance < 10){
-        const groundClearanceScore = product.groundClearance / 5 // PUEDE CAMBIAR
-        
-        score += groundClearanceScore
-      }else{
-        score += -(product.groundClearance) + 10
+      if(product.groundClearance > 10 && product.groundClearance < 15){      
+        score += 5// ALTURA AL SUELO EQUIVALE AL 5% DE LA PUNTUACIÓN
       }
 
-      for (let i = 0; i < product.comfortFeatures.length; i++) {
-        if (product.comfortFeatures[i] === 'Control de crucero') {
-          score += 2
-        }
+      if(product.driveTrain === 'Tracción trasera'){ // TRACCIÓN EQUIVALE AL 10% DE LA PUNTUACIÓN
+        score += 10
+      }else if(product.driveTrain === 'Tracción total'){
+        score += 5
       }
-
-      const driveTrainScore = product.driveTrain === 'Tracción trasera' ? 10 : -5
-      score += driveTrainScore
 
       score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
       return score
@@ -205,40 +387,36 @@ export default {
     calculateOffRoadScore(product) {
       let score = 0
 
-      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
-        score += parseFloat(product.cylinderCapacity.replace(' L', ''))
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') { // CILINDRAJE EQUIVALE AL 5% DE LA PUNTUACIÓN
+        score += (parseFloat(product.cylinderCapacity.replace(' L', '')))/2
       }else{
-        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 70)
         score += cylinderScore
       }     
 
-      const transmissionScore = product.transmission === 'Manual' ? 10 : -5
+      const transmissionScore = product.transmission === 'Manual' ? 5 : 0 // TRANSMISION EQUIVALE AL 5% DE LA PUNTUACIÓN
       score += transmissionScore
 
-      const powerScore = product.power / 70 // PUEDE CAMBIAR
+      const power = parseInt(product.power.replace(' HP', ''))
+      const normalizedPower = (power - 0) / (1000 - 0) // POTENCIA EQUIVALE AL 10% DE LA PUNTUACIÓN
+      const powerScore = (normalizedPower / 10)*100 
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'Ajustable' ? 10 : -5
-      score += suspensionScore
-
-      const tireTypeScore = product.tireType === 'Todo Terreno' ? 10 : -5
-      score += tireTypeScore
-      
-      if(product.groundClearance > 20){
-        const groundClearanceScore = product.groundClearance / 5 // PUEDE CAMBIAR
-        
-        score += groundClearanceScore
-      }else{
-        score += product.groundClearance - 20
+      if(product.suspensionType === 'Ajustable'){ // SUSPENSIÓN EQUIVALE AL 15% DE LA PUNTUACIÓN
+        score += 15
+      }else if(product.suspensionType === 'Estándar'){
+        score += 7
       }
 
-      const driveTrainScore = product.driveTrain === 'Tracción total' ? 10 : -5
-      score += driveTrainScore
+      const tireTypeScore = product.tireType === 'Todo Terreno' ? 25 : 0 // TIPO DE NEUMÁTICOS EQUIVALE AL 25% DE LA PUNTUACIÓN
+      score += tireTypeScore
+      
+      if(product.groundClearance > 20 && product.groundClearance < 30){      
+        score += 5// ALTURA AL SUELO EQUIVALE AL 5% DE LA PUNTUACIÓN
+      }
 
-      for (let i = 0; i < product.comfortFeatures.length; i++) {
-        if (product.comfortFeatures[i] === 'Control de crucero' || product.comfortFeatures[i] === 'Sensores de estacionamiento' || product.comfortFeatures[i] === 'Cámara de visión trasera' || product.comfortFeatures[i] === 'Asistente de mantenimiento de carril') {
-          score += 2
-        }
+      if(product.driveTrain === 'Tracción total'){// TRACCIÓN EQUIVALE AL 20% DE LA PUNTUACIÓN
+        score += 20
       }
 
       score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
@@ -248,33 +426,40 @@ export default {
     calculateConfortScore(product) {
       let score = 0
 
-      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') {
-        score += parseFloat(product.cylinderCapacity.replace(' L', ''))
+      if (product.fuel === 'Diésel' || product.fuel === 'Gasolina') { // CILINDRAJE EQUIVALE AL 5% DE LA PUNTUACIÓN
+        score += (parseFloat(product.cylinderCapacity.replace(' L', '')))/2
       }else{
-        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 100) * 2
+        const cylinderScore = (parseFloat(product.cylinderCapacity.replace(' kW', '')) / 70)
         score += cylinderScore
       }     
 
-      const transmissionScore = product.transmission === 'Automatico' ? 10 : -5
+      const transmissionScore = product.transmission === 'Automático' ? 10 : 0 // TRANSMISION EQUIVALE AL 10% DE LA PUNTUACIÓN
       score += transmissionScore
 
-      const airbagScore = product.airbag === 'yes' ? 10 : -5
-      score += airbagScore
-
-      const powerScore = product.power / 150 // PUEDE CAMBIAR
+      const power = parseInt(product.power.replace(' HP', ''))
+      const normalizedPower = (power - 0) / (1000 - 0) // POTENCIA EQUIVALE AL 5% DE LA PUNTUACIÓN
+      const powerScore = (normalizedPower / 20)*100 
       score += powerScore
 
-      const suspensionScore = product.suspensionType === 'Estándar' ? 10 : -5
-      score += suspensionScore
+      if(product.suspensionType === 'Ajustable'){ // SUSPENSIÓN EQUIVALE AL 20% DE LA PUNTUACIÓN
+        score += 20
+      }else if(product.suspensionType === 'Estándar'){
+        score += 10
+      }
 
-      const tireTypeScore = product.tireType === 'Mixtos' ? 10 : -5
+      const tireTypeScore = product.tireType === 'Mixtos' ? 10 : 0 // TIPO DE NEUMÁTICOS EQUIVALE AL 10% DE LA PUNTUACIÓN
       score += tireTypeScore
+      
+      if(product.groundClearance > 12 && product.groundClearance < 16){      
+        score += 10// ALTURA AL SUELO EQUIVALE AL 10% DE LA PUNTUACIÓN
+      }
 
-      const driveTrainScore = product.driveTrain === 'Tracción total' ? 10 : -5
-      score += driveTrainScore
+      if(product.driveTrain === 'Tracción total'){// TRACCIÓN EQUIVALE AL 10% DE LA PUNTUACIÓN
+        score += 10
+      }
 
       for (let i = 0; i < product.comfortFeatures.length; i++) {
-        score += 2       
+        score += 3
       }
 
       score = Math.min(Math.max(score, 0), 100) //puntuación entre 0 y 100.      
@@ -315,6 +500,7 @@ progress::-moz-progress-bar {
 }
 .container {
   width: 100%;
+  max-width: 1700px;
   margin: 20px auto;
   padding: 20px;
   display: flex;
@@ -334,6 +520,7 @@ progress::-moz-progress-bar {
 
 .product-list {
   display: flex;
+  max-width: 1700px;
 }
 
 .product-card {

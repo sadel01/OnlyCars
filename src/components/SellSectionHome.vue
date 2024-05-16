@@ -9,11 +9,13 @@
           <div class="text-block">
             <strong class="title">Vende tu Auto</strong>
             <p class="description">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nobis iure pariatur ullam
-              omnis reprehenderit. Rerum vitae voluptatibus nisi numquam ad, officiis in modi odit
-              minima corrupti eius ratione consequuntur, dicta eaque laborum ipsa neque, vel
-              reiciendis voluptatem minus sapiente necessitatibus commodi magni accusamus? Ratione
-              sint incidunt ipsa repudiandae, pariatur totam atque praesentium.
+              ¿Estás buscando una manera rápida, segura y conveniente de vender tu vehículo en
+              Chile? ¡Has llegado al lugar indicado! En nuestra plataforma, te ofrecemos la
+              oportunidad de poner tu auto en manos de potenciales compradores de manera sencilla y
+              eficiente.
+              <br><br>
+              ¡Únete a nuestra comunidad de vendedores hoy mismo y vende tu auto de manera fácil y
+              segura!
             </p>
             <RouterLink to="/sell" class="boton">
               <button class="botonVendeAuto"><span>Vende tu auto</span></button>
@@ -43,6 +45,11 @@
   gap: 4rem;
   margin: 0 5%;
   padding: 2rem;
+}
+
+.description{
+  font-size: 1.125rem;
+  line-height: 1.5;
 }
 
 .image-container {
@@ -113,7 +120,7 @@
   text-decoration: none;
   width: 100%;
   color: black;
-  font-size: 1.125em;
+  font-size: 1.2em;
   font-weight: 700;
   letter-spacing: 0.1em;
   z-index: 20;

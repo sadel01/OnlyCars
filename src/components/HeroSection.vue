@@ -5,7 +5,7 @@
         <h1 id="title">ONLYCARS</h1>
       </div>
       <span class="subtitle">Compra y Vende Autos con nosotros</span>
-      <p>Tu plataforma confiable para transacciones de automóviles seguras y convenientes</p>
+      <p class="description">Tu plataforma confiable para transacciones de automóviles seguras y convenientes</p>
       <RouterLink to="/catalog" class="theme-features-btn">
         <span>Ver Catálogo</span>
         <svg
@@ -31,6 +31,11 @@
   z-index: 2;
 }
 
+.description{
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
 body,
 html {
   margin: 0;
@@ -46,7 +51,7 @@ html {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-image: url(../assets/ferrari2.jpg); /*Agregar imagen*/
+  background-image: url(../assets/ferrari2.jpg);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -81,7 +86,7 @@ html {
 }
 
 .subtitle {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin-top: 2rem;
 }
 
@@ -147,7 +152,7 @@ p {
   }
 
   .hero-section {
-    height: 600px;
+    height: 100vh;
   }
 }
 
@@ -157,7 +162,7 @@ p {
   }
 
   .hero-section {
-    height: 500px;
+    height: 100vh;
   }
 
   .theme-features-btn {

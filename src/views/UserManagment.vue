@@ -1,78 +1,119 @@
 <template>
-  <div>
-    <div class="container">
-      <div class="search">
-        <input
-          class="search-input"
-          type="text"
-          v-model="searchName"
-          placeholder="Buscar por nombre"
-        />
-        <input
-          class="search-input"
-          type="text"
-          v-model="searchLastName"
-          placeholder="Buscar por apellido"
-        />
-        <input
-          class="search-input"
-          type="text"
-          v-model="searchEmail"
-          placeholder="Buscar por email"
-        />
-        <input class="search-input" type="text" v-model="searchRut" placeholder="Buscar por RUT" />
-      </div>
-      <div></div>
-      <div class="userList">
-        <table class="aligned-table">
-          <thead>
-            <tr class="header-table">
-              <th>ID</th>
-              <th>RUT</th>
-              <th>Nombre</th>
-              <th>Apellido</th>
-              <th>Mail</th>
-              <th>Rol</th>
-              <th>Tipo</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="user in filteredUsers"
-              :key="user._id"
-              :class="{ changed: user.tipo !== user.originalTipo }"
-              class="users-table"
-            >
-              <td>{{ user._id }}</td>
-              <td>{{ user.rut }}</td>
-              <td>{{ user.nombre }}</td>
-              <td>{{ user.apellido }}</td>
-              <td>{{ user.mail }}</td>
-              <td>{{ user.rol }}</td>
+  <div class="container">
+    <div class="search-bar">
+      <input
+        class="search-input"
+        type="text"
+        v-model="searchName"
+        placeholder="Buscar por nombre"
+      />
+      <input
+        class="search-input"
+        type="text"
+        v-model="searchLastName"
+        placeholder="Buscar por apellido"
+      />
+      <input
+        class="search-input"
+        type="text"
+        v-model="searchEmail"
+        placeholder="Buscar por email"
+      />
+      <input class="search-input" type="text" v-model="searchRut" placeholder="Buscar por RUT" />
+    </div>
 
+    <div class="table-container">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Mail</th>
+            <th>RUT</th>
+            <th>Rol</th>
+            <th>Verificado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(user, index) in paginatedUsers">
+            <tr :class="{ 'selected-row': selectedUser && selectedUser._id === user._id }">
               <td>
-                <select class="select-verified" v-model="user.tipo" @change="mostrarBoton()">
-                  <option value="verificado">Verificado</option>
-                  <option value="normal">Normal</option>
-                </select>
+                <input type="checkbox" v-model="selectedUsers" :value="user._id" @click.stop />
+              </td>
+              <td @click="selectUser(user)">
+                <img
+                  :src="user.imgProfile || '../src/assets/icons/userDefault.jpg'"
+                  class="profile-img"
+                  alt="profile"
+                />
+                <span class="user-name">{{ user.nombre }}</span>
+              </td>
+              <td @click="selectUser(user)">{{ user.apellido }}</td>
+              <td @click="selectUser(user)">{{ user.mail }}</td>
+              <td @click="selectUser(user)">{{ user.rut }}</td>
+              <td @click="selectUser(user)">{{ user.rol }}</td>
+              <td>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    class="checkbox"
+                    :checked="isVerified(user.tipo)"
+                    @change="toggleVerification(user)"
+                  />
+                  <div class="slider"></div>
+                </label>
+              </td>
+              <td class="actions">
+                <button class="edit-button" @click.stop="editUser(user)">
+                  <i class="fa fa-pencil"></i>
+                </button>
+                <button class="delete-button" @click.stop="deleteUser(user)">
+                  <i class="fa fa-trash"></i>
+                </button>
               </td>
             </tr>
-          </tbody>
-        </table>
+            <transition name="expand">
+              <tr v-if="selectedUser && selectedUser._id === user._id" class="user-details-row">
+                <td colspan="8">
+                  <div class="user-details">
+                    <div><strong>Nombre:</strong> {{ selectedUser.nombre }}</div>
+                    <div><strong>Apellido:</strong> {{ selectedUser.apellido }}</div>
+                    <div><strong>Email:</strong> {{ selectedUser.mail }}</div>
+                    <div><strong>RUT:</strong> {{ selectedUser.rut }}</div>
+                    <div><strong>Rol:</strong> {{ selectedUser.rol }}</div>
+                    <div><strong>Verificado:</strong> {{ selectedUser.tipo }}</div>
+                  </div>
+                </td>
+              </tr>
+            </transition>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination">
+      <button @click="prevPage" :disabled="currentPage === 1">Anterior</button>
+      <span>Página {{ currentPage }} de {{ totalPages }}</span>
+      <button @click="nextPage" :disabled="currentPage === totalPages">Siguiente</button>
+    </div>
+
+    <div class="buttons-container" :class="{ hidden: !dataChanged }">
+      <button class="apply-button" @click="aplicarCambio()">Aplicar</button>
+      <button class="apply-button" @click="deshacerCambio()">Rehacer</button>
+    </div>
+
+    <div class="modal" v-if="showModal">
+      <div class="modal-content">
+        <button class="apply-button close-button" @click="closeModal()">x</button>
+        <p class="pop-up-text">¡Tus cambios se han realizado con éxito!</p>
+        <button class="apply-button accept-button" @click="closeModal()">Aceptar</button>
       </div>
     </div>
-    <div class="buttons-container" :class="{ hidden: dataChanged }">
-      <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
-      <button class="aplicate-button" @click="rehacerCambio()">Rehacer</button>
-    </div>
-    <div class="modal" v-if="showModal">
-            <div class="modal-content">
-                <button class="aplicate-button close-button " @click="closeModal()">x</button>
-                 <p class="pop-up-text">¡Tus cambios se han realizado con exito!</p>
-                <button class="aplicate-button accept-button" @click="closeModal()">Aceptar</button>
-            </div>
-        </div>
-        <div class="modal-overlay" v-if="showModal"></div>
+
+    <div class="modal-overlay" v-if="showModal"></div>
+
   </div>
 </template>
 
@@ -88,7 +129,11 @@ export default {
       searchRut: '',
       searchLastName: '',
       dataChanged: false,
-      showModal: false
+      showModal: false,
+      selectedUser: null,
+      selectedUsers: [],
+      currentPage: 1,
+      itemsPerPage: 10
     }
   },
   async created() {
@@ -105,6 +150,14 @@ export default {
           user.apellido.toLowerCase().includes(this.searchLastName.toLowerCase()) &&
           user.rut.includes(this.searchRut)
       )
+    },
+    paginatedUsers() {
+      const start = (this.currentPage - 1) * this.itemsPerPage
+      const end = start + this.itemsPerPage
+      return this.filteredUsers.slice(start, end)
+    },
+    totalPages() {
+      return Math.ceil(this.filteredUsers.length / this.itemsPerPage)
     }
   },
   methods: {
@@ -122,7 +175,7 @@ export default {
       this.dataChanged = false
       this.showModal = true
     },
-    async rehacerCambio() {
+    async deshacerCambio() {
       const changedUsers = this.users.filter((user) => user.tipo !== user.originalTipo)
       for (const user of changedUsers) {
         await axios.post(`http://localhost:8080/admin/users/${user._id}`, {
@@ -131,229 +184,43 @@ export default {
         user.tipo = user.originalTipo
       }
       this.dataChanged = false
-        
     },
     closeModal() {
-            this.showModal = false;
+      this.showModal = false
     },
+    selectUser(user) {
+      this.selectedUser = this.selectedUser && this.selectedUser._id === user._id ? null : user
+    },
+    editUser(user) {
+      // Implementar lógica para editar usuario
+      console.log('Editar usuario:', user)
+    },
+    deleteUser(user) {
+      // Implementar lógica para eliminar usuario
+      console.log('Eliminar usuario:', user)
+    },
+    prevPage() {
+      if (this.currentPage > 1) {
+        this.currentPage--
+      }
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) {
+        this.currentPage++
+      }
+    },
+    toggleVerification(user) {
+      user.tipo = user.tipo === 'verificado' ? 'normal' : 'verificado'
+      this.mostrarBoton()
+    },
+    isVerified(tipo) {
+      return tipo === 'verificado'
+    }
   }
 }
 </script>
 
 <style scoped>
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.3);
-    z-index: 999;
-}
-.modal {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    height: 200px;
-    width: 400px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    animation: modalAppear 0.5s ease-out;
-}
-.modal-content {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
-    justify-content: center;
-    height: 100%;
-}
-.aplicate-button.close-button {
-    width: 35px;
-    height: 35px;
-    border: none;
-    left: 85%;
-    margin-bottom: 15px;
-    margin-top: 0;
-}
-.aplicate-button.accept-button {
-    border: none;
-    left: 65%;
-}
-.pop-up-text {
-    margin-left: 12%;
-    color: #1a1a1a;
-}
-
-
-.buttons-container {
-  display: flex;
-  position: relative;
-  justify-content: flex-end;
-  margin-right: 3rem;
-  top: -3rem;
-  visibility: hidden;
-}
-
-.buttons-container.hidden {
-  visibility: visible;
-}
-.select-verified {
-  width: 60%;
-  text-align: center;
-  padding: 10px 10px 10px 10px;
-  font-size: 15px;
-  color: black;
-  background-color: transparent;
-  border-color: 1px solid black;
-}
-.select-verified:focus {
-  outline: none;
-  border-color: #fbc40e;
-  box-shadow: 0 0 10px #fbc40e;
-  background-color: white;
-}
-.search-input {
-  max-width: 190px;
-  background-color: #f5f5f5;
-  color: #242424;
-  padding: 0.13rem 0.8rem;
-  min-height: 40px;
-  border-radius: 4px;
-  outline: none;
-  border: none;
-  line-height: 1.15;
-  box-shadow: 0px 10px 20px -18px;
-  font-size: 16px;
-}
-
-.search-input:focus {
-  border-bottom: 4px solid #fbc40e;
-  border-radius: 4px 4px 2px 2px;
-}
-.aplicate-button {
-  transition: all 0.2s ease-in;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-  cursor: pointer;
-  font-size: 15px;
-  border-radius: 0.3em;
-  border: 2px solid #1a1a1a;
-  background: #ffffff;
-  color: #090909;
-  width: 7rem;
-  height: 2.5rem;
-  font-weight: bold;
-  margin-left: 1rem;
-  right: 2rem;
-  margin-top: 3rem;
-}
-
-.aplicate-button:active {
-  color: #666;
-  box-shadow:
-    inset 4px 4px 12px #c5c5c5,
-    inset -4px -4px 12px #ffffff;
-}
-
-.aplicate-button:before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%) scaleY(1) scaleX(1.25);
-  top: 100%;
-  width: 140%;
-  height: 180%;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 50%;
-  display: block;
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-  z-index: -1;
-}
-
-.aplicate-button:after {
-  content: '';
-  position: absolute;
-  left: 55%;
-  transform: translateX(-50%) scaleY(1) scaleX(1.45);
-  top: 180%;
-  width: 160%;
-  height: 190%;
-  background-color: #fbc40e;
-  border-radius: 50%;
-  display: block;
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-  z-index: -1;
-}
-
-.aplicate-button:hover {
-  color: #ffffff;
-  border-color: #fbc40e;
-  transform: scale(1.05);
-}
-
-.aplicate-button:hover:before {
-  top: -35%;
-  background-color: #fbc40e;
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-}
-
-.aplicate-button:hover:after {
-  top: -45%;
-  background-color: #fbc40e;
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-}
-
-.header-table {
-  background-color: #1a1a1a;
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  position: sticky;
-  top: 0px; /* Fijar la fila de encabezados en la parte superior */
-  z-index: 2;
-}
-.changed {
-  background-color: #fbc40e;
-  color: black;
-  font-weight: bold;
-}
-.users-table.changed:hover {
-  background-color: #fbc40e;
-}
-
-.aligned-table {
-  width: 98%;
-  text-align: left;
-  border-collapse: collapse;
-  text-align: center;
-  border-bottom: 3px solid #1f1f1a;
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-.changed:nth-child(even) {
-  background-color: #fbc40e !important;
-}
-tr:nth-child(even) {
-  background-color: #ebebeb;
-}
-.users-table:hover {
-  background-color: #b3b3b3;
-}
-
-.aligned-table th,
-.aligned-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  margin: 0;
-}
-.aligned-table td,
-.aligned-table th {
-  border-radius: 5px;
-}
 .container {
   display: flex;
   flex-direction: column;
@@ -361,90 +228,317 @@ tr:nth-child(even) {
   margin-top: 0px;
   margin-bottom: 0px;
   position: relative;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+  padding: 20px;
 }
 
-.search {
+.search-bar {
   display: flex;
-  justify-content: start;
-  padding: 10px 10px 10px 10px;
-  margin-bottom: 1rem;
-  background-color: #1a1a1a;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-}
-.userList {
-  padding: 0px;
-  margin: 0;
-  overflow: hidden;
-}
-
-.userList table {
-  width: 100%; /* Ocupa todo el ancho disponible */
-}
-input {
-  margin: 10px;
+  justify-content: space-between;
   padding: 10px;
-  border: 1px solid rgb(0, 0, 0);
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
   border-radius: 5px;
-  width: 200px;
+  margin-bottom: 20px;
 }
-.container {
-  overflow-x: auto;
-  height: 90vh;
-  margin-bottom: 1rem;
-}
-.search {
-  display: flex;
-  justify-content: start;
-  padding: 10px;
-  background-color: #1a1a1a;
-  position: sticky;
-  top: -10px;
-  z-index: 1;
-  width: 100%;
-  margin-bottom: 0;
-}
-.userList {
-  display: flex;
-  justify-content: start;
-  padding: 10px;
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  margin-top: 0px;
-  margin-bottom: 0px;
-  padding-top: 0px;
-}
-@media (min-width: 768px) {
-  /* En pantallas grandes, controla el diseño */
-  .container {
-    overflow-x: auto;
-    height: calc(90vh - 120px); /* El cálculo para dejar espacio para .search y .userList */
-    margin-bottom: 1rem;
-  }
 
-  .userList {
-    height: calc(90vh - 180px); /* Altura controlada para evitar sobrelapamiento */
-    overflow-y: auto; /* Scroll vertical si es necesario */
-    position: relative; /* Para controlar el posicionamiento */
-    margin-top: 0;
-  }
+.search-input {
+  flex: 1;
+  margin: 0 10px;
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
 }
-tbody {
-  overflow-y: auto;
-  height: 70vh; /* Altura máxima del cuerpo de la tabla */
+
+.table-container {
+  overflow-x: auto;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.styled-table thead tr {
+  background-color: #fbc40e;
+  color: #ffffff;
+  text-align: left;
+  font-weight: bold;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f9f9f9;
+}
+
+.styled-table tbody tr.selected-row {
+  background-color: #f8f4e7;
+}
+
+.styled-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.user-details-row {
+  background-color: #f8f9fa;
+}
+
+.user-details {
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.profile-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+
+.user-name {
+  vertical-align: middle;
+}
+
+.actions {
+  display: flex;
+  justify-content: space-around;
+}
+
+.edit-button,
+.delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+}
+
+.edit-button i,
+.delete-button i {
+  color: #6c757d;
+}
+
+.edit-button,
+.delete-button {
+  background-color: #e0e0e0;
+}
+
+.edit-button:hover {
+  background-color: #f5cd49;
+}
+
+.edit-button:hover i {
+  color: black;
+}
+
+.delete-button:hover {
+  background-color: rgba(220, 53, 69, 0.2);
+}
+
+.delete-button:hover i {
+  color: #dc3545;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.buttons-container.hidden {
+  display: none;
+}
+
+.apply-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #fbc40e;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.apply-button:hover {
+  background-color: #fbc40e;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  background-color: #fbc40e;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-size: 16px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  height: 200px;
+  width: 400px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  animation: modalAppear 0.5s ease-out;
+}
+.close-button{
+  background-color: transparent;
+  border: none;
+  color: #ff0000;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.apply-button.close-button {
+  width: 35px;
+  height: 35px;
+  border: none;
+  margin-bottom: 15px;
+  background-color: transparent;
+  color: #ff0000;
+}
+
+.apply-button.accept-button {
+  border: none;
+}
+
+.pop-up-text {
+  font-size: 20px;
+  margin-bottom: 20px;
+  margin-top: 70px;
 }
 
 @keyframes modalAppear {
-    0% {
-        opacity: 0;
-        transform: translate(-50%, -60%);
-    }
-    100% {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.expand-enter-active,
+.expand-leave-active {
+  transition:
+    max-height 0.5s ease-in-out,
+    opacity 0.5s ease-in-out;
+}
+.expand-enter, .expand-leave-to /* .expand-leave-active in <2.1.8 */ {
+  max-height: 0;
+  opacity: 0;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px; /* Adjusted for smaller size */
+  height: 20px; /* Adjusted for smaller size */
+}
+
+.checkbox {
+  display: none;
+}
+
+.slider {
+  width: 100%;
+  height: 100%;
+  background-color: lightgray;
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border: 2px solid transparent; /* Adjusted for smaller size */
+  transition: 0.3s;
+  box-shadow: 0 0 10px 0 rgb(0, 0, 0, 0.25) inset;
+  cursor: pointer;
+}
+
+.slider::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  transform: translateX(-20px); /* Adjusted for smaller size */
+  border-radius: 20px;
+  transition: 0.3s;
+  box-shadow: 0 0 10px 3px rgb(0, 0, 0, 0.25);
+}
+
+.checkbox:checked + .slider::before {
+  transform: translateX(20px); /* Adjusted for smaller size */
+  box-shadow: 0 0 10px 3px rgb(0, 0, 0, 0.25);
+}
+
+.checkbox:checked + .slider {
+  background-color: #fbc40e;
+}
+
+.checkbox:active + .slider::before {
+  transform: translateX(10px); /* Adjusted for smaller size */
 }
 </style>

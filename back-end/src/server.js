@@ -86,12 +86,10 @@ io.on('connection', (socket) => {
   // Cuando un cliente se conecta, se une a una sala específica
   socket.on('join', (room) => {
     socket.join(room)
-    console.log('joined room: ' + room)
   })
 
   // Cuando se recibe un mensaje, se emite solo a la sala específica
   socket.on('message', (room, message) => {
-    console.log('message1: ' + message)
     io.to(room).emit('message', message)
   })
 
@@ -190,18 +188,16 @@ app.post('/login', async (req, res) => {
             apellido: user.apellido,
             rut: user.rut,
             mail: user.mail,
-            rol : user.rol,
-            tipo : user.tipo
+            rol: user.rol,
+            tipo: user.tipo,
+            imgProfile: user.imgProfile
           }
         })
-        console.log('Inicio de sesion exitoso')
       } else {
         res.send('Contraseña incorrecta')
-        console.log('Contraseña incorrecta')
       }
     } else {
       res.send('Usuario no encontrado')
-      console.log('User no encontrado')
     }
   } catch (error) {
     console.log(error)
@@ -242,6 +238,23 @@ app.get('/posts', async (req, res) => {
   }
 })
 
+// Contador de visitas
+
+app.post('/catalog/:id/visit', async (req, res) => {
+  try {
+    const database = client.db('onlycars')
+    const collection = database.collection('posts')
+    const post = await collection.findOne({ _id: new ObjectId(req.params.id) })
+    await collection.updateOne(
+      { _id: new ObjectId(req.params.id) },
+      { $set: { visitas: post.visitas + 1 } }
+    )
+    res.send({ message: 'Visita registrada' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
 // iniciar un chat
 app.post('/chat/startChat', async (req, res) => {
   try {
@@ -250,7 +263,6 @@ app.post('/chat/startChat', async (req, res) => {
     const collection = database.collection('chat')
     let chat = await collection.findOne({ buyerID, sellerID, productID })
 
-    console.log('SE ENTRA A STARTCHAT')
     if (!chat) {
       if (buyerID === sellerID) {
         const chats = await collection.find({ sellerID }).toArray()
@@ -276,9 +288,6 @@ app.post('/chat/:id', async (req, res) => {
     const collection = database.collection('chat')
     const chat = await collection.findOne({ _id: new ObjectId(id) })
 
-    console.log('message: ' + message)
-    console.log('user: ' + user)
-
     await collection.updateOne(
       { _id: new ObjectId(id) },
       { $push: { messages: { text: message, user: user } } }
@@ -296,6 +305,46 @@ app.get('/chat/:id', async (req, res) => {
     const collection = database.collection('chat')
     const chat = await collection.findOne({ _id: new ObjectId(id) })
     res.send(chat)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+// Actualizar el perfil del usuario
+app.post('/updateUserProfile', async (req, res) => {
+  try {
+    const { id, nombre, apellido, mail, rut, imgProfile } = req.body
+    const database = client.db('onlycars')
+    const usersCollection = database.collection('users')
+    const postsCollection = database.collection('posts')
+
+    // Actualizar el perfil del usuario en la colección de users
+    await usersCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          nombre: nombre,
+          apellido: apellido,
+          mail: mail,
+          rut: rut,
+          imgProfile: imgProfile
+        }
+      }
+    )
+
+    // Actualizar el nombre del usuario en la colección de posts
+    await postsCollection.updateMany(
+      { 'user._id': id },
+      {
+        $set: {
+          'user.name': nombre,
+          'user.lastName': apellido,
+          'user.imgProfile': imgProfile
+        }
+      }
+    )
+
+    res.send({ message: 'Usuario y publicaciones actualizadas con éxito' })
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -319,7 +368,6 @@ app.get('/findChat', async (req, res) => {
     res.send(chat)
   } catch (error) {
     res.status(500).send(error.message)
-    console.log('chat no encontrado')
   }
 })
 
@@ -342,13 +390,16 @@ app.get('/findUserChats', async (req, res) => {
 
         let otherUserName = ''
         let otherUserLastName = ''
+        let otherImgProfile = ''
 
         if (chat.buyerID === userID) {
           otherUserName = seller ? seller.nombre : ''
           otherUserLastName = seller ? seller.apellido : ''
+          otherImgProfile = seller ? seller.imgProfile : ''
         } else {
           otherUserName = buyer ? buyer.nombre : ''
           otherUserLastName = buyer ? buyer.apellido : ''
+          otherImgProfile = buyer ? buyer.imgProfile : ''
         }
 
         return {
@@ -359,6 +410,7 @@ app.get('/findUserChats', async (req, res) => {
           sellerLastName: seller ? seller.apellido : '',
           otherUserName: otherUserName,
           otherUserLastName: otherUserLastName,
+          otherImgProfile: otherImgProfile,
           brand: product ? product.brand : '',
           model: product ? product.model : '',
           product: product ? product : {}
@@ -367,7 +419,6 @@ app.get('/findUserChats', async (req, res) => {
     )
 
     res.send(chatsWithBuyerDetails)
-    console.log('chats encontrados')
   } catch (error) {
     res.status(500).send(error.message)
   }
@@ -383,7 +434,6 @@ app.get('/findSpecificChat', async (req, res) => {
     res.send(chat)
   } catch (error) {
     res.status(500).send(error.message)
-    console.log('chat no encontrado')
   }
 })
 
@@ -424,14 +474,11 @@ app.post('/favorites', async (req, res) => {
 })
 
 app.get('/favorites', async (req, res) => {
-  console.log('Obteniendo favoritos')
   try {
     const database = client.db('onlycars')
     const collection = database.collection('favorites')
     const userId = req.query.userId
-    console.log(userId)
     const favorites = await collection.findOne({ userId: userId })
-    console.log(favorites.postIds)
     const productCollection = database.collection('posts')
     const products = await productCollection
       .find({ _id: { $in: favorites.postIds.map((id) => new ObjectId(id)) } })
@@ -460,27 +507,126 @@ app.delete('/favorites', async (req, res) => {
   }
 })
 
-app.get("/admin/users", async (req, res) => {
+app.get('/admin/users', async (req, res) => {
   try {
-    const database = client.db("onlycars");
-    const collection = database.collection("users");
-    const users = await collection.find().toArray();
-    res.send(users);
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
+    const users = await collection.find().toArray()
+    res.send(users)
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.post('/admin/users/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
+    const result = await collection.updateOne({ _id: new ObjectId(id) }, { $set: req.body })
+    res.send({ message: 'Usuario actualizado con éxito' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.post("/profile/users/:id", async (req, res) => {
+  try {
+    const schedules = req.body;
+    const id = req.params.id;
+    const database = client.db('onlycars');
+    const collection = database.collection('users');
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { schedules: schedules } }
+    );
+    res.send({ message: 'Horarios actualizados con éxito' });
   } catch (error) {
     res.status(500).send(error.message);
   }
 });
+    
+app.post('/reportChat', async (req, res) => {
+  try {
+    const { chatId, reportedBy } = req.body
+    const database = client.db('onlycars')
+    const chatsCollection = database.collection('chat')
+    const usersCollection = database.collection('users')
 
-app.post("/admin/users/:id", async (req, res) => {
+    // Encontrar el chat que se está reportando
+    const chat = await chatsCollection.findOne({ _id: new ObjectId(chatId) })
+
+    if (!chat) {
+      res.status(404).send('Chat no encontrado')
+      return
+    }
+
+    // Marcar el chat como reportado
+    await chatsCollection.updateOne({ _id: new ObjectId(chatId) }, { $set: { reported: true } });
+
+    // Encontrar todos los usuarios con rol de admin
+    const admins = await usersCollection.find({ rol: 'admin' }).toArray()
+
+    for (const admin of admins) {
+      // Hay que buscar alguna forma de informarle a los administradores, no sé qué puede ser.
+      // Había pensado en enviar un correo, pero no sé si es posible hacerlo desde acá (probablemente sí)
+    }
+
+    res.send({ success: true, message: 'Chat reportado con éxito' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
+
+app.get('/getReportedChats', async (req, res) => {
+  try {
+    console.log('HOLA');
+
+    const database = client.db('onlycars');
+    const userCollection = database.collection('users')
+    const productCollection = database.collection('posts')
+    const chatsCollection = database.collection('chat');
+
+    // Encontrar todos los chats que han sido reportados
+    const reportedChats = await chatsCollection.find({ reported: true }).toArray();
+
+    const chatsWithBuyerDetails = await Promise.all(
+    reportedChats.map(async (chat) => {
+      const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+      const seller = await userCollection.findOne({ _id: new ObjectId(chat.sellerID) })
+      const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+
+      return {
+        buyerName: buyer ? buyer.nombre : '',
+        buyerLastName: buyer ? buyer.apellido : '',
+        sellerName: seller ? seller.nombre : '',
+        sellerLastName: seller ? seller.apellido : '',
+        brand: product ? product.brand : '',
+        model: product ? product.model : '',
+        product: product ? product : {}
+      }
+    })
+  )
+  
+      res.send(chatsWithBuyerDetails);
+    }
+    catch (error) {
+      res.status(500).send(error.message);
+    } 
+
+});
+
+app.delete("/admin/delete/:id", async (req, res) => {
   try {
     const id = req.params.id;
     const database = client.db("onlycars");
-    const collection = database.collection("users");
-    const result = await collection.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: req.body }
-    );
-    res.send({ message: "Usuario actualizado con éxito" });
+    const collection = database.collection("posts");
+    const collection2 = database.collection("favorites");
+
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    const result2 = await collection2.updateMany({}, { $pull: { postIds: id } });
+
+    res.send({ message: "Publicación eliminada con éxito" });
   } catch (error) {
     res.status(500).send(error.message);
   }

@@ -16,6 +16,7 @@ import FavoritesView from '../views/FavoritesView.vue'
 import AdminView from '../views/AdminView.vue'
 import CatalogManagment from '../views/CatalogManagment.vue'
 import userManagment from '../views/UserManagment.vue'
+import ChatsManagment from '../views/ChatsManagment.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -105,6 +106,12 @@ const router = createRouter({
       path: '/userManagment',
       name: 'userManagment',
       component: userManagment,
+      meta: { requiresAuth: true , requiresAdmin: true},
+    },
+    {
+      path: '/chatsManagment', 
+      name: 'chatsManagment',
+      component: ChatsManagment,
       meta: { requiresAuth: true , requiresAdmin: true},
     }
   ],
