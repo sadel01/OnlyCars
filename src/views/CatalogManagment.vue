@@ -80,7 +80,7 @@
                         <strong>Opciones de Seguro:</strong>
                         {{ product.insuranceOptions.join(', ') }}
                       </div>
-                      <div><strong>Visitas:</strong> {{ product.visits }}</div>
+                      <div><strong>Visitas:</strong> {{ product.visitas }}</div>
                       <div>
                         <strong>Fecha de Publicación:</strong>
                         {{ new Date(product.fechaPublicacion).toLocaleDateString() }}

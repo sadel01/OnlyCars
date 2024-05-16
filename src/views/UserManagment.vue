@@ -101,7 +101,7 @@
 
     <div class="buttons-container" :class="{ hidden: !dataChanged }">
       <button class="apply-button" @click="aplicarCambio()">Aplicar</button>
-      <button class="apply-button" @click="rehacerCambio()">Rehacer</button>
+      <button class="apply-button" @click="deshacerCambio()">Rehacer</button>
     </div>
 
     <div class="modal" v-if="showModal">
@@ -111,19 +111,9 @@
         <button class="apply-button accept-button" @click="closeModal()">Aceptar</button>
       </div>
     </div>
+
     <div class="modal-overlay" v-if="showModal"></div>
-    <div class="buttons-container" :class="{ hidden: dataChanged }">
-      <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
-      <button class="aplicate-button" @click="deshacerCambio()">Deshacer</button>
-    </div>
-    <div class="modal" v-if="showModal">
-      <div class="modal-content">
-        <button class="aplicate-button close-button" @click="closeModal()">x</button>
-        <p class="pop-up-text">¡Tus cambios se han realizado con exito!</p>
-        <button class="aplicate-button accept-button" @click="closeModal()">Aceptar</button>
-      </div>
-    </div>
-    <div class="modal-overlay" v-if="showModal"></div>
+
   </div>
 </template>
 
@@ -443,13 +433,22 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   animation: modalAppear 0.5s ease-out;
 }
+.close-button{
+  background-color: transparent;
+  border: none;
+  color: #ff0000;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+}
 
 .modal-content {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
 }
 
 .apply-button.close-button {
@@ -466,8 +465,9 @@ export default {
 }
 
 .pop-up-text {
-  margin-bottom: 15px;
-  color: #1a1a1a;
+  font-size: 20px;
+  margin-bottom: 20px;
+  margin-top: 70px;
 }
 
 @keyframes modalAppear {
