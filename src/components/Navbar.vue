@@ -42,7 +42,7 @@
       </nav>
 
       <nav v-else>
-        <RouterLink to="/AdminView" class="logo-container">
+        <RouterLink to="/catalogManagment" class="logo-container">
           <img src="@/assets/logoOnlyCars.svg" alt="logoOC" class="logo-image" />
         </RouterLink>
         <div class="nav-links" :class="{ active: navActive }">
