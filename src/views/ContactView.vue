@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     enviarFormulario() {
-      if (this.nombre === '' || this.email === '' || this.mensaje === '') {
+      if (this.nombre === '' || this.email === '' || this.message === '') {
         this.errorMessage()
         return
       }
