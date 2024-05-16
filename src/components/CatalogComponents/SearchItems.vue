@@ -119,7 +119,7 @@
     </div>
 
     <div class="grupo">
-      <div class="km-filter-container">
+      <div class="price-filter-container">
         <div class="price-label">Kilometraje</div>
         <div class="price-inputs-container">
           <input type="text" class="price-input" placeholder="Max." v-model="mileage" />
@@ -242,16 +242,17 @@ export default {
 </script>
 
 <style>
+
 .btnAplicar {
   background-color: #fbc40e;
-  color: white;
+  width: 45%;
+  color: black;
   padding: 10px 0px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  width: calc(100% - 150px);
   box-sizing: border-box;
-  margin: 0 10px;
+  font-weight: 600;
 }
 
 .btnAplicar:hover {

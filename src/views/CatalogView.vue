@@ -19,11 +19,11 @@
       <div class="sortBy">
         <p>Ordenar por:</p>
         <select class="sortSelection" v-model="selectedSortOption">
+          <option value="relevance">Relevancia</option>
           <option value="price">Precio</option>
           <option value="year">Año</option>
           <option value="mileage">Kilometraje</option>
-          <option value="relevance">Relevancia</option>
-          <option value="date">Fecha</option>
+          <option value="date">Fecha de publicación</option>
           <option value="power">Potencia</option>
         </select>
         <button class="ascOrDesc" @click="toggleSortOrder">
@@ -64,7 +64,7 @@ export default {
       selectedMinPrice: '',
       selectedAirbag: '',
       selectedRegion: '',
-      selectedSortOption: '',
+      selectedSortOption: 'relevance',
       products: [],
       isLoading: false,
       sortOrder: null

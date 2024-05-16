@@ -5,7 +5,7 @@
         <h1 id="title">ONLYCARS</h1>
       </div>
       <span class="subtitle">Compra y Vende Autos con nosotros</span>
-      <p>Tu plataforma confiable para transacciones de automóviles seguras y convenientes</p>
+      <p class="description">Tu plataforma confiable para transacciones de automóviles seguras y convenientes</p>
       <RouterLink to="/catalog" class="theme-features-btn">
         <span>Ver Catálogo</span>
         <svg
@@ -29,6 +29,11 @@
 <style scoped>
 .hero-section {
   z-index: 2;
+}
+
+.description{
+  font-size: 1.25rem;
+  line-height: 1.5;
 }
 
 body,
@@ -81,7 +86,7 @@ html {
 }
 
 .subtitle {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin-top: 2rem;
 }
 

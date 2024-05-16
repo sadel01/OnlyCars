@@ -16,7 +16,7 @@
       <div class="container listContainer">
         <ul class="list">
           <li
-            v-for="product in productsWithComparisonState"
+            v-for="product in paginatedProducts"
             :key="product.id"
             @click="showProductDetail(product)"
           >
@@ -111,14 +111,10 @@
 </template>
 
 <script>
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faCar } from '@fortawesome/free-solid-svg-icons'
-import mileageIcon from '@/assets/icons/mileage.svg'
-import gearboxIcon from '@/assets/icons/gearbox.svg'
 import 'sweetalert2/dist/sweetalert2.min.css'
-import SearchItems from './SearchItems.vue'
 import ProductDetail from './ProductDetail.vue'
 import axios from 'axios'
+import Swal from 'sweetalert2'
 
 export default {
   props: ['products'],
@@ -168,6 +164,23 @@ export default {
         this.isLoading = false
       }
     },
+    showAlertMinCompare() {
+      Swal.fire({
+        title: 'Elige al menos dos autos para comparar!',
+        icon: 'error',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    },
+
+    showAlertMaxCompare() {
+      Swal.fire({
+        title: 'No puedes comparar más de 6 autos!',
+        icon: 'error',
+        showConfirmButton: false,
+        timer: 1500
+      })
+    },
 
     goToComparisonView() {
       this.$store.commit('comparison/setList', this.comparisonList)
@@ -196,6 +209,10 @@ export default {
       return compared
     },
     goToComparisonView() {
+      if (this.comparisonList.length < 2) {
+        this.showAlertMinCompare()
+        return
+      }
       this.$store.commit('comparison/setList', this.comparisonList)
       this.$router.push({ name: 'comparison' })
     },
@@ -207,7 +224,7 @@ export default {
         if (this.comparisonList.length < 6) {
           this.comparisonList.push(product)
         } else {
-          alert('No puedes comparar más de 6 productos') //TOTALMENTE SUJETO A CAMBIOS GRACIAS, NO ME GUSTA EL ALERT
+          this.showAlertMaxCompare()
         }
       }
     },
@@ -272,7 +289,6 @@ export default {
     })
   },
   components: {
-    SearchItems,
     ProductDetail
   },
   computed: {
@@ -288,12 +304,7 @@ export default {
     paginatedProducts() {
       const start = (this.page - 1) * this.perPage
       const end = start + this.perPage
-      return this.products.slice(start, end).map((product) => {
-        return {
-          ...product,
-          isCompared: this.comparisonList.some((compProduct) => compProduct.id === product.id)
-        }
-      })
+      return this.productsWithComparisonState.slice(start, end)
     }
   }
 }
