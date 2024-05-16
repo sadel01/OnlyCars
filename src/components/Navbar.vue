@@ -52,6 +52,9 @@
           <RouterLink to="/userManagment" class="nav-link" @click="closeNav"
             >Gestionar Usuarios</RouterLink
           >
+          <RouterLink to="/chatsManagment" class="nav-link" @click="closeNav"
+            >Gestionar Chats</RouterLink
+          >
         </div>
 
         <div class="nav-buttons" :class="{ active: navActive }">
