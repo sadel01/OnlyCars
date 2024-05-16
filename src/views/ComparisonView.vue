@@ -9,66 +9,6 @@
             <img :src="product.image" alt="Imagen del producto" />
           </div>
           <div class="product-info">
-            <section class="brand-model">
-              <h3><strong>Marca y Modelo</strong></h3>
-              <p><strong>Marca:</strong> {{ product.brand }}</p>
-              <p><strong>Modelo:</strong> {{ product.model }}</p>
-              <p><strong>Año:</strong> {{ product.year }}</p>
-            </section>
-            <section class="details">
-              <h3><strong>Detalles</strong></h3>
-              <p>
-                <strong>Condición:</strong> {{ product.condition === 'used' ? 'Usado' : 'Nuevo' }}
-              </p>
-              <p><strong>Kilometraje:</strong> {{ product.mileage }}
-                <span v-if="index === minMileageIndex">🡇</span>
-              </p>
-              <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
-              <p><strong>Combustible:</strong> {{ product.fuel }}</p>
-              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }}
-                <span v-if="index === maxCylinderCapacityIndex">🡅</span>
-              </p>
-              <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
-              <p>
-                <strong>Potencia:</strong> {{product.power}} {{ product.fuel === 'Eléctrico' ? ' kW' : 'HP' }}
-                <span v-if="index === maxPowerIndex">🡅</span>
-              </p>
-              <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
-              <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
-            </section>
-            <section class="pricing">
-              <h3>Precio</h3>
-              <p>${{ product.price }} CLP</p>
-            </section>
-            <section class="comfort">
-              <h3><strong>Tecnologías de confort</strong></h3>
-              <ul>
-                <li v-for="(technology, index) in product.comfortFeatures" :key="index">{{ technology }}</li>
-              </ul>
-            </section>
-            <section class="additional-info">
-              <h3><strong>Información Adicional</strong></h3>
-              <p><strong>Color Interior:</strong> {{ product.interiorColor }}</p>
-              <p><strong>Color Exterior:</strong> {{ product.exteriorColor }}</p>
-              <p><strong>Altura al suelo:</strong> {{ product.groundClearance }} cm</p>
-              <p><strong>Puertas:</strong> {{ product.doors }}</p>
-              <p><strong>Dueños:</strong> {{ product.owners }}</p>
-              <p><strong>Seguridad:</strong> {{ product.airbag === 'yes' ? 'Con airbag' : 'Sin airbag' }}</p>
-              
-              <!-- Agregar mas cosas a futuro para mejor comparasao -->
-            </section>
-            <section class="insurances">
-              <h3><strong>Seguros</strong></h3>
-              <ul>
-                <li v-for="(seguro, index) in product.insuranceOptions" :key="index">{{ seguro }}</li>
-              </ul>
-            </section>
-            <section class="ubication">
-              <h3><strong>Ubicación</strong></h3>
-              <p><strong>Región:</strong> {{ product.region }}</p>
-              <p><strong>Ciudad:</strong> {{ product.provincia }}</p>
-              <p><strong>Comuna:</strong> {{ product.comuna }}</p>
-            </section>
             <section class="scores">
               <h3><strong>Puntuaciones</strong></h3>
               <div class="score-bar">
@@ -96,6 +36,80 @@
                 ></progress>
               </div>
             </section>
+            <section class="brand-model">
+              <h3><strong>Marca y Modelo</strong></h3>
+              <p><strong>Marca:</strong> {{ product.brand }}</p>
+              <p><strong>Modelo:</strong> {{ product.model }}</p>
+              <p><strong>Año:</strong> {{ product.year }} 
+                <span v-if="newestCarIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="newestCarIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </p>
+            </section>
+            <section class="details">
+              <h3><strong>Detalles</strong></h3>
+              <p>
+                <strong>Condición:</strong> {{ product.condition === 'used' ? 'Usado' : 'Nuevo' }}
+              </p>
+              <p><strong>Kilometraje:</strong> {{ product.mileage }} 
+                <span v-if="lowestMileageIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #63E6BE;"></i></span>
+                <span v-if="lowestMileageIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #e72a08;"></i></span>
+              </p>
+              <p><strong>Transmisión:</strong> {{ product.transmission }}</p>
+              <p><strong>Combustible:</strong> {{ product.fuel }}</p>
+              <p><strong>Cilindraje:</strong> {{ product.cylinderCapacity }} 
+                <span v-if="maxCylinderCapacityIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxCylinderCapacityIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </p>
+              <p><strong>Tracción:</strong> {{ product.driveTrain }}</p>
+              <p><strong>Potencia:</strong> {{ product.power }} 
+                <span v-if="maxPowerIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxPowerIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </p>
+              <p><strong>Tipo de suspensión:</strong> {{ product.suspensionType }}</p>
+              <p><strong>Tipo de neumáticos:</strong> {{ product.tireType }}</p>
+            </section>
+            <section class="pricing">
+              <h3>Precio</h3>
+              <p>${{ product.price }} 
+                <span v-if="lowestPriceIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #63E6BE;"></i></span>
+                <span v-if="lowestPriceIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #e72a08;"></i></span>
+              </p>
+            </section>
+            <section class="comfort">
+              <h3><strong>Tecnologías de confort </strong> 
+                <span v-if="maxComfortTechIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxComfortTechIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </h3>
+              <ul>
+                <li v-for="(technology, index) in product.comfortFeatures" :key="index">{{ technology }}</li>
+              </ul>
+            </section>
+            <section class="additional-info">
+              <h3><strong>Información Adicional</strong></h3>
+              <p><strong>Color Interior:</strong> {{ product.interiorColor }}</p>
+              <p><strong>Color Exterior:</strong> {{ product.exteriorColor }}</p>
+              <p><strong>Altura al suelo:</strong> {{ product.groundClearance }} cm</p>
+              <p><strong>Puertas:</strong> {{ product.doors }}</p>
+              <p><strong>Dueños:</strong> {{ product.owners }}</p>
+              <p><strong>Seguridad:</strong> {{ product.airbag === 'yes' ? 'Con airbag' : 'Sin airbag' }}</p>
+              
+              <!-- Agregar mas cosas a futuro para mejor comparasao -->
+            </section>
+            <section class="insurances">
+              <h3><strong>Seguros </strong> 
+                <span v-if="maxInsuranceIndices[0].includes(index)"><i class="fa-solid fa-arrow-up" style="color: #63E6BE;"></i></span>
+                <span v-if="maxInsuranceIndices[1].includes(index)"><i class="fa-solid fa-arrow-down" style="color: #e72a08;"></i></span>
+              </h3>
+              <ul>
+                <li v-for="(seguro, index) in product.insuranceOptions" :key="index">{{ seguro }}</li>
+              </ul>
+            </section>
+            <section class="ubication">
+              <h3><strong>Ubicación</strong></h3>
+              <p><strong>Región:</strong> {{ product.region }}</p>
+              <p><strong>Ciudad:</strong> {{ product.provincia }}</p>
+              <p><strong>Comuna:</strong> {{ product.comuna }}</p>
+            </section>
           </div>
         </div>
       </div>
@@ -117,41 +131,211 @@ export default {
         }
       })
     },
-    maxPowerIndex() {
-      let maxPower = 0;
-      let index = -1;
+    lowestMileageIndices() {
+      let lowestMileage = Infinity;
+      let highestMileage = 0;
+      let mayor = [];
+      let menor = [];
       this.comparisonList.forEach((product, i) => {
-        let power = Number(product.power);
-        if (power > maxPower) {
-          maxPower = power;
-          index = i;
+        let mileage = Number(product.mileage.replace('.', ''));
+        if (mileage < lowestMileage) {
+          lowestMileage = mileage;
+          menor = [i];
+        } else if (mileage === lowestMileage) {
+          menor.push(i);
         }
       });
-      return index;
-    },
-    minMileageIndex() {
-      let minMileage = Infinity;
-      let index = -1;
       this.comparisonList.forEach((product, i) => {
-        let mileage = Number(product.mileage);
-        if (mileage < minMileage) {
-          minMileage = mileage;
-          index = i;
+        let mileage = Number(product.mileage.replace('.', ''));
+        if (menor.length === this.comparisonList.length) {
+          return [mayor, menor];
+        }
+        else if (mileage > highestMileage) {
+          highestMileage = mileage;
+          mayor = [i];
+        } else if (mileage === highestMileage) {
+          mayor.push(i);
         }
       });
-      return index;
+      return [mayor, menor];
     },
-    maxCylinderCapacityIndex() {
+    newestCarIndices() {
+      let newestYear = 0;
+      let lowesYear = Infinity;
+      let mayor = [];
+      let menor = [];
+      for (let i = 0; i < this.comparisonList.length; i++) {
+        let product = this.comparisonList[i];
+        let year = Number(product.year);
+        if (year > newestYear) {
+          newestYear = year;
+          mayor = [i];
+        } else if (year === newestYear) {
+          mayor.push(i);
+        }
+      }
+      for (let i = 0; i < this.comparisonList.length; i++) {
+        let product = this.comparisonList[i];
+        let year = Number(product.year);
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }else if (year < lowesYear) {
+          lowesYear = year;
+          menor = [i];
+        } else if (year === lowesYear) {
+          menor.push(i);
+        }
+      }
+      return [mayor, menor];
+    },
+    maxCylinderCapacityIndices() {
       let maxCapacity = 0;
-      let index = -1;
+      let minCapacity = Infinity;
+      let mayor = [];
+      let menor = [];
       this.comparisonList.forEach((product, i) => {
-        let capacity = Number(product.cylinderCapacity.split(' ')[0]);
+        let capacity = Number(product.cylinderCapacity.replace(' L', '').replace(' kW', ''));
         if (capacity > maxCapacity) {
           maxCapacity = capacity;
-          index = i;
+          mayor = [i];
+        } else if (capacity === maxCapacity) {
+          mayor.push(i);
         }
       });
-      return index;
+      this.comparisonList.forEach((product, i) => {
+        let capacity = Number(product.cylinderCapacity.replace(' L', '').replace(' kW', ''));
+        if (mayor.length === this.comparisonList.length) {
+          return [mayor, menor];
+        }
+        else if (capacity < minCapacity) {
+          minCapacity = capacity;
+          menor = [i];
+        } else if (capacity === minCapacity) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    maxPowerIndices() {
+      let maxPower = 0;
+      let minPower = Infinity;
+      let mayor = [];
+      let menor = [];
+      let power = 0;
+      this.comparisonList.forEach((product, i) => {
+        if(product.fuel === 'Eléctrico'){
+          power = Number(product.power.replace(' kWh', ''))*0.7457;
+        }else{
+          power = Number(product.power.replace(' HP', ''));
+        }
+        if (power > maxPower) {
+          maxPower = power;
+          mayor = [i];
+        } else if (power === maxPower) {
+          mayor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        if(product.fuel === 'Eléctrico'){
+          power = Number(product.power.replace(' kWh', ''))*0.7457;
+        }else{
+          power = Number(product.power.replace(' HP', ''));
+        }
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (power < minPower) {
+          minPower = power;
+          menor = [i];
+        } else if (power === minPower) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    lowestPriceIndices() {
+      let lowestPrice = Infinity;
+      let highestPrice = 0;
+      let mayor = [];
+      let menor = [];
+      this.comparisonList.forEach((product, i) => {
+        let price = Number(product.price.replace('$', '').replace('.', ''));
+        if (price < lowestPrice) {
+          lowestPrice = price;
+          menor = [i];
+        } else if (price === lowestPrice) {
+          menor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        let price = Number(product.price.replace('$', '').replace('.', ''));
+        if(menor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (price > highestPrice) {
+          highestPrice = price;
+          mayor = [i];
+        } else if (price === highestPrice) {
+          mayor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    maxComfortTechIndices() {
+      let maxTech = 0;
+      let minTech = Infinity;
+      let mayor = [];
+      let menor = [];
+      this.comparisonList.forEach((product, i) => {
+        let techCount = product.comfortFeatures.length;
+        if (techCount > maxTech) {
+          maxTech = techCount;
+          mayor = [i];
+        } else if (techCount === maxTech) {
+          mayor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        let techCount = product.comfortFeatures.length;
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (techCount < minTech) {
+          minTech = techCount;
+          menor = [i];
+        } else if (techCount === minTech) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
+    },
+    maxInsuranceIndices() {
+      let maxInsurance = 0;
+      let minInsurance = Infinity;
+      let mayor = [];
+      let menor = [];
+      this.comparisonList.forEach((product, i) => {
+        let insuranceCount = product.insuranceOptions.length;
+        if (insuranceCount > maxInsurance) {
+          maxInsurance = insuranceCount;
+          mayor = [i];
+        } else if (insuranceCount === maxInsurance) {
+          mayor.push(i);
+        }
+      });
+      this.comparisonList.forEach((product, i) => {
+        let insuranceCount = product.insuranceOptions.length;
+        if(mayor.length === this.comparisonList.length){
+          return [mayor, menor];
+        }
+        else if (insuranceCount < minInsurance) {
+          minInsurance = insuranceCount;
+          menor = [i];
+        } else if (insuranceCount === minInsurance) {
+          menor.push(i);
+        }
+      });
+      return [mayor, menor];
     }
   },
   created() {
@@ -316,6 +500,7 @@ progress::-moz-progress-bar {
 }
 .container {
   width: 100%;
+  max-width: 1700px;
   margin: 20px auto;
   padding: 20px;
   display: flex;
@@ -335,6 +520,7 @@ progress::-moz-progress-bar {
 
 .product-list {
   display: flex;
+  max-width: 1700px;
 }
 
 .product-card {
