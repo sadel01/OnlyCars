@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="search-bar">
-      <input class="search-input" type="text" v-model="searchReport" placeholder="reporte de..." />
-      <input class="search-input" type="text" v-model="searchChatCon" placeholder="chat con..." />
+      <input class="search-input" type="text" v-model="searchReport" placeholder="Reporte de..." />
+      <input class="search-input" type="text" v-model="searchChatCon" placeholder="Chat con..." />
     </div>
 
     <div class="table-container">
@@ -11,18 +11,12 @@
           <tr>
             <th>Reporte de</th>
             <th>Chat con</th>
-            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="chat in reportedChats" :key="chat._id">
             <td>{{ chat.buyerName }} {{ chat.buyerLastName }}</td>
             <td>{{ chat.sellerName }} {{ chat.sellerLastName }}</td>
-            <td class="actions">
-              <button @click.stop="deleteProduct(product._id)" class="delete-button">
-                <i class="fa fa-trash"></i>
-              </button>
-            </td>
           </tr>
         </tbody>
       </table>
