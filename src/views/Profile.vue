@@ -33,8 +33,6 @@
           <input id="apellido" v-model="editableUser.apellido" placeholder="Apellido" />
           <label for="email">Email:</label>
           <input id="email" v-model="editableUser.mail" type="email" placeholder="Email" />
-          <label for="rut">RUT:</label>
-          <input id="rut" v-model="editableUser.rut" placeholder="RUT" />
           <div class="form-buttons">
             <button type="submit" class="saveButton">Guardar</button>
             <button type="button" class="cancelButton" @click="cancelEdit">Cancelar</button>
@@ -43,7 +41,7 @@
       </div>
     </div>
 
-    <div class="schedule-section" v-if="user.rol!='admin'">
+    <div class="schedule-section" v-if="user.rol != 'admin'">
       <h1 @click="toggleSection('schedule')">
         Horarios de atención
         <i
@@ -286,7 +284,6 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-
 .profile-image-container {
   position: relative;
   width: 100px;
@@ -475,16 +472,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px; 
-  width: 100%; 
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 .day-title {
   text-align: center;
 }
-
-
-
 
 .buttonSave-container {
   margin-top: 1rem;
@@ -587,7 +581,6 @@ body {
   animation: scaleUp 0.3s ease-in-out;
 }
 
-
 .schedule-container {
   flex: 1;
   position: relative;
@@ -631,10 +624,9 @@ body {
     margin-top: 1rem;
   }
   .save {
-    margin:auto;
+    margin: auto;
   }
 }
-
 
 .profile-image {
   width: 100%;
@@ -685,116 +677,130 @@ body {
   outline: none;
   transition: all 0.2s ease-in;
   font-weight: bold;
-  width:10rem;
+  width: 10rem;
 }
-.button-group{
+.button-group {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
-.form-buttons{
+.form-buttons {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
 }
 
-.editButton, .saveButton { 
-  background-color: #fbc40e; 
+.editButton,
+.saveButton {
+  background-color: #fbc40e;
   border: 2px solid #fbc40e;
-  color: white; 
-} 
-.logoutButton, .cancelButton { 
+  color: white;
+}
+.logoutButton,
+.cancelButton {
   border: 2px solid #d1d0d0;
   background-color: #d1d0d0;
   margin-left: 50%;
-} 
-
- 
-.logoutButton:active,.cancelButton:active { 
-  color: #666; 
-  box-shadow: 
-    inset 4px 4px 12px #c5c5c5, 
-    inset -4px -4px 12px #ffffff; 
-} 
- 
-.logoutButton:before,.cancelButton:before { 
-  content: ''; 
-  position: absolute; 
-  left: 50%; 
-  transform: translateX(-50%) scaleY(1) scaleX(1.25); 
-  top: 100%; 
-  width: 140%; 
-  height: 180%; 
-  background-color: rgba(0, 0, 0, 0.05); 
-  border-radius: 50%; 
-  display: block; 
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1); 
-  z-index: -1; 
-} 
- 
-.logoutButton:after,.cancelButton:after { 
-  content: ''; 
-  position: absolute; 
-  left: 55%; 
-  transform: translateX(-50%) scaleY(1) scaleX(1.45); 
-  top: 180%; 
-  width: 160%; 
-  height: 190%; 
-  background-color: #fbc40e; 
-  border-radius: 50%; 
-  display: block; 
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1); 
-  z-index: -1; 
-} 
-.editButton:before ,.saveButton:before{ 
-  content: ''; 
-  position: absolute; 
-  left: 50%; 
-  transform: translateX(-50%) scaleY(1) scaleX(1.25); 
-  top: 100%; 
-  width: 140%; 
-  height: 180%; 
-  background-color: rgba(0, 0, 0, 0.05); 
-  border-radius: 50%; 
-  display: block; 
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1); 
-  z-index: -1; 
-} 
- 
-.editButton:after,.saveButton:after { 
-  content: ''; 
-  position: absolute; 
-  left: 55%; 
-  transform: translateX(-50%) scaleY(1) scaleX(1.45); 
-  top: 180%; 
-  width: 160%; 
-  height: 190%; 
-  background-color: #fbc40e; 
-  border-radius: 50%; 
-  display: block; 
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1); 
-  z-index: -1; 
-} 
-.logoutButton:hover,.cancelButton:hover { 
-  color: black; 
-  border-color: #c19400; 
-} 
-.editButton:hover,.saveButton:hover{
-  color: black; 
-  border-color: #c19400; 
 }
- 
-.logoutButton:hover:before, .editButton:hover:before, .saveButton:hover:before,.cancelButton:hover:before  { 
-  top: -35%; 
-  background-color: #c19400; 
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8); 
-} 
- 
-.logoutButton:hover:after, .editButton:hover:after,.saveButton:hover:after,.cancelButton:hover:after { 
-  top: -45%; 
-  background-color: #c19400; 
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8); 
-} 
+
+.logoutButton:active,
+.cancelButton:active {
+  color: #666;
+  box-shadow:
+    inset 4px 4px 12px #c5c5c5,
+    inset -4px -4px 12px #ffffff;
+}
+
+.logoutButton:before,
+.cancelButton:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+  top: 100%;
+  width: 140%;
+  height: 180%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+
+.logoutButton:after,
+.cancelButton:after {
+  content: '';
+  position: absolute;
+  left: 55%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+  top: 180%;
+  width: 160%;
+  height: 190%;
+  background-color: #fbc40e;
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+.editButton:before,
+.saveButton:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+  top: 100%;
+  width: 140%;
+  height: 180%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+
+.editButton:after,
+.saveButton:after {
+  content: '';
+  position: absolute;
+  left: 55%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+  top: 180%;
+  width: 160%;
+  height: 190%;
+  background-color: #fbc40e;
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+.logoutButton:hover,
+.cancelButton:hover {
+  color: black;
+  border-color: #c19400;
+}
+.editButton:hover,
+.saveButton:hover {
+  color: black;
+  border-color: #c19400;
+}
+
+.logoutButton:hover:before,
+.editButton:hover:before,
+.saveButton:hover:before,
+.cancelButton:hover:before {
+  top: -35%;
+  background-color: #c19400;
+  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+}
+
+.logoutButton:hover:after,
+.editButton:hover:after,
+.saveButton:hover:after,
+.cancelButton:hover:after {
+  top: -45%;
+  background-color: #c19400;
+  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+}
 
 .edit-form label {
   font-weight: bold;
@@ -841,8 +847,6 @@ body {
   background-color: #fff;
   color: #333;
 }
-
-
 
 .remove-btn {
   background: none;

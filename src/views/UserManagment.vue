@@ -111,22 +111,19 @@
         <button class="apply-button accept-button" @click="closeModal()">Aceptar</button>
       </div>
     </div>
-<<<<<<< HEAD
     <div class="modal-overlay" v-if="showModal"></div>
-=======
     <div class="buttons-container" :class="{ hidden: dataChanged }">
       <button class="aplicate-button" @click="aplicarCambio()">Aplicar</button>
       <button class="aplicate-button" @click="deshacerCambio()">Deshacer</button>
     </div>
     <div class="modal" v-if="showModal">
-            <div class="modal-content">
-                <button class="aplicate-button close-button " @click="closeModal()">x</button>
-                 <p class="pop-up-text">¡Tus cambios se han realizado con exito!</p>
-                <button class="aplicate-button accept-button" @click="closeModal()">Aceptar</button>
-            </div>
-        </div>
-        <div class="modal-overlay" v-if="showModal"></div>
->>>>>>> origin/Adrian
+      <div class="modal-content">
+        <button class="aplicate-button close-button" @click="closeModal()">x</button>
+        <p class="pop-up-text">¡Tus cambios se han realizado con exito!</p>
+        <button class="aplicate-button accept-button" @click="closeModal()">Aceptar</button>
+      </div>
+    </div>
+    <div class="modal-overlay" v-if="showModal"></div>
   </div>
 </template>
 
