@@ -105,7 +105,7 @@ export default {
           this.errorMessage = ''
           setTimeout(() => {
             if (userData.rol === 'admin') {
-              this.$router.push('/AdminView')
+              this.$router.push('/catalogManagment')
             } else {
               this.$router.push('/')
             }
