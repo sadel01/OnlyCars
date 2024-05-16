@@ -250,6 +250,9 @@
             :id="'insurance-' + insuranceOption"
             :value="insuranceOption"
             v-model="vehicle.insuranceOptions"
+            :disabled="
+              vehicle.insuranceOptions.includes('Sin seguro') && insuranceOption !== 'Sin seguro'
+            "
           />
           <label :for="'insurance-' + insuranceOption">{{ insuranceOption }}</label>
         </div>
