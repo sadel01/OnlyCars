@@ -89,7 +89,11 @@
       <!-- Sección del perfil del usuario ajustada -->
       <section class="user-profile" v-if="product">
         <div class="user-avatar-name">
-          <img src="@/assets/icons/userDefault.jpg" alt="User Avatar" class="avatar" />
+          <img
+            :src="product.user.imgProfile || '@/assets/icons/userDefault.jpg'"
+            alt="User Avatar"
+            class="avatar"
+          />
           <div class="user-info">
             <div class="userNameVerificated">
               <h3 class="user-name">{{ product.user.name + ' ' + product.user.lastName }}</h3>
@@ -133,6 +137,52 @@
       <section class="vehicle-description" v-if="product">
         <h2>Descripción</h2>
         <p class="user-email">{{ product.description }}</p>
+      </section>
+      <!-- Sección de calificacion y reseñas -->
+      <section class="calificacion-resenias">
+        <h2>Calificaciones y reseñas</h2>
+        <!-- Botón para calificar -->
+        <button @click="mostrarFormulario" class="btnCalificar">
+          <span>Calificar</span>
+        </button>
+
+        <!-- Formulario de calificación -->
+        <div id="formulario-calificacion" v-if="showRatingForm">
+          <h3>Calificar este producto</h3>
+          <form>
+            <p><span class="label">Nombre:</span> {{ user.nombre }}</p>
+
+            <label for="calificacion">Calificación:</label>
+            <div class="calification">
+              <div
+                class="star"
+                v-for="index in 5"
+                :key="index"
+                @click="starColor(index - 1)"
+                style="cursor: pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 576 512"
+                  fill="currentColor"
+                  :id="'star:' + (index - 1)"
+                >
+                  <rect fill="none" height="256" width="256"></rect>
+                  <path
+                    d="M287.9 0c9.2 0 17.6 5.2 21.6 13.5l68.6 141.3 153.2 22.6c9 1.3 16.5 7.6 19.3 16.3s.5 18.1-5.9 24.5L433.6 328.4l26.2 155.6c1.5 9-2.2 18.1-9.7 23.5s-17.3 6-25.3 1.7l-137-73.2L151 509.1c-8.1 4.3-17.9 3.7-25.3-1.7s-11.2-14.5-9.7-23.5l26.2-155.6L31.1 218.2c-6.5-6.4-8.7-15.9-5.9-24.5s10.3-14.9 19.3-16.3l153.2-22.6L266.3 13.5C270.4 5.2 278.7 0 287.9 0zm0 79L235.4 187.2c-3.5 7.1-10.2 12.1-18.1 13.3L99 217.9 184.9 303c5.5 5.5 8.1 13.3 6.8 21L171.4 443.7l105.2-56.2c7.1-3.8 15.6-3.8 22.6 0l105.2 56.2L384.2 324.1c-1.3-7.7 1.2-15.5 6.8-21l85.9-85.1L358.6 200.5c-7.8-1.2-14.6-6.1-18.1-13.3L287.9 79z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <label for="comentario">Comentario:</label><br />
+            <textarea id="comentario" name="comentario" rows="4" cols="30" required></textarea
+            ><br /><br />
+
+            <button type="submit" class="btnEnviar">
+              <span>Enviar</span>
+            </button>
+          </form>
+        </div>
       </section>
 
       <!-- Sección de información adicional desplegable -->
@@ -237,7 +287,9 @@ export default {
       chat: null,
       cars: [],
       isLoadingCar: true,
-      isVerificated: false
+      isVerificated: false,
+      showRatingForm: false,
+      selectedRating: 0
     }
   },
 
@@ -261,6 +313,35 @@ export default {
     }
   },
   methods: {
+    starColor(starIndex) {
+      this.selectedRating = starIndex + 1
+      for (let i = 0; i < this.selectedRating; i++) {
+        const starElement = document.getElementById(`star:${i}`)
+        if (starElement) {
+          starElement.style.fill = 'gold'
+        }
+      }
+      for (let i = this.selectedRating; i < 5; i++) {
+        const starElement = document.getElementById(`star:${i}`)
+        if (starElement) {
+          starElement.style.fill = 'black'
+        }
+      }
+    },
+
+    mostrarFormulario() {
+      if (!this.user) {
+        this.errorMessage = 'Debe iniciar sesión para contactar al vendedor'
+        this.$router.push('/login')
+        return
+      } else {
+        if (this.showRatingForm == false) {
+          this.showRatingForm = true
+        } else {
+          this.showRatingForm = false
+        }
+      }
+    },
     formatDate(date) {
       const options = { year: 'numeric', month: 'long', day: 'numeric' }
       return new Date(date).toLocaleDateString('es-CL', options)
@@ -410,7 +491,7 @@ export default {
 del usuario y el icono de verificado seria genial ;D
 */
 
-.fechaPublicacion{
+.fechaPublicacion {
   font-size: 0.9rem;
   color: #333;
   margin-top: 0;
@@ -451,7 +532,11 @@ del usuario y el icono de verificado seria genial ;D
   transition: 100ms;
   margin-left: 3rem;
 }
-
+.calification {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
 .checkmark {
   top: 7rem;
   left: 0;
@@ -459,6 +544,17 @@ del usuario y el icono de verificado seria genial ;D
   width: 2.5em;
   transition: 100ms;
   animation: dislike_effect 400ms ease;
+}
+.star {
+  top: 7rem;
+  left: 0;
+  height: 2.5em;
+  width: 2.5em;
+  transition: 100ms;
+  animation: dislike_effect 400ms ease;
+}
+.star:hover {
+  transform: scale(1.1);
 }
 
 .containerFav input:checked ~ .checkmark path {
@@ -866,6 +962,102 @@ strong {
   animation: scaleUp 0.3s ease-in-out;
 }
 
+.btnCalificar {
+  top: 0;
+  margin-top: 3%;
+  margin-bottom: 5%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #a0c4d3;
+  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 1%;
+}
+.btnCalificar:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #63b2d4;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+}
+
+.btnCalificar:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+.btnCalificar span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+.btnCalificar:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
+}
+
+.btnEnviar {
+  top: 0;
+  margin-top: 0%;
+  margin-bottom: 3%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  background: #a0c4d3;
+  box-shadow: 0px 6px 24px 0px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  cursor: pointer;
+  border: none;
+  padding: 1%;
+}
+.btnEnviar:after {
+  content: ' ';
+  width: 0%;
+  height: 100%;
+  background: #63b2d4;
+  position: absolute;
+  transition: all 0.4s ease-in-out;
+  right: 0;
+}
+
+.btnEnviar:hover::after {
+  right: auto;
+  left: 0;
+  width: 100%;
+}
+
+.btnEnviar span {
+  text-align: center;
+  text-decoration: none;
+  width: 100%;
+  color: black;
+  font-size: 1.125em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  z-index: 20;
+  transition: all 0.3s ease-in-out;
+}
+.btnEnviar:hover span {
+  color: white;
+  animation: scaleUp 0.3s ease-in-out;
+}
+
 .user-container,
 .vehicle-description,
 .additional-info,
@@ -913,5 +1105,12 @@ strong {
 
 .addon-services {
   /* Agrega estilos aca xavales */
+}
+
+.calificacion-resenias {
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
 }
 </style>

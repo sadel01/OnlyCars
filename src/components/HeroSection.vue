@@ -46,7 +46,7 @@ html {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background-image: url(../assets/ferrari2.jpg); /*Agregar imagen*/
+  background-image: url(../assets/ferrari2.jpg);
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -147,7 +147,7 @@ p {
   }
 
   .hero-section {
-    height: 600px;
+    height: 100vh;
   }
 }
 
@@ -157,7 +157,7 @@ p {
   }
 
   .hero-section {
-    height: 500px;
+    height: 100vh;
   }
 
   .theme-features-btn {
