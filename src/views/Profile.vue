@@ -1,119 +1,136 @@
 <template>
-  <div v-if="user" class="profile-container">
-    <div class="profile-image"></div>
-
-    <div v-show="!editing">
-      <h1>Perfil de Usuario</h1>
-      <p><span class="label">Nombre:</span> {{ user.nombre }}</p>
-      <p><span class="label">Apellido:</span> {{ user.apellido }}</p>
-      <p><span class="label">Email:</span> {{ user.mail }}</p>
-      <p><span class="label">RUT:</span> {{ user.rut }}</p>
-      <p><span class="label">Verificado:</span> {{ verificacion }}</p>
-      <div class="button-group">
-        <button class="editButton" @click="editProfile">Editar Perfil</button>
-        <button class="logoutButton" @click="logout">Cerrar Sesión</button>
+  <div class="main-container">
+    <div v-if="user" class="profile-section">
+      <div class="profile-image-container">
+        <div
+          class="profile-image"
+          :style="{
+            backgroundImage: `url(${user.imgProfile || '/src/assets/icons/userDefault.jpg'})`
+          }"
+        ></div>
+        <div v-show="editing" class="edit-icon" @click="selectImage">
+          <i class="fas fa-pencil-alt"></i>
+        </div>
+        <input type="file" ref="fileInput" @change="handleFileChange" style="display: none" />
+      </div>
+      <div v-show="!editing" class="profile-details">
+        <h1>Perfil de Usuario</h1>
+        <p><span class="label">Nombre:</span> {{ user.nombre }}</p>
+        <p><span class="label">Apellido:</span> {{ user.apellido }}</p>
+        <p><span class="label">Email:</span> {{ user.mail }}</p>
+        <p><span class="label">RUT:</span> {{ user.rut }}</p>
+        <div class="button-group">
+          <button class="editButton" @click="editProfile">Editar Perfil</button>
+          <button class="logoutButton" @click="logout">Cerrar Sesión</button>
+        </div>
+      </div>
+      <div v-show="editing" class="edit-form">
+        <h2>Editar Perfil</h2>
+        <form @submit.prevent="saveProfile">
+          <label for="nombre">Nombre:</label>
+          <input id="nombre" v-model="editableUser.nombre" placeholder="Nombre" />
+          <label for="apellido">Apellido:</label>
+          <input id="apellido" v-model="editableUser.apellido" placeholder="Apellido" />
+          <label for="email">Email:</label>
+          <input id="email" v-model="editableUser.mail" type="email" placeholder="Email" />
+          <label for="rut">RUT:</label>
+          <input id="rut" v-model="editableUser.rut" placeholder="RUT" />
+          <div class="form-buttons">
+            <button type="submit" class="saveButton">Guardar</button>
+            <button type="button" class="cancelButton" @click="cancelEdit">Cancelar</button>
+          </div>
+        </form>
       </div>
     </div>
 
-    <div v-show="editing" class="edit-form">
-      <h2>Editar Perfil</h2>
-      <form @submit.prevent="saveProfile">
-        <label for="nombre">Nombre:</label>
-        <input id="nombre" v-model="editableUser.nombre" placeholder="Nombre" />
-
-        <label for="apellido">Apellido:</label>
-        <input id="apellido" v-model="editableUser.apellido" placeholder="Apellido" />
-
-        <label for="email">Email:</label>
-        <input id="email" v-model="editableUser.mail" type="email" placeholder="Email" />
-
-        <label for="rut">RUT:</label>
-        <input id="rut" v-model="editableUser.rut" placeholder="RUT" />
-
-        <div class="form-buttons">
-          <button type="submit" class="saveButton">Guardar</button>
-          <button type="button" class="cancelButton" @click="cancelEdit">Cancelar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="schedule-container">
-    <h1 class="day-title">Define tus horarios de atención</h1>
-    <div class="schedule">
-      <div class="day-container" v-for="(day, index) in days" :key="index">
-        <h2 class="day-title">{{ day }}</h2>
-        <div v-for="(time, timeIndex) in schedule[day]" :key="timeIndex" class="time-slot">
-          <div class="labelStart">
-            <label for="start">Inicio:</label>
-            <flat-pickr v-model="time.start" :config="config"></flat-pickr>
-          </div>
-          <div class="labelEnd">
-            <label for="end">Fin:</label>
-            <flat-pickr v-model="time.end" :config="config"></flat-pickr>
-          </div>
-          <div class="deleteContainer">
-            <div class="buttonDelete" @click="deleteSchedule(day, timeIndex)">
-              <div class="button-wrapper">
-                <div class="text">Borrar</div>
-                <span class="icon-delete">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      <path
-                        d="M10 11V17"
-                        stroke="#ffff"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M14 11V17"
-                        stroke="#ffff"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M4 7H20"
-                        stroke="#ffff"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z"
-                        stroke="#ffff"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                      <path
-                        d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
-                        stroke="#ffff"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                      ></path>
-                    </g>
-                  </svg>
-                </span>
+    <div class="schedule-section">
+      <h1 @click="toggleSection('schedule')">
+        Horarios de atención
+        <i
+          :class="visibleSections.schedule ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"
+          class="arrow-icon"
+        ></i>
+      </h1>
+      <transition name="slide-fade">
+        <div v-show="visibleSections.schedule" class="schedule-container">
+          <h1 class="day-title">Define tus horarios de atención</h1>
+          <div class="schedule">
+            <div class="day-container" v-for="(day, index) in days" :key="index">
+              <h2 class="day-title">{{ day }}</h2>
+              <div v-for="(time, timeIndex) in schedule[day]" :key="timeIndex" class="time-slot">
+                <div class="labelStart">
+                  <label for="start">Inicio:</label>
+                  <flat-pickr v-model="time.start" :config="config"></flat-pickr>
+                </div>
+                <div class="labelEnd">
+                  <label for="end">Fin:</label>
+                  <flat-pickr v-model="time.end" :config="config"></flat-pickr>
+                </div>
+                <div class="deleteContainer">
+                  <div class="buttonDelete" @click="deleteSchedule(day, timeIndex)">
+                    <div class="button-wrapper">
+                      <div class="text">Borrar</div>
+                      <span class="icon-delete">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                          <g
+                            id="SVGRepo_tracerCarrier"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          ></g>
+                          <g id="SVGRepo_iconCarrier">
+                            <path
+                              d="M10 11V17"
+                              stroke="#ffff"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></path>
+                            <path
+                              d="M14 11V17"
+                              stroke="#ffff"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></path>
+                            <path
+                              d="M4 7H20"
+                              stroke="#ffff"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></path>
+                            <path
+                              d="M6 7H12H18V18C18 19.6569 16.6569 21 15 21H9C7.34315 21 6 19.6569 6 18V7Z"
+                              stroke="#ffff"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></path>
+                            <path
+                              d="M9 5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7H9V5Z"
+                              stroke="#ffff"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            ></path>
+                          </g>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="addContainer">
+                <button class="addTimeBtn" @click="addTime(day)">Añadir horario</button>
               </div>
             </div>
           </div>
+          <div class="buttonSave-container">
+            <button class="save" @click="saveSchedule()"><span>Guardar horario</span></button>
+          </div>
         </div>
-        <div class="addContainer">
-          <button class="addTimeBtn" @click="addTime(day)">Añadir horario</button>
-        </div>
-      </div>
-    </div>
-    <div class="buttonSave-container">
-      <button class="save" @click="saveSchedule()"><span>Guardar horario</span></button>
+      </transition>
     </div>
   </div>
 </template>
@@ -123,13 +140,20 @@ import axios from 'axios'
 import { ref } from 'vue'
 import flatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
 
 export default {
   name: 'Profile',
+  components: {
+    flatPickr
+  },
   data() {
     return {
       editing: false,
       editableUser: {},
+      visibleSections: {
+        schedule: false
+      },
       config: {
         enableTime: true,
         noCalendar: true,
@@ -145,11 +169,9 @@ export default {
         Viernes: [{ start: '', end: '' }],
         Sábado: [{ start: '', end: '' }],
         Domingo: [{ start: '', end: '' }]
-      }
+      },
+      imageFile: null
     }
-  },
-  components: {
-    flatPickr
   },
   computed: {
     user() {
@@ -176,39 +198,112 @@ export default {
     deleteSchedule(day, timeIndex) {
       this.schedule[day].splice(timeIndex, 1)
     },
+    async saveProfile() {
+      if (this.imageFile) {
+        await this.uploadProfileImage()
+      }
+      try {
+        const response = await axios.post(`http://localhost:8080/updateUserProfile`, {
+          id: this.user._id,
+          nombre: this.editableUser.nombre,
+          apellido: this.editableUser.apellido,
+          mail: this.editableUser.mail,
+          rut: this.editableUser.rut,
+          imgProfile: this.editableUser.imgProfile
+        })
+        this.$store.commit('setUser', { ...this.user, ...this.editableUser })
+        this.editing = false
+      } catch (error) {
+        console.error('Error al guardar el perfil:', error)
+      }
+    },
+    async uploadProfileImage() {
+      const storage = getStorage()
+      const fileRef = storageRef(storage, `profile-images/${this.imageFile.name}-${Date.now()}`)
+      try {
+        const snapshot = await uploadBytes(fileRef, this.imageFile)
+        const downloadURL = await getDownloadURL(snapshot.ref)
+        this.editableUser.imgProfile = downloadURL
+      } catch (error) {
+        console.error('Error al subir la imagen de perfil:', error)
+        throw error
+      }
+    },
     saveSchedule() {
       const userId = this.user._id
-      console.log('id: ',userId)
-      console.log('horarios: ', this.schedule)
       if (Object.values(this.schedule).some((day) => day.some((time) => time.start && time.end))) {
         axios
-          .post(`http://localhost:8080/profile/users/${userId}`, { schedules: this.schedule }) 
+          .post(`http://localhost:8080/profile/users/${userId}`, { schedules: this.schedule })
           .then(() => {
-        console.log('Horarios guardados exitosamente')
+            console.log('Horarios guardados exitosamente')
           })
           .catch((error) => {
-        console.error('Error al guardar horarios:', error)
+            console.error('Error al guardar horarios:', error)
           })
       } else {
         console.log('No se han definido horarios')
       }
+    },
+    toggleSection(section) {
+      this.visibleSections[section] = !this.visibleSections[section]
+    },
+    selectImage() {
+      this.$refs.fileInput.click()
+    },
+    handleFileChange(event) {
+      this.imageFile = event.target.files[0]
     }
   },
   created() {
-    this.verificacion = 'No'
-    if (this.user.tipo === 'verificado') {
-      this.verificacion = 'Si'
-    }
+    this.verificacion = this.user.tipo === 'verificado' ? 'Si' : 'No'
   }
 }
 </script>
 
 <style scoped>
+body {
+  background-color: #f5f5f5;
+  color: #333;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.main-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.profile-section,
+.schedule-section {
+  width: 100%;
+  max-width: 1200px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.schedule-section {
+  cursor: pointer;
+}
+
+.profile-image-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 20px;
+}
+
 .addContainer {
   justify-content: center;
   align-items: center;
   display: flex;
+  margin-top: 0.5rem;
 }
+
 .addTimeBtn {
   transition: all 0.2s ease-in;
   position: relative;
@@ -217,10 +312,10 @@ export default {
   cursor: pointer;
   font-size: 15px;
   border-radius: 0.3em;
-  border: 3px solid #fbc40e;
-  background: #ececec;
+  border: none;
+  background: rgb(209, 208, 208);
   color: #090909;
-  width: 100%;
+  width: 80%;
   height: 2.5rem;
   font-weight: bold;
   margin: 1rem auto 1rem; /* Centrado horizontal y ajuste de margen superior e inferior */
@@ -285,18 +380,18 @@ export default {
   justify-content: center;
   margin-top: -0.5rem; /* Ajuste para pegar el botón más arriba */
 }
+
 .buttonDelete {
   cursor: pointer;
-  --width: 95px;
+  --width: 65px;
   --height: 28px;
   --tooltip-height: 35px;
   --tooltip-width: 90px;
   --gap-between-tooltip-to-button: 18px;
-  --button-color: transparent;
-  color: white;
+  --button-color: #e0e0e0;
+  color: black;
   width: var(--width);
   height: var(--height);
-  border: 3px solid #fbc40e;
   background: var(--button-color);
   position: relative;
   text-align: center;
@@ -327,7 +422,7 @@ export default {
   width: 100%;
   height: 100%;
   left: 0;
-  color: #fff;
+  color: black;
 }
 
 .text {
@@ -340,7 +435,7 @@ export default {
 }
 
 .icon-delete {
-  color: #fff;
+  color: black;
   top: 100%;
   display: flex;
   align-items: center;
@@ -406,6 +501,7 @@ export default {
   width: auto;
   text-align: right;
 }
+
 .time-slot {
   display: flex;
   flex-direction: column;
@@ -414,6 +510,7 @@ export default {
 .flatpickr-input {
   width: 30%;
 }
+
 .labelStart,
 .labelEnd {
   display: flex;
@@ -421,9 +518,11 @@ export default {
   width: 100%;
   margin-left: 15%;
 }
+
 .labelStart {
   margin-top: 10%;
 }
+
 .labelEnd {
   margin-bottom: 1rem; /* Ajusta el margen según tu preferencia */
 }
@@ -470,6 +569,10 @@ export default {
   right: 0;
 }
 
+.time-slot {
+  border-bottom: 1px solid #eeeeee;
+}
+
 .save:hover::after {
   right: auto;
   left: 0;
@@ -503,23 +606,26 @@ export default {
   color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
+
 .schedule-container {
   flex: 1;
   position: relative;
-  background-color: #1a1a1a;
-  max-width: 70%;
+  background-color: #fff;
+  max-width: 100%;
   margin: 20px auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #bbbaba;
   border-radius: 20px;
-  color: #fff;
+  color: black;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
+
 @media screen and (min-width: 1281px) {
   .schedule-container .schedule > div:not(:last-child) {
-    border-right: 1px solid #fff;
+    border-right: 1px solid #c9c9c9;
   }
 }
+
 @media screen and (max-width: 1280px) {
   .schedule-container .schedule {
     flex-direction: column; /* Cambia la dirección de los elementos a columna */
@@ -527,7 +633,7 @@ export default {
   .day-container {
     width: 100%; /* Ancho completo cuando está en modo columna */
     margin-bottom: 1rem; /* Reducir el margen inferior entre los elementos */
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #8f8f8f;
   }
   .time-slot {
     margin-bottom: 10px; /* Reducir el espacio entre los slots de tiempo */
@@ -547,29 +653,30 @@ export default {
     margin-top: 1rem;
   }
 }
+
 .profile-image {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 100px;
-  height: 100px;
-  background-image: url('/src/assets/icons/userDefault.jpg');
+  width: 100%;
+  height: 100%;
   background-size: cover;
   border-radius: 50%;
 }
 
-.profile-container {
-  background-color: #1a1a1a;
-  max-width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+.edit-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: #fbc40e;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.user-info {
+.profile-details h1,
+.schedule-section h1 {
+  font-size: 24px;
   margin-bottom: 20px;
 }
 
@@ -578,7 +685,9 @@ export default {
 }
 
 .logoutButton,
-.editButton {
+.editButton,
+.saveButton,
+.cancelButton {
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -596,186 +705,29 @@ export default {
   transition: all 0.2s ease-in;
   font-weight: bold;
 }
+
 .editButton {
   background-color: #fbc40e;
   color: white;
 }
+
 .logoutButton {
-  background-color: transparent;
+  background-color: #fbc40e;
   color: white;
 }
 
-.logoutButton:active {
-  color: #666;
-  box-shadow:
-    inset 4px 4px 12px #c5c5c5,
-    inset -4px -4px 12px #ffffff;
-}
-
-.logoutButton:before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%) scaleY(1) scaleX(1.25);
-  top: 100%;
-  width: 140%;
-  height: 180%;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 50%;
-  display: block;
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-  z-index: -1;
-}
-
-.logoutButton:after {
-  content: '';
-  position: absolute;
-  left: 55%;
-  transform: translateX(-50%) scaleY(1) scaleX(1.45);
-  top: 180%;
-  width: 160%;
-  height: 190%;
-  background-color: #fbc40e;
-  border-radius: 50%;
-  display: block;
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-  z-index: -1;
-}
-
-.logoutButton:hover {
-  color: black;
-  border-color: #fbc40e;
-}
-
-.logoutButton:hover:before {
-  top: -35%;
-  background-color: #c19400;
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-}
-
-.logoutButton:hover:after {
-  top: -45%;
-  background-color: #c19400;
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-.editButton:active {
-  color: #666;
-  box-shadow:
-    inset 4px 4px 12px #c5c5c5,
-    inset -4px -4px 12px #ffffff;
-}
-
-.editButton:before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%) scaleY(1) scaleX(1.25);
-  top: 100%;
-  width: 140%;
-  height: 180%;
-  background-color: rgba(0, 0, 0, 0.05);
-  border-radius: 50%;
-  display: block;
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-  z-index: -1;
-}
-
-.editButton:after {
-  content: '';
-  position: absolute;
-  left: 55%;
-  transform: translateX(-50%) scaleY(1) scaleX(1.45);
-  top: 180%;
-  width: 160%;
-  height: 190%;
-  background-color: #fbc40e;
-  border-radius: 50%;
-  display: block;
-  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
-  z-index: -1;
-}
-
-.editButton:hover {
-  color: black;
-  border-color: #c19400;
-}
-
-.editButton:hover:before {
-  top: -35%;
-  background-color: #c19400;
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-}
-
-.editButton:hover:after {
-  top: -45%;
-  background-color: #c19400;
-  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
-}
-
-.edit-form {
-  margin-top: 20px;
-  background: #1a1a1a;
-  padding: 20px;
-  border-radius: 5px;
+.editButton:hover,
+.logoutButton:hover,
+.saveButton:hover,
+.cancelButton:hover {
+  background-color: #f8d150;
   color: #fff;
 }
 
-.edit-form h2 {
-  margin-bottom: 15px;
-}
-
-.edit-form input {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #424242;
-  background-color: #2e2e2e;
-  border-radius: 4px;
-  color: #fff;
-}
-
-.form-buttons {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.saveButton {
-  background-color: #fbc40e;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-  border-radius: 4px;
-  outline: none;
-}
-
+.saveButton,
 .cancelButton {
-  background-color: transparent;
+  background-color: #fbc40e;
   color: white;
-  border: 2px solid #fbc40e;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-  border-radius: 4px;
-  outline: none;
 }
 
 .edit-form label {
@@ -784,19 +736,120 @@ export default {
   margin-top: 10px;
 }
 
-.input-group {
+.edit-form input {
+  display: block;
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fafafa;
+  color: #333;
+}
+
+.schedule {
+  margin-top: 20px;
+}
+
+.day-schedule {
+  background: #fafafa;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  padding: 10px;
+  color: #333;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.time-entry {
+  display: flex;
+  align-items: center;
   margin-bottom: 10px;
 }
 
-.input-group input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+.time-input {
+  width: 100px;
+  padding: 5px;
+  margin: 0 10px;
   border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+}
+
+.addTimeBtn {
+  margin-top: 10px;
+  background-color: #fbc40e;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  transition-duration: 0.4s;
+  cursor: pointer;
   border-radius: 4px;
 }
 
-.button-group {
-  margin-top: 20px;
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ff4c4c;
+  cursor: pointer;
+}
+
+.collapsible-section h2 {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.arrow-icon {
+  margin-left: 10px;
+}
+
+.slide-fade-enter-active {
+  transition: all 0.5s ease;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.5s ease;
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.slide-fade-enter-to,
+.slide-fade-leave-from {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .main-container {
+    padding: 10px;
+  }
+
+  .profile-section,
+  .schedule-section {
+    padding: 10px;
+  }
+
+  .editButton,
+  .logoutButton,
+  .saveButton,
+  .cancelButton,
+  .addTimeBtn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .time-input {
+    width: 80px;
+    padding: 5px;
+  }
 }
 </style>
