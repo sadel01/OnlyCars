@@ -33,8 +33,6 @@
           <input id="apellido" v-model="editableUser.apellido" placeholder="Apellido" />
           <label for="email">Email:</label>
           <input id="email" v-model="editableUser.mail" type="email" placeholder="Email" />
-          <label for="rut">RUT:</label>
-          <input id="rut" v-model="editableUser.rut" placeholder="RUT" />
           <div class="form-buttons">
             <button type="submit" class="saveButton">Guardar</button>
             <button type="button" class="cancelButton" @click="cancelEdit">Cancelar</button>
@@ -43,7 +41,7 @@
       </div>
     </div>
 
-    <div class="schedule-section">
+    <div class="schedule-section" v-if="user.rol != 'admin'">
       <h1 @click="toggleSection('schedule')">
         Horarios de atención
         <i
@@ -286,10 +284,6 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.schedule-section {
-  cursor: pointer;
-}
-
 .profile-image-container {
   position: relative;
   width: 100px;
@@ -313,7 +307,7 @@ body {
   font-size: 15px;
   border-radius: 0.3em;
   border: none;
-  background: rgb(209, 208, 208);
+  background-color: rgb(209, 208, 208);
   color: #090909;
   width: 80%;
   height: 2.5rem;
@@ -398,11 +392,11 @@ body {
   border-radius: 0.45em;
   font-size: 14px;
   transition: background 0.3s;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.7rem;
 }
 
 .buttonDelete::after,
-.button::before {
+.buttonDelete::before {
   opacity: 0;
   visibility: hidden;
   transition: all 0.5s;
@@ -478,19 +472,11 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px; /* Espacio entre cada día */
-  width: 100%; /* Ancho relativo al contenedor principal */
+  margin-bottom: 20px;
+  width: 100%;
 }
 
 .day-title {
-  text-align: center;
-}
-
-.addTimeBtn {
-  margin-top: 10px; /* Espacio entre el último slot de tiempo y el botón */
-}
-
-.buttonSave-container {
   text-align: center;
 }
 
@@ -508,7 +494,7 @@ body {
 }
 
 .flatpickr-input {
-  width: 30%;
+  width: 22%;
 }
 
 .labelStart,
@@ -550,7 +536,7 @@ body {
   cursor: pointer;
   border: none;
   height: 3rem;
-  width: 15%;
+  width: 10rem;
   font-size: 15px;
   margin-left: 83%;
 }
@@ -595,26 +581,12 @@ body {
   animation: scaleUp 0.3s ease-in-out;
 }
 
-.profile-container {
-  position: relative;
-  background-color: #1a1a1a;
-  max-width: 70%;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 20px;
-  color: #fff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
 .schedule-container {
   flex: 1;
   position: relative;
   background-color: #fff;
   max-width: 100%;
   margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #bbbaba;
   border-radius: 20px;
   color: black;
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
@@ -625,7 +597,6 @@ body {
     border-right: 1px solid #c9c9c9;
   }
 }
-
 @media screen and (max-width: 1280px) {
   .schedule-container .schedule {
     flex-direction: column; /* Cambia la dirección de los elementos a columna */
@@ -651,6 +622,9 @@ body {
   }
   .buttonDelete {
     margin-top: 1rem;
+  }
+  .save {
+    margin: auto;
   }
 }
 
@@ -691,7 +665,6 @@ body {
   position: relative;
   overflow: hidden;
   z-index: 1;
-  border: 2px solid #fbc40e;
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
@@ -704,30 +677,129 @@ body {
   outline: none;
   transition: all 0.2s ease-in;
   font-weight: bold;
+  width: 10rem;
+}
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.editButton {
+.editButton,
+.saveButton {
   background-color: #fbc40e;
+  border: 2px solid #fbc40e;
   color: white;
 }
-
-.logoutButton {
-  background-color: #fbc40e;
-  color: white;
-}
-
-.editButton:hover,
-.logoutButton:hover,
-.saveButton:hover,
-.cancelButton:hover {
-  background-color: #f8d150;
-  color: #fff;
-}
-
-.saveButton,
+.logoutButton,
 .cancelButton {
+  border: 2px solid #d1d0d0;
+  background-color: #d1d0d0;
+  margin-left: 50%;
+}
+
+.logoutButton:active,
+.cancelButton:active {
+  color: #666;
+  box-shadow:
+    inset 4px 4px 12px #c5c5c5,
+    inset -4px -4px 12px #ffffff;
+}
+
+.logoutButton:before,
+.cancelButton:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+  top: 100%;
+  width: 140%;
+  height: 180%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+
+.logoutButton:after,
+.cancelButton:after {
+  content: '';
+  position: absolute;
+  left: 55%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+  top: 180%;
+  width: 160%;
+  height: 190%;
   background-color: #fbc40e;
-  color: white;
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+.editButton:before,
+.saveButton:before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.25);
+  top: 100%;
+  width: 140%;
+  height: 180%;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+
+.editButton:after,
+.saveButton:after {
+  content: '';
+  position: absolute;
+  left: 55%;
+  transform: translateX(-50%) scaleY(1) scaleX(1.45);
+  top: 180%;
+  width: 160%;
+  height: 190%;
+  background-color: #fbc40e;
+  border-radius: 50%;
+  display: block;
+  transition: all 0.5s 0.1s cubic-bezier(0.55, 0, 0.1, 1);
+  z-index: -1;
+}
+.logoutButton:hover,
+.cancelButton:hover {
+  color: black;
+  border-color: #c19400;
+}
+.editButton:hover,
+.saveButton:hover {
+  color: black;
+  border-color: #c19400;
+}
+
+.logoutButton:hover:before,
+.editButton:hover:before,
+.saveButton:hover:before,
+.cancelButton:hover:before {
+  top: -35%;
+  background-color: #c19400;
+  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
+}
+
+.logoutButton:hover:after,
+.editButton:hover:after,
+.saveButton:hover:after,
+.cancelButton:hover:after {
+  top: -45%;
+  background-color: #c19400;
+  transform: translateX(-50%) scaleY(1.3) scaleX(0.8);
 }
 
 .edit-form label {
@@ -774,20 +846,6 @@ body {
   border-radius: 4px;
   background-color: #fff;
   color: #333;
-}
-
-.addTimeBtn {
-  margin-top: 10px;
-  background-color: #fbc40e;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  transition-duration: 0.4s;
-  cursor: pointer;
-  border-radius: 4px;
 }
 
 .remove-btn {
