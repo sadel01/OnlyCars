@@ -22,11 +22,19 @@
 
       <div class="chat">
         <div class="chat-header">
+          <div
+            class="profile-image"
+            :style="{
+              backgroundImage: `url(${user.imgProfile || '/src/assets/icons/userDefault.jpg'})`
+            }"
+          ></div>
           <h1>{{ selectedChat.otherUserName }} {{ selectedChat.otherUserLastName }}</h1>
           <div class="report-section">
             <p v-if="chatReported">Reportado correctamente &nbsp;</p>
-          <button class="report-button" @click="reportChat" :disabled="chatReported">Reportar chat</button>
-        </div>
+            <button class="report-button" @click="reportChat" :disabled="chatReported">
+              Reportar chat
+            </button>
+          </div>
         </div>
         <div class="chatContainer" ref="chatContainer">
           <div class="messages" ref="messages">
@@ -241,7 +249,7 @@ export default {
         if (response.status === 200) {
           this.successMessage = 'Chat reportado con éxito'
           console.log('Chat reportado con éxito')
-          this.chatReported = true;
+          this.chatReported = true
         } else {
           this.errorMessage = 'Error al reportar el chat'
           console.log('Error al reportar el chat')
@@ -301,6 +309,12 @@ export default {
 </script>
 
 <style scoped>
+.profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
 
 .report-section {
   display: flex;
@@ -310,7 +324,7 @@ export default {
 }
 
 .report-button {
-  /* Designado al departamento de CSS (Adrián) para agregar estilos, está default */ 
+  /* Designado al departamento de CSS (Adrián) para agregar estilos, está default */
 }
 
 #messageInput:focus ~ #sendButton svg path,

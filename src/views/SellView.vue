@@ -250,6 +250,9 @@
             :id="'insurance-' + insuranceOption"
             :value="insuranceOption"
             v-model="vehicle.insuranceOptions"
+            :disabled="
+              vehicle.insuranceOptions.includes('Sin seguro') && insuranceOption !== 'Sin seguro'
+            "
           />
           <label :for="'insurance-' + insuranceOption">{{ insuranceOption }}</label>
         </div>
@@ -784,7 +787,8 @@ export default {
             name: user.nombre,
             lastName: user.apellido,
             email: user.mail,
-            rut: user.rut
+            rut: user.rut,
+            imgProfile: user.imgProfile
           },
           visitas: 0,
           fechaPublicacion: new Date().toISOString()
