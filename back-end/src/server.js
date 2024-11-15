@@ -7,9 +7,12 @@ import http from 'http'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: path.join(__dirname, '.env') })
 
 const app = express()
-const url = `mongodb://admin:12345adminADMIN@ac-sjjuxyv-shard-00-00.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-01.2sd1gmw.mongodb.net:27017,ac-sjjuxyv-shard-00-02.2sd1gmw.mongodb.net:27017/?ssl=true&replicaSet=atlas-a9gjt5-shard-0&authSource=admin&retryWrites=true&w=majority&appName=Cluster0`
+const url = process.env.MONGODB_URI
 const client = new MongoClient(url)
 
 // Configuración de Multer
@@ -530,22 +533,22 @@ app.post('/admin/users/:id', async (req, res) => {
   }
 })
 
-app.post("/profile/users/:id", async (req, res) => {
+app.post('/profile/users/:id', async (req, res) => {
   try {
-    const schedules = req.body;
-    const id = req.params.id;
-    const database = client.db('onlycars');
-    const collection = database.collection('users');
+    const schedules = req.body
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('users')
     const result = await collection.updateOne(
       { _id: new ObjectId(id) },
       { $set: { schedules: schedules } }
-    );
-    res.send({ message: 'Horarios actualizados con éxito' });
+    )
+    res.send({ message: 'Horarios actualizados con éxito' })
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
-    
+})
+
 app.post('/reportChat', async (req, res) => {
   try {
     const { chatId, reportedBy } = req.body
@@ -562,7 +565,7 @@ app.post('/reportChat', async (req, res) => {
     }
 
     // Marcar el chat como reportado
-    await chatsCollection.updateOne({ _id: new ObjectId(chatId) }, { $set: { reported: true } });
+    await chatsCollection.updateOne({ _id: new ObjectId(chatId) }, { $set: { reported: true } })
 
     // Encontrar todos los usuarios con rol de admin
     const admins = await usersCollection.find({ rol: 'admin' }).toArray()
@@ -580,57 +583,55 @@ app.post('/reportChat', async (req, res) => {
 
 app.get('/getReportedChats', async (req, res) => {
   try {
-    console.log('HOLA');
+    console.log('HOLA')
 
-    const database = client.db('onlycars');
+    const database = client.db('onlycars')
     const userCollection = database.collection('users')
     const productCollection = database.collection('posts')
-    const chatsCollection = database.collection('chat');
+    const chatsCollection = database.collection('chat')
 
     // Encontrar todos los chats que han sido reportados
-    const reportedChats = await chatsCollection.find({ reported: true }).toArray();
+    const reportedChats = await chatsCollection.find({ reported: true }).toArray()
 
     const chatsWithBuyerDetails = await Promise.all(
-    reportedChats.map(async (chat) => {
-      const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
-      const seller = await userCollection.findOne({ _id: new ObjectId(chat.sellerID) })
-      const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
+      reportedChats.map(async (chat) => {
+        const buyer = await userCollection.findOne({ _id: new ObjectId(chat.buyerID) })
+        const seller = await userCollection.findOne({ _id: new ObjectId(chat.sellerID) })
+        const product = await productCollection.findOne({ _id: new ObjectId(chat.productID) })
 
-      return {
-        buyerName: buyer ? buyer.nombre : '',
-        buyerLastName: buyer ? buyer.apellido : '',
-        sellerName: seller ? seller.nombre : '',
-        sellerLastName: seller ? seller.apellido : '',
-        brand: product ? product.brand : '',
-        model: product ? product.model : '',
-        product: product ? product : {}
-      }
-    })
-  )
-  
-      res.send(chatsWithBuyerDetails);
-    }
-    catch (error) {
-      res.status(500).send(error.message);
-    } 
+        return {
+          buyerName: buyer ? buyer.nombre : '',
+          buyerLastName: buyer ? buyer.apellido : '',
+          sellerName: seller ? seller.nombre : '',
+          sellerLastName: seller ? seller.apellido : '',
+          brand: product ? product.brand : '',
+          model: product ? product.model : '',
+          product: product ? product : {}
+        }
+      })
+    )
 
-});
-
-app.delete("/admin/delete/:id", async (req, res) => {
-  try {
-    const id = req.params.id;
-    const database = client.db("onlycars");
-    const collection = database.collection("posts");
-    const collection2 = database.collection("favorites");
-
-    const result = await collection.deleteOne({ _id: new ObjectId(id) });
-    const result2 = await collection2.updateMany({}, { $pull: { postIds: id } });
-
-    res.send({ message: "Publicación eliminada con éxito" });
+    res.send(chatsWithBuyerDetails)
   } catch (error) {
-    res.status(500).send(error.message);
+    res.status(500).send(error.message)
   }
-});
+})
+
+app.delete('/admin/delete/:id', async (req, res) => {
+  try {
+    const id = req.params.id
+    const database = client.db('onlycars')
+    const collection = database.collection('posts')
+    const collection2 = database.collection('favorites')
+
+    const result = await collection.deleteOne({ _id: new ObjectId(id) })
+    const result2 = await collection2.updateMany({}, { $pull: { postIds: id } })
+
+    res.send({ message: 'Publicación eliminada con éxito' })
+  } catch (error) {
+    res.status(500).send(error.message)
+  }
+})
 
 const PORT = 8080
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
