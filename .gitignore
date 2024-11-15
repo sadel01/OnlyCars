@@ -117,3 +117,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#ENV FILES
+.env
